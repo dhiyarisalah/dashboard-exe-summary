@@ -1,0 +1,46 @@
+*{
+    font-family: "Gill Sans";
+}
+
+:root {
+    --blue-black: #0E2735;
+    --blue-tua: #2076BD;
+    --blue-muda: #4FA6D5;
+    --blue-sky: #A1CCE2;
+    --white: #FFFFFF;
+    --black: #000000;
+    --white-gading: #F8F8F8;
+    --grey: #EFEFEF;
+  }
+
+.navbar.navbar-custom {
+    background-color: #194375;
+    height: 119px;
+}
+
+h1{
+    padding: 30px 0px 0px 30px;
+}
+
+h2 {
+    padding: 5px 0px 0px 30px;   
+}
+
+h3 {
+    padding: 5px 0px 0px 30px;   
+}
+
+.date-updated {
+    font-size: 14px;
+    padding-left: 30px;
+    padding-top: 0.5px;
+}
+
+.refresh-button {
+    display: inline-block;
+    border-radius: 4px;
+    background-color: #0D6EFD;
+    text-align: center;
+    color: #FFFFFF;
+    margin: 30px 30px 30px 30px;
+}
