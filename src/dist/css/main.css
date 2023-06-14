@@ -27,13 +27,13 @@ h2 {
 }
 
 h3 {
-    padding: 5px 0px 0px 30px;   
+    padding: 20px 0px 0px 30px;   
 }
 
 .date-updated {
     font-size: 14px;
-    padding-left: 30px;
-    padding-top: 0.5px;
+    padding: 0px 0px 18px 30px;
+    
 }
 
 .refresh-button {
@@ -43,4 +43,7 @@ h3 {
     text-align: center;
     color: #FFFFFF;
     margin: 30px 30px 30px 30px;
+    margin-bottom: 0;
+    width: 81px;
+    height: 38px;
 }
