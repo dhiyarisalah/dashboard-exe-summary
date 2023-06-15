@@ -1,7 +1,6 @@
 import {Row, Col, Button, Container} from 'react-bootstrap'
 import ProjectChart from '../components/ProjectChart'
 // import ProjectChart from '../components/ProjectChart'
-// import Progress from '../components/Progress'
 
 const LandingPage = () => {
   return (

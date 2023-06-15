@@ -19,7 +19,7 @@ function Progress() {
           "#2a71d0",
         ],
         borderColor: "black",
-        borderWidth: 2,
+        borderWidth: 1,
       },
     ],
   });
