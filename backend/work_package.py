@@ -32,8 +32,10 @@ def process_element(element):
     if date is not None:
         date_object = datetime.strptime(date, "%Y-%m-%d")
         month = date_object.strftime("%m")
+        year = date_object.strftime("%Y")
     else:
         month = None
+        year = None
 
     return {
         "wp_id": wp_id,
@@ -42,6 +44,7 @@ def process_element(element):
         "status": status,
         "wp_type": wp_type,
         "month": month,
+        "year": year,
         "date": date,
         "assignee": assignee,
         "percentage_done": percentage_done,
@@ -84,6 +87,8 @@ def miles_by_project():
         wp_type = item.get("wp_type")
         wp_name = item.get("wp_name")
         date = item.get("date")
+        month = item.get("month")
+        year = item.get("year")
 
         if wp_type == "Milestone":
             if project_name not in milestones:
@@ -93,7 +98,9 @@ def miles_by_project():
                 }
             milestones[project_name]["milestones"].append({
                 "wpName": wp_name,
-                "date": date
+                "date": date,
+                "month": month,
+                "year": year
             })
 
     milestones_list = list(milestones.values())

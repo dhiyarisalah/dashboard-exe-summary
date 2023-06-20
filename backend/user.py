@@ -1,9 +1,7 @@
-from utils import count_progress
 from work_package import get_all_wp
 import requests
 
 header = {"Authorization": "Basic YXBpa2V5OmVlMjUzM2I0OTBjMmQ5M2M1ZDNkN2U2OGZlOGNkY2ViODAyMjc2ZTQxZjkyZTQxODU3MjBhM2M0OTgyMTM2ZjQ="}
-params = {'filters': '[{"status": { "operator": "=", "values": ["17"] }}]'}
 url = "https://nirmala.infoglobal.id/api/v3"
 memberships = requests.get(f"{url}/memberships",headers=header)
 
@@ -27,5 +25,39 @@ def get_all_memberships():
         return {"message": "No memberships found."}
     
 def get_progress_assignee():
+    assignee_progress = {}
     all_wp = get_all_wp()
-    return count_progress(all_wp, "assignee")
+    for item in all_wp:
+        month = item.get("month")
+        assignee = item.get("assignee")
+
+        if month is not None and assignee is not None:
+            if month not in assignee_progress:
+                assignee_progress[month] = []
+
+            assignee_data = None
+            for data in assignee_progress[month]:
+                if data["userName"] == assignee:
+                    assignee_data = data
+                    break
+
+            if assignee_data is None:
+                assignee_data = {
+                    "userName": assignee,
+                    "wpTotal": 0,
+                    "wpDone": 0
+                }
+                assignee_progress[month].append(assignee_data)
+
+            assignee_data["wpTotal"] += 1
+
+            if item.get("status") == "Done":
+                assignee_data["wpDone"] += 1
+
+    result = []
+    for month, progress in assignee_progress.items():
+        result.append({
+            "month": month,
+            "progress": progress
+        })
+    return result

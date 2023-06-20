@@ -6,7 +6,6 @@ from collections import Counter
 import requests
 
 header = {"Authorization": "Basic YXBpa2V5OmVlMjUzM2I0OTBjMmQ5M2M1ZDNkN2U2OGZlOGNkY2ViODAyMjc2ZTQxZjkyZTQxODU3MjBhM2M0OTgyMTM2ZjQ="}
-params = {'filters': '[{"status": { "operator": "=", "values": ["17"] }}]'}
 url = "https://nirmala.infoglobal.id/api/v3"
 projects = requests.get(f"{url}/projects",headers=header)
 
@@ -37,8 +36,14 @@ def get_all_projects():
             project_name = element["name"]
             project_status = element["_links"]["status"]["title"] # seluruh project harus di set status
             project_priority = element["_links"]["customField5"]["title"] # seluruh project harus di set priority
+            project_parent = element["_links"].get("parent", {}).get("title")
+
+            if project_parent is None:
+                project_parent = None
+
             all_projects.append({"project_id": project_id, 
-                                 "project_name": project_name, 
+                                 "project_name": project_name,
+                                 "project_parent": project_parent, 
                                  "project_status": project_status, 
                                  "project_priority": project_priority})
     if all_projects:
@@ -63,28 +68,14 @@ def get_progress_project():
     return count_progress(all_wp, "project_name")
 
 def get_project_details():
-    versions = get_all_versions()
     memberships = get_all_memberships()
     project_details = {}
-
-    for version in versions:
-        project_name = version.get("at_project") 
-        if project_name not in project_details:
-            project_details[project_name] = {"project_name": project_name, "versions": []}
-
-        project_details[project_name]["versions"].append({
-            "version_id": version["version_id"],
-            "version_name": version["version_name"]
-        })
 
     for member in memberships:
         project_name = member.get("project_name") 
         if project_name not in project_details:
-            project_details[project_name] = {"project_name": project_name, "versions": []}
+            project_details[project_name] = {"project_name": project_name, "members": []}
         
-        if "members" not in project_details[project_name]:
-            project_details[project_name]["members"] = []
-
         project_details[project_name]["members"].append({
             "member_id": member["memberships_id"],
             "member_name": member["member_name"],

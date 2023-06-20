@@ -12,6 +12,7 @@ def count_progress(items, key):
                 progress_counts[value] = {
                     "wp_total": 0,
                     "wp_done": 0,
+                    "progress": 0,
                     "story_points": 0
                 }
 
@@ -30,6 +31,7 @@ def count_progress(items, key):
             "progress": {
                 "wp_total": counts["wp_total"],
                 "wp_done": counts["wp_done"],
+                "progress": (counts["wp_done"] / counts["wp_total"])*100,
                 "story_points": counts["story_points"]
             }
         })
