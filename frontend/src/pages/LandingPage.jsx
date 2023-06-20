@@ -1,34 +1,54 @@
 import {Row, Col, Button, Container} from 'react-bootstrap'
 import ProjectChart from '../components/ProjectChart'
-// import ProjectChart from '../components/ProjectChart'
+import Progress from '../components/Progress'
+import { useState, useEffect} from 'react'
 
 const LandingPage = () => {
+  const [lastUpdate, setLastUpdate] = useState("");
+
+  useEffect(() => {
+    const storedLastUpdate = localStorage.getItem ('lastUpdate');
+    if (storedLastUpdate) {
+      setLastUpdate(storedLastUpdate);
+    }
+  }, [])
+
+  const handleRefresh = () => {
+    const currentDate = new Date().toLocaleString();
+    setLastUpdate(currentDate);
+    localStorage.setItem('lastUpdate', currentDate);
+  }
   return (
     <div className= "landingpage">
       <header className= "w=100 min-vh-100">
         <Row>
           <Col>
-            <h1 style={{fontWeight:'bolder'}}>Dashboard</h1>
+            <h1 className='dashboard'>Dashboard</h1>
           </Col>
           <Col className="d-flex justify-content-end">
-            <Button className='refresh-button'>Refresh</Button>
+            <Button className='refresh-button' onClick={handleRefresh} >
+              Refresh</Button>
           </Col>
         </Row>
         <div className='date-updated'>
-          Last Update: DD/MM/YY
+          Last Update: {lastUpdate}
         </div>
         <div>
-          <h2 style={{fontWeight:'bolder'}}>Project</h2>
+          <h2 className='project'>Project</h2>
         </div>
         <div>
-          <h3 style={{fontSize:"24px"}}>Overview</h3>
+          <h3 className='overview'>Overview</h3>
         </div>
         <Container>
           <Row>
-            <Col> 
-            <ProjectChart />
+            <Col>
+              <ProjectChart />
+            </Col>
+            <Col>
+              <Progress />
             </Col>
           </Row>
+
         </Container>
      </header>
     </div>

@@ -1,15 +1,15 @@
 import { useState } from "react";
 import BarChart from "./BarChart";
-import { UserData } from "../data/index.js";
+import { projectProgress } from "../data/index.js";
 
 function Progress() {
-  const [userData, setUserData] = useState({
-    labels: UserData.map((data) => data.year),
+  const [projectData, setProjectData] = useState({
+    labels: projectProgress.map((data) => data.project_name),
     datasets: [
       {
         indexAxis: "y",
-        label: "Users Gained",
-        data: UserData.map((data) => data.userGain),
+        label: "Project Progress",
+        data: projectProgress.map((data) => data.progress.percentage),
         fill: false,
         backgroundColor: [
           "rgba(75,192,192,1)",
@@ -23,11 +23,12 @@ function Progress() {
       },
     ],
   });
+  
   return (
     <div className="Progress">
-      <div style={{ width: 700 }}>
-        <BarChart chartData={userData} />
-    </div>
+      <div style={{ width: 700, height: 400, overflow: "auto"}}>
+        <BarChart chartData={projectData} />
+      </div>
     </div>
   );
 }

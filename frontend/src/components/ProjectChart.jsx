@@ -62,8 +62,10 @@ function ProjectChart() {
       <Container>
         <Row>
           <Col>
-            <h5>Total Project</h5>
-            <h2>{totalProjectCount} Projects</h2> {/* Update the value here */}
+            <div className="title-count">
+              Total Project <br /> <span className="count-project">
+              {totalProjectCount} Projects </ span> 
+            </div> 
           </Col>
           <Col>
           <Dropdown className= "dropdown-custom" onSelect={handleDropdownSelect}>

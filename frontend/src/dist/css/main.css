@@ -18,32 +18,70 @@
     height: 119px;
 }
 
-h1{
+h1.dashboard{
     padding: 30px 0px 0px 30px;
+    font-family: 'Gill Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 77px;
+    color: #0E2735;
 }
 
-h2 {
-    padding: 5px 0px 0px 30px;   
+h2.project {
+    padding: 5px 0px 0px 30px;
+    font-family: 'Gill Sans';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 58px;
+    color: #2C2F33;
 }
 
-h3 {
-    padding: 20px 0px 0px 30px;   
+h3.overview {
+    padding: 20px 0px 0px 30px;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 38px;   
+}
+
+.ProjectChart .title-count {
+    font-weight: 600;
+    size: 22.6px;
+    color: #828282
+
+}
+
+.ProjectChart .title-count .count-project {
+    color: #000000;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 56.4972px;
+    line-height: 66px;
+    letter-spacing: -0.0375em;
 }
 
 .date-updated {
+    font-style: normal;
+    font-weight: 400;
     font-size: 14px;
+    line-height: 16px;
+    color: #0E2735;
     padding: 0px 0px 18px 30px;
     
 }
 
 .refresh-button {
-    display: inline-block;
+    box-sizing: border-box;
+    background: #0D6EFD;
+    /* Theme/Primary */
+    border: 1px solid #0D6EFD;
+    display: flex;
     border-radius: 4px;
-    background-color: #0D6EFD;
     text-align: center;
     color: #FFFFFF;
-    margin: 30px 30px 30px 30px;
-    margin-bottom: 0;
+    margin: 30px 30px 0px 0px;
     width: 81px;
     height: 38px;
 }
