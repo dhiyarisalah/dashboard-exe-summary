@@ -1,10 +1,14 @@
 import { useState } from "react";
 import BarChart from "./BarChart";
 import { projectProgress } from "../data/index.js";
+import {Button} from "react-bootstrap"
 
 function Progress() {
   const [projectData, setProjectData] = useState({
-    labels: projectProgress.map((data) => data.project_name),
+    labels: projectProgress.map((data) => 
+    <Button>
+      {data.project_name}
+    </Button>),
     datasets: [
       {
         indexAxis: "y",
@@ -20,15 +24,15 @@ function Progress() {
         ],
         borderColor: "black",
         borderWidth: 1,
+        barThickness: 30
       },
     ],
   });
-  
   return (
     <div className="Progress">
-      <div style={{ width: 700, height: 400, overflow: "auto"}}>
-        <BarChart chartData={projectData} />
-      </div>
+      <div style={{ width: "100%", height: "100%" }}>
+        <BarChart chartData={projectData}/>
+    </div>
     </div>
   );
 }
