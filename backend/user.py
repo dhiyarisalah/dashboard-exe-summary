@@ -37,27 +37,110 @@ def get_progress_assignee():
 
             assignee_data = None
             for data in assignee_progress[month]:
-                if data["userName"] == assignee:
+                if data["user_name"] == assignee:
                     assignee_data = data
                     break
 
             if assignee_data is None:
                 assignee_data = {
-                    "userName": assignee,
-                    "wpTotal": 0,
-                    "wpDone": 0
+                    "user_name": assignee,
+                    "wp_total": 0,
+                    "wp_done": 0
                 }
                 assignee_progress[month].append(assignee_data)
 
-            assignee_data["wpTotal"] += 1
+            assignee_data["wp_total"] += 1
 
             if item.get("status") == "Done":
-                assignee_data["wpDone"] += 1
+                assignee_data["wp_done"] += 1
 
     result = []
     for month, progress in assignee_progress.items():
+        for data in progress:
+            data["progress"] = (data["wp_done"] / data["wp_total"]) * 100
         result.append({
             "month": month,
             "progress": progress
+        })
+    return result
+
+def get_assignee_details():
+    assignee_details = {}
+    all_wp = get_all_wp()
+    for item in all_wp:
+        user_name = item.get("assignee")
+        project_name = item.get("project_name")
+        story_points = item.get("story_points")
+
+        if user_name is not None and project_name is not None:
+            if user_name not in assignee_details:
+                assignee_details[user_name] = []
+
+            projects_data = None
+            for data in assignee_details[user_name]:
+                if data["project_name"] == project_name:
+                    projects_data = data
+                    break
+
+            if projects_data is None:
+                projects_data = {
+                    "project_name": project_name,
+                    "wp_assigned": 0,
+                    "story_points": 0
+                }
+                assignee_details[user_name].append(projects_data)
+
+            projects_data["wp_assigned"] += 1
+
+            if story_points is not None:
+                projects_data["story_points"] += story_points
+
+    result = []
+    for user_name, projects in assignee_details.items():
+        result.append({
+            "user_name": user_name,
+            "projects": projects
+        })
+    return result
+
+def get_assignee_wp_details():
+    wp_details = {}
+    all_wp = get_all_wp()
+    for item in all_wp:
+        user_name = item.get("assignee")
+        project_name = item.get("project_name")
+        wp_name = item.get("wp_name")
+        progress = item.get("percentage_done")
+        story_points = item.get("story_points")
+
+        if user_name is not None and project_name is not None:  
+            if user_name not in wp_details:
+                wp_details[user_name] = []
+
+            project_data = None
+            for data in wp_details[user_name]:
+                if data["project_name"] == project_name:
+                    project_data = data
+                    break
+
+            if project_data is None:
+                project_data = {
+                    "project_name": project_name,
+                    "wp_assigned": []
+                }
+                wp_details[user_name].append(project_data)
+            
+            wp_assigned_data = {
+                "wp_name": wp_name,
+                "progress": progress,
+                "story_points": story_points
+            }
+            project_data["wp_assigned"].append(wp_assigned_data)
+
+    result = []
+    for user_name, projects in wp_details.items():
+        result.append({
+            "user_name": user_name,
+            "projects": projects
         })
     return result

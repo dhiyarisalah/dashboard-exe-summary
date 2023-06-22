@@ -1,8 +1,8 @@
 from fastapi import APIRouter
-from project import get_all_projects, count_all, project_count_by_status, project_count_by_priority,get_progress_project, get_project_details
-from work_package import get_all_wp, miles_by_project
-from version import get_all_versions, get_progress_version
-from user import get_all_memberships, get_progress_assignee
+from project import *
+from work_package import *
+from version import *
+from user import *
 
 router = APIRouter()
 
@@ -69,16 +69,23 @@ def progress_version():
 
 # User Progress Project Details (kembangin fungsi ini tp gausa dicampur antara version dan member, 2 endpoint yg beda aja)
 # buat per nama project ada member, role, progress
-@router.get("/get-project-details")
-def project_details():
-    return get_project_details()
+@router.get("/get-project-members")
+def project_members():
+    return get_project_members()
+
+@router.get("/get-progress-assignee-project")
+def progress_assignee_project():
+    return get_progress_assignee_project()
 
 
 # ----------------------- USER DETAILS PAGE ----------------------- 
 
 # Pie Chart Overview User
-# dibuat tiap nama user, projectnya apa aja didalem projectnya ada info progress isinya brp wp & sp
+@router.get("/get-assignee-details")
+def assignee_details():
+    return get_assignee_details()
 
 # tabel project details
-# dibuat tiap nama user, projectnya apa aja didalem projectnya ada info wp isinya nama wp, progress, sp
-
+@router.get("/get-assignee-wp-details")
+def assignee_wp_details():
+    return get_assignee_wp_details()
