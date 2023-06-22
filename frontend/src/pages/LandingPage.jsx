@@ -39,7 +39,6 @@ const LandingPage = () => {
         <div>
           <h3 className='overview'>Overview</h3>
         </div>
-        <Progress />
         <Container>
           <Row>
             <Col>
