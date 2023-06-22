@@ -77,8 +77,7 @@ def progress_version():
 def burndown_chart():
     return get_burndown_chart()
 
-# User Progress Project Details (kembangin fungsi ini tp gausa dicampur antara version dan member, 2 endpoint yg beda aja)
-# buat per nama project ada member, role, progress
+# User Progress Project Details
 @router.get("/get-project-members")
 def project_members():
     return get_project_members()

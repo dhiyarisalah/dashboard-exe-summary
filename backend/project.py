@@ -1,12 +1,10 @@
-from utils import count_progress
 from work_package import get_all_wp
 from version import get_all_versions
 from user import get_all_memberships
 from collections import Counter
 import requests
+from auth import header, url
 
-header = {"Authorization": "Basic YXBpa2V5OmVlMjUzM2I0OTBjMmQ5M2M1ZDNkN2U2OGZlOGNkY2ViODAyMjc2ZTQxZjkyZTQxODU3MjBhM2M0OTgyMTM2ZjQ="}
-url = "https://nirmala.infoglobal.id/api/v3"
 projects = requests.get(f"{url}/projects",headers=header)
 
 def count_all():
@@ -95,7 +93,41 @@ def project_list_by_priority():
 
 def get_progress_project():
     all_wp = get_all_wp()
-    return count_progress(all_wp, "project_name")
+    progress_counts = {}
+    for item in all_wp:
+        value = item.get("project_name")
+        status = item.get("status")
+        story_points = item.get("story_points")
+
+        if value is not None:
+            if value not in progress_counts:
+                progress_counts[value] = {
+                    "wp_total": 0,
+                    "wp_done": 0,
+                    "progress": 0,
+                    "story_points": 0
+                }
+
+            progress_counts[value]["wp_total"] += 1
+
+            if story_points is not None:
+                progress_counts[value]["story_points"] += story_points
+
+            if status == "Done":
+                progress_counts[value]["wp_done"] += 1
+
+    result = []
+    for progress_name, counts in progress_counts.items():
+        result.append({
+            "project_name": progress_name,
+            "progress": {
+                "wp_total": counts["wp_total"],
+                "wp_done": counts["wp_done"],
+                "progress": (counts["wp_done"] / counts["wp_total"])*100,
+                "story_points": counts["story_points"]
+            }
+        })
+    return result
 
 def get_project_members():
     memberships = get_all_memberships()

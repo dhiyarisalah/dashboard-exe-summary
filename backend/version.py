@@ -1,9 +1,7 @@
-from utils import count_progress
 from work_package import get_all_wp
 import requests
+from auth import header, url
 
-header = {"Authorization": "Basic YXBpa2V5OmVlMjUzM2I0OTBjMmQ5M2M1ZDNkN2U2OGZlOGNkY2ViODAyMjc2ZTQxZjkyZTQxODU3MjBhM2M0OTgyMTM2ZjQ="}
-url = "https://nirmala.infoglobal.id/api/v3"
 versions = requests.get(f"{url}/versions",headers=header)
 
 def get_all_versions():
@@ -116,4 +114,3 @@ def get_burndown_chart():
             "versions": versions
         })
     return result
-

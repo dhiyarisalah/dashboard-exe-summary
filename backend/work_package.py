@@ -1,10 +1,9 @@
 from datetime import datetime
 import requests
+from auth import header, url
 
-header = {"Authorization": "Basic YXBpa2V5OmVlMjUzM2I0OTBjMmQ5M2M1ZDNkN2U2OGZlOGNkY2ViODAyMjc2ZTQxZjkyZTQxODU3MjBhM2M0OTgyMTM2ZjQ="}
-params = {'filters': '[{"status": { "operator": "=", "values": ["17"] }}]'}
-url = "https://nirmala.infoglobal.id/api/v3"
 work_packages = requests.get(f"{url}/work_packages",headers=header)
+params = {'filters': '[{"status": { "operator": "=", "values": ["17"] }}]'}
 done_work_packages = requests.get(f'{url}/work_packages', params=params, headers=header)
 
 def process_element(element):
