@@ -63,3 +63,57 @@ def get_progress_version():
         })
     return result
 
+
+def get_burndown_chart():
+    burndown_chart = {}
+    all_wp = get_all_wp()
+    for item in all_wp:
+        project_name = item.get("project_name")
+        version_name = item.get("at_version")
+        month = item.get("month")
+
+        if version_name is not None and project_name is not None:  
+            if project_name not in burndown_chart:
+                burndown_chart[project_name] = []
+
+            version_data = None
+            for data in burndown_chart[project_name]:
+                if data["version_name"] == version_name:
+                    version_data = data
+                    break
+
+            if version_data is None:
+                version_data = {
+                    "version_name": version_name,
+                    "progress": []
+                }
+                burndown_chart[project_name].append(version_data)
+
+            progress_data = None
+            for data in version_data["progress"]:
+                if data["month"] == month:
+                    progress_data = data
+                    break
+
+            if progress_data is None:
+                progress_data = {
+                    "month": month,
+                    "wp_done": 0,
+                    "wp_on_going": 0
+                }
+                version_data["progress"].append(progress_data)
+
+            if item.get("status") == "Done":
+                progress_data["wp_done"] += 1
+            else:
+                progress_data["wp_on_going"] += 1
+
+
+    result = []
+    for project_name, versions in burndown_chart.items():
+        result.append({
+            "project_name": project_name,
+            "versions": versions
+        })
+    return result
+

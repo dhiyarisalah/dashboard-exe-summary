@@ -42,6 +42,14 @@ def count_by_status():
 def count_by_priority():
     return project_count_by_priority()
 
+@router.get("/project-list-by-status")
+def list_by_status():
+    return project_list_by_status()
+
+@router.get("/project-list-by-priority")
+def list_by_priority():
+    return project_list_by_priority()
+
 # Bar Chart Overview (- : harusnya child aja parent gausa)
 @router.get("/get-progress-project")
 def progress_projects():
@@ -65,7 +73,9 @@ def progress_version():
     return get_progress_version()
 
 # Burndown Chart
-# version progress tp dibagi perbulan untuk project X
+@router.get("/get-burndown-chart")
+def burndown_chart():
+    return get_burndown_chart()
 
 # User Progress Project Details (kembangin fungsi ini tp gausa dicampur antara version dan member, 2 endpoint yg beda aja)
 # buat per nama project ada member, role, progress

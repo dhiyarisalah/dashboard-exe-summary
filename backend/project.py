@@ -63,6 +63,36 @@ def project_count_by_priority():
     priority_counts = dict(Counter(priority_list))
     return priority_counts
 
+def project_list_by_status():
+    all_projects = get_all_projects()
+    project_list = {}
+    for project in all_projects:
+        project_name = project.get("project_name")
+        status = project.get("project_status")
+
+        if project_name is not None and status is not None:
+            if status not in project_list:
+                project_list[status] = []
+
+            project_list[status].append(project_name)
+
+    return project_list
+    
+def project_list_by_priority():
+    all_projects = get_all_projects()
+    project_list = {}
+    for project in all_projects:
+        project_name = project.get("project_name")
+        priority = project.get("project_priority")
+
+        if project_name is not None and priority is not None:
+            if priority not in project_list:
+                project_list[priority] = []
+
+            project_list[priority].append(project_name)
+
+    return project_list
+
 def get_progress_project():
     all_wp = get_all_wp()
     return count_progress(all_wp, "project_name")
