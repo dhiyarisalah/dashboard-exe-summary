@@ -43,18 +43,20 @@ def get_progress_version():
             if version_data is None:
                 version_data = {
                     "version_name": version_name,
-                    "wpTotal": 0,
-                    "wpDone": 0
+                    "wp_total": 0,
+                    "wp_done": 0
                 }
                 version_progress[project_name].append(version_data)
 
-            version_data["wpTotal"] += 1
+            version_data["wp_total"] += 1
 
             if item.get("status") == "Done":
-                version_data["wpDone"] += 1
+                version_data["wp_done"] += 1
 
     result = []
     for project_name, progress in version_progress.items():
+        for data in progress:
+            data["progress"] = (data["wp_done"] / data["wp_total"]) * 100
         result.append({
             "project_name": project_name,
             "progress": progress
