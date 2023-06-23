@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Dropdown, Container, Row, Col } from "react-bootstrap";
-import PieChart from "./PieChart";
+import { Pie } from "react-chartjs-2";
 import { projectStatus, projectPriority, totalCount } from "../data/index.js";
-import { Chart as ChartJS } from "chart.js";
+
 function ProjectChart() {
   const dropdownItems = [
     { label: "priority", value: "priority" },
@@ -12,7 +12,7 @@ function ProjectChart() {
   const [selectedItem, setSelectedItem] = useState("select type");
   const [chartData, setChartData] = useState(generateChartData(projectStatus));
   const [modalVisible, setModalVisible] = useState(false);
-  const [clickedLabel, setClickedLabel] = useState ("")
+  const [clickedLabel, setClickedLabel] = useState("");
 
   function handleChartDataUpdate(selectedValue) {
     if (selectedValue === "status") {
@@ -29,7 +29,7 @@ function ProjectChart() {
 
   const handleLegendClick = (legendItem) => {
     const clickedLabel = chartData.labels[legendItem.index];
-    setClickedLabel(clickedLabel)
+    setClickedLabel(clickedLabel);
     setModalVisible(true); // Open the modal when legend is clicked
   };
 
@@ -61,12 +61,17 @@ function ProjectChart() {
               paddingLeft: 20,
               boxWidth: 12,
               boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-
             },
           },
         },
-      }
-    }
+        onClick: (_, activeElements) => {
+          if (activeElements.length > 0) {
+            const legendItem = activeElements[0];
+            handleLegendClick(legendItem);
+          }
+        },
+      },
+    };
   }
 
   return (
@@ -75,7 +80,7 @@ function ProjectChart() {
         <Row>
           <Col>
             <div className="title-count">
-              Total Project <br />{" "}
+              Total Project <br />
               <span className="count-project">{totalProjectCount} Projects</span>
             </div>
           </Col>
@@ -94,13 +99,13 @@ function ProjectChart() {
             </Dropdown>
           </Col>
         </Row>
-        <div style={{width: "100%", height: "100%"  }}>
-          <PieChart chartData={chartData} handleLegendClick={handleLegendClick} />
+        <div style={{ width: "100%", height: "100%" }}>
+          <Pie data={chartData} options={chartData.options} />
         </div>
       </Container>
       <Modal show={modalVisible} onHide={handleCloseModal}>
         <Modal.Header closeButton>
-        <Modal.Title>Legend Clicked: {clickedLabel}</Modal.Title>
+          <Modal.Title>Legend Clicked: {clickedLabel}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>{clickedLabel}.</p>

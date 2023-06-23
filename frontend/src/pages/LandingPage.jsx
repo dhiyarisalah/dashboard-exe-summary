@@ -2,6 +2,7 @@ import {Row, Col, Button, Container} from 'react-bootstrap'
 import ProjectChart from '../components/ProjectChart'
 import Progress from '../components/Progress'
 import { useState, useEffect} from 'react'
+import Ganttchart from '../components/Ganttchart'
 
 const LandingPage = () => {
   const [lastUpdate, setLastUpdate] = useState("");
@@ -47,6 +48,9 @@ const LandingPage = () => {
             <Col className= 'first-column'>
               <Progress />
             </Col>
+          </Row>
+          <Row className="second-row">
+            <Ganttchart />
           </Row>
 
         </Container>

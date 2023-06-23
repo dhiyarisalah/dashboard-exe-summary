@@ -112,6 +112,12 @@ h3.overview {
     border-radius: 6px;
     background: var(--white, #FFF);
     box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
-    margin: 5px;
+    overflow-wrap: unset;
+}
+
+.landingpage .container-project .second-row{
+    border-radius: 6px;
+    background: var(--white, #FFF);
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
     overflow-wrap: unset;
 }
