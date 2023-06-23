@@ -1,6 +1,5 @@
 from work_package import get_all_wp
 from version import get_all_versions
-from user import get_all_memberships
 from collections import Counter
 import requests
 from auth import header, url
@@ -98,6 +97,8 @@ def get_progress_project():
         value = item.get("project_name")
         status = item.get("status")
         story_points = item.get("story_points")
+        type = item.get("wp_type")
+        percentage_done = item.get("percentage_done")
 
         if value is not None:
             if value not in progress_counts:
@@ -116,6 +117,9 @@ def get_progress_project():
             if status == "Done":
                 progress_counts[value]["wp_done"] += 1
 
+            if type == "Initiative":
+                progress_counts[value]["progress"] = percentage_done
+
     result = []
     for progress_name, counts in progress_counts.items():
         result.append({
@@ -123,30 +127,11 @@ def get_progress_project():
             "progress": {
                 "wp_total": counts["wp_total"],
                 "wp_done": counts["wp_done"],
-                "progress": (counts["wp_done"] / counts["wp_total"])*100,
+                "progress": counts["progress"],
                 "story_points": counts["story_points"]
             }
         })
     return result
-
-def get_project_members():
-    memberships = get_all_memberships()
-    project_details = {}
-
-    for member in memberships:
-        project_name = member.get("project_name") 
-        if project_name not in project_details:
-            project_details[project_name] = {"project_name": project_name, "members": []}
-        
-        project_details[project_name]["members"].append({
-            "member_id": member["memberships_id"],
-            "member_name": member["member_name"],
-            "role": member["role"]
-        })
-
-    list_project_details = list(project_details.values())
-    return list_project_details
-
 
 def get_progress_assignee_project():
     assignee_progress = {}

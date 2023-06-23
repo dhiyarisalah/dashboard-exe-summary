@@ -23,6 +23,24 @@ def get_all_memberships():
     else:
         return {"message": "No memberships found."}
     
+def get_project_members():
+    memberships = get_all_memberships()
+    project_details = {}
+
+    for member in memberships:
+        project_name = member.get("project_name") 
+        if project_name not in project_details:
+            project_details[project_name] = {"project_name": project_name, "members": []}
+        
+        project_details[project_name]["members"].append({
+            "member_id": member["memberships_id"],
+            "member_name": member["member_name"],
+            "role": member["role"]
+        })
+
+    list_project_details = list(project_details.values())
+    return list_project_details
+    
 def get_progress_assignee():
     assignee_progress = {}
     all_wp = get_all_wp()

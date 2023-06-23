@@ -7,9 +7,9 @@ params = {'filters': '[{"status": { "operator": "=", "values": ["17"] }}]'}
 done_work_packages = requests.get(f'{url}/work_packages', params=params, headers=header)
 
 def process_element(element):
+    project_name = element["_links"]["project"]["title"]
     wp_id = element["id"]
     wp_name = element["subject"]
-    project_name = element["_links"]["project"]["title"]
     status = element["_links"]["status"]["title"]
     wp_type = element["_links"]["type"]["title"]
     assignee = element["_links"].get("assignee", {}).get("title")
@@ -48,7 +48,7 @@ def process_element(element):
         "assignee": assignee,
         "percentage_done": percentage_done,
         "story_points": story_points,
-        "at_version": at_version
+        "at_version": at_version,
     }
 
 def get_wp():
