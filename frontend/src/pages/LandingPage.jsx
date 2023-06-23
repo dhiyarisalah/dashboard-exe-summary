@@ -39,13 +39,13 @@ const LandingPage = () => {
         <div>
           <h3 className='overview'>Overview</h3>
         </div>
-        <Container>
-          <Row>
-            <Col>
+        <Container className='container-project'>
+          <Row className='first-row'>
+            <Col className= 'first-column'>
               <ProjectChart />
             </Col>
-            <Col>
-              
+            <Col className= 'first-column'>
+              <Progress />
             </Col>
           </Row>
 

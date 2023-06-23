@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Dropdown, Container, Row, Col } from "react-bootstrap";
 import PieChart from "./PieChart";
 import { projectStatus, projectPriority, totalCount } from "../data/index.js";
-
+import { Chart as ChartJS } from "chart.js";
 function ProjectChart() {
   const dropdownItems = [
     { label: "priority", value: "priority" },
@@ -57,10 +57,16 @@ function ProjectChart() {
         plugins: {
           legend: {
             position: "right",
+            labels: {
+              paddingLeft: 20,
+              boxWidth: 12,
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+
+            },
           },
         },
-      },
-    };
+      }
+    }
   }
 
   return (
@@ -88,7 +94,7 @@ function ProjectChart() {
             </Dropdown>
           </Col>
         </Row>
-        <div style={{ width: 400 }}>
+        <div style={{width: "100%", height: "100%"  }}>
           <PieChart chartData={chartData} handleLegendClick={handleLegendClick} />
         </div>
       </Container>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import BarChart from "./BarChart";
 import { projectProgress } from "../data/index.js";
-  
+import {Container, Col, Row} from "react-bootstrap"
   function Progress() {
     const [projectData, setProjectData] = useState(() => {
       const labels = projectProgress.map((data) => data.project_name);
@@ -22,14 +22,38 @@ import { projectProgress } from "../data/index.js";
           borderWidth: 1,
           barThickness: 30,
         },
-      ];
+      ]
+      const options = {
+        plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+          },
+        },
+      };
+  
+      return {
+        labels: labels,
+        datasets: datasets,
+        options: options
+      };
     });
   
     return (
       <div className="Progress">
-        <div style={{ width: "100%", height: "100%" }}>
-          <BarChart chartData={projectData} />
-        </div>
+        <Container className="progress-box">
+          <Row>
+            <div className="title-count">
+              Total Project
+            </div>
+          </Row>
+          <Row>
+            <div style={{ width: "100%", height: "100%" }}>
+              <BarChart chartData={projectData} />
+            </div>
+          </Row>
+        </Container>
+
       </div>
     );
   }
