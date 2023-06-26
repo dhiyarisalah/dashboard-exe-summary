@@ -27,7 +27,7 @@ def all_wp():
 def all_memberships():
     return get_all_memberships()
 
-# ----------------------- OVERVIEW PAGE ---------------------- 
+# ----------------------- OVERVIEW PAGE ----------------------- 
 
 # Pie Chart Overview
 @router.get("/count-all")
