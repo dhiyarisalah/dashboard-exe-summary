@@ -38,11 +38,12 @@ def get_all_projects():
             if project_parent is None:
                 project_parent = None
 
-            all_projects.append({"project_id": project_id, 
-                                 "project_name": project_name,
-                                 "project_parent": project_parent, 
-                                 "project_status": project_status, 
-                                 "project_priority": project_priority})
+            if len(project_name) == 7:
+                all_projects.append({"project_id": project_id, 
+                                    "project_name": project_name,
+                                    "project_parent": project_parent, 
+                                    "project_status": project_status, 
+                                    "project_priority": project_priority})
     if all_projects:
         return all_projects
     else:

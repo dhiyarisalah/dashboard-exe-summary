@@ -13,9 +13,11 @@ def get_all_versions():
             version_id = element["id"]
             version_name = element["name"]
             at_project = element["_links"]["definingProject"]["title"]
-            all_versions.append({"version_id": version_id, 
-                                 "version_name": version_name, 
-                                 "at_project": at_project}) 
+
+            if len(at_project) == 7:
+                all_versions.append({"version_id": version_id, 
+                                    "version_name": version_name, 
+                                    "at_project": at_project}) 
     if all_versions:
         return all_versions
     else:
