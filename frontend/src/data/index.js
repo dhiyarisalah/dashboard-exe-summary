@@ -169,5 +169,111 @@ export const projectProgress = [
     }
   }
   
-  
 ]
+
+export const userProgress = [
+  {
+    "March": [
+      {
+        "user_name": "Salsabila Asyifa",
+        "wp_total": 5,
+        "wp_done": 1,
+        "progress": 20
+      },
+      {
+        "user_name": "Dhiya Risalah Ghaida",
+        "wp_total": 1,
+        "wp_done": 0,
+        "progress": 0
+      }
+    ],
+    "July": [
+      {
+        "user_name": "Salsabila Asyifa",
+        "wp_total": 1,
+        "wp_done": 0,
+        "progress": 0
+      }
+    ],
+    "August": [
+      {
+        "user_name": "Dhiya Risalah Ghaida",
+        "wp_total": 2,
+        "wp_done": 0,
+        "progress": 0
+      }
+    ],
+    "November": [
+      {
+        "user_name": "Salsabila Asyifa",
+        "wp_total": 1,
+        "wp_done": 0,
+        "progress": 0
+      }
+    ],
+    "April": [
+      {
+        "user_name": "Dhiya Risalah Ghaida",
+        "wp_total": 1,
+        "wp_done": 0,
+        "progress": 0
+      }
+    ]
+  }  
+]
+
+// export const userProgress = [
+//   {
+//     "project_name": "Sandbox",
+//     "progress": [
+//       {
+//         "userName": "Salsabila Asyifa",
+//         "wpTotal": 9,
+//         "wpDone": 1,
+//         "storyPoints": 40,
+//         "progress": 11.11111111111111
+//       },
+//       {
+//         "userName": "Dhiya Risalah Ghaida",
+//         "wpTotal": 7,
+//         "wpDone": 0,
+//         "storyPoints": 303,
+//         "progress": 0
+//       },
+//       {
+//         "userName": "Anonymous Software",
+//         "wpTotal": 1,
+//         "wpDone": 1,
+//         "storyPoints": 0,
+//         "progress": 100
+//       }
+//     ]
+//   },
+//   {
+//     "project_name": "DEXS23D",
+//     "progress": [
+//       {
+//         "userName": "Software-Intern ITB",
+//         "wpTotal": 11,
+//         "wpDone": 11,
+//         "storyPoints": 0,
+//         "progress": 100
+//       },
+//       {
+//         "userName": "Dhiya Risalah Ghaida",
+//         "wpTotal": 2,
+//         "wpDone": 2,
+//         "storyPoints": 0,
+//         "progress": 100
+//       },
+//       {
+//         "userName": "Salsabila Asyifa",
+//         "wpTotal": 2,
+//         "wpDone": 2,
+//         "storyPoints": 0,
+//         "progress": 100
+//       }
+//     ]
+//   }
+
+
