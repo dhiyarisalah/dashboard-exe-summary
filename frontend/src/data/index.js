@@ -290,6 +290,43 @@ export const burdownData = [
   }
 ]
 
+export const userDetails = [
+  {
+    "user_name": "Salsabila Asyifa",
+    "total_wp": 11,
+    "total_sp": 40,
+    "projects": [
+      {
+        "project_name": "Sandbox",
+        "wp_assigned": 9,
+        "story_points": 40
+      },
+      {
+        "project_name": "DEXS23D",
+        "wp_assigned": 2,
+        "story_points": 0
+      }
+    ]
+  },
+  {
+    "user_name": "Dhiya Risalah Ghaida",
+    "total_wp": 20,
+    "total_sp": 30,
+    "projects": [
+      {
+        "project_name": "Sandbox",
+        "wp_assigned": 7,
+        "story_points": 303
+      },
+      {
+        "project_name": "DEXS23D",
+        "wp_assigned": 2,
+        "story_points": 0
+      }
+    ]
+  }
+]
+
 // export const userProgress = [
 //   {
 //     "project_name": "Sandbox",

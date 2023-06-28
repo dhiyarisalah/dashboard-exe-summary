@@ -30,7 +30,15 @@ function Progress() {
         position: "bottom",
       },
     },
-  };
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true
+    }
+  }
+};
 
   const [selectedMonth, setSelectedMonth] = useState("");
   const [projectData, setProjectData] = useState({});
@@ -43,7 +51,7 @@ function Progress() {
     if (elements.length > 0) {
       const clickedIndex = elements[0].index;
       const clickedLabel = projectData.labels[clickedIndex];
-      window.location.href = `/user/${clickedLabel}`;
+      window.location.href = `/assigneedetails/${clickedLabel}`;
     }
   };
 
@@ -56,7 +64,7 @@ function Progress() {
     const datasets = [
       {
         indexAxis: "x",
-        label: "Project Progress (Total)",
+        label: "WP Total",
         data: data.map((item) => item.wp_total),
         fill: false,
         backgroundColor: [
@@ -72,7 +80,7 @@ function Progress() {
       },
       {
         indexAxis: "x",
-        label: "Project Progress (Done)",
+        label: "WP Done",
         data: data.map((item) => item.wp_done),
         fill: false,
         backgroundColor: [

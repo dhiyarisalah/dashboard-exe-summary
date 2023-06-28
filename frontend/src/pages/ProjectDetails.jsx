@@ -14,7 +14,7 @@ function ProjectDetails() {
   return (
     <div>
       <h1>{label}</h1>
-      {/* Rest of the component */}
+      <h3 className='overview'>Overview</h3>
     </div>
   );
 }
