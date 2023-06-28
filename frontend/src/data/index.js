@@ -59,114 +59,6 @@ export const projectProgress = [
       "percentage": 100,
       "story_points": 0
     }
-  },
-  {
-    "project_name": "Sandbox",
-    "progress": {
-      "wp_total": 17,
-      "wp_done": 2,
-      "percentage": 11.76470588235294,
-      "story_points": 343
-    }
-  },
-  {
-    "project_name": "DEXS23D",
-    "progress": {
-      "wp_total": 20,
-      "wp_done": 14,
-      "percentage": 70,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "tes",
-    "progress": {
-      "wp_total": 1,
-      "wp_done": 0,
-      "percentage": 0,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "SOFTWARE-INTERN",
-    "progress": {
-      "wp_total": 3,
-      "wp_done": 3,
-      "percentage": 100,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "Sandbox",
-    "progress": {
-      "wp_total": 17,
-      "wp_done": 2,
-      "percentage": 11.76470588235294,
-      "story_points": 343
-    }
-  },
-  {
-    "project_name": "DEXS23D",
-    "progress": {
-      "wp_total": 20,
-      "wp_done": 14,
-      "percentage": 70,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "tes",
-    "progress": {
-      "wp_total": 1,
-      "wp_done": 0,
-      "percentage": 0,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "SOFTWARE-INTERN",
-    "progress": {
-      "wp_total": 3,
-      "wp_done": 3,
-      "percentage": 100,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "Sandbox",
-    "progress": {
-      "wp_total": 17,
-      "wp_done": 2,
-      "percentage": 11.76470588235294,
-      "story_points": 343
-    }
-  },
-  {
-    "project_name": "DEXS23D",
-    "progress": {
-      "wp_total": 20,
-      "wp_done": 14,
-      "percentage": 70,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "tes",
-    "progress": {
-      "wp_total": 1,
-      "wp_done": 0,
-      "percentage": 0,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "SOFTWARE-INTERN",
-    "progress": {
-      "wp_total": 3,
-      "wp_done": 3,
-      "percentage": 100,
-      "story_points": 0
-    }
   }
   
 ]
@@ -310,8 +202,8 @@ export const userDetails = [
   },
   {
     "user_name": "Dhiya Risalah Ghaida",
-    "total_wp": 20,
-    "total_sp": 30,
+    "total_wp": 7,
+    "total_sp": 303,
     "projects": [
       {
         "project_name": "Sandbox",
@@ -327,6 +219,149 @@ export const userDetails = [
   }
 ]
 
+
+export const wpDetails = [
+  {
+    "user_name": "Salsabila Asyifa",
+    "projects": [
+      {
+        "project_name": "Sandbox",
+        "wp_assigned": [
+          {
+            "wp_name": "Epic 2",
+            "progress": 16,
+            "story_points": null
+          },
+          {
+            "wp_name": "User story 1",
+            "progress": 30,
+            "story_points": 40
+          },
+          {
+            "wp_name": "Task 1",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "Task 2",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "User story 2",
+            "progress": 0,
+            "story_points": null
+          },
+          {
+            "wp_name": "Task 3",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "Bug 1",
+            "progress": 0,
+            "story_points": null
+          },
+          {
+            "wp_name": "Task 9",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "Epic 1",
+            "progress": 0,
+            "story_points": null
+          }
+        ]
+      },
+      {
+        "project_name": "DEXS23D",
+        "wp_assigned": [
+          {
+            "wp_name": "Belajar mandiri #2",
+            "progress": 100,
+            "story_points": null
+          },
+          {
+            "wp_name": "Requirement Specification #2",
+            "progress": 100,
+            "story_points": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "user_name": "Dhiya Risalah Ghaida",
+    "projects": [
+      {
+        "project_name": "Sandbox",
+        "wp_assigned": [
+          {
+            "wp_name": "Epic 21",
+            "progress": 16,
+            "story_points": null
+          },
+          {
+            "wp_name": "User story 11",
+            "progress": 30,
+            "story_points": 40
+          },
+          {
+            "wp_name": "Task 11",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "Task 21",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "User story 21",
+            "progress": 0,
+            "story_points": null
+          },
+          {
+            "wp_name": "Task 31",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "Bug 11",
+            "progress": 0,
+            "story_points": null
+          },
+          {
+            "wp_name": "Task 91",
+            "progress": 0,
+            "story_points": 0
+          },
+          {
+            "wp_name": "Epic 11",
+            "progress": 0,
+            "story_points": null
+          }
+        ]
+      },
+      {
+        "project_name": "DEXS23D",
+        "wp_assigned": [
+          {
+            "wp_name": "Belajar mandiri #21",
+            "progress": 100,
+            "story_points": null
+          },
+          {
+            "wp_name": "Requirement Specification #21",
+            "progress": 100,
+            "story_points": null
+          }
+        ]
+      }
+    ]
+  }
+]
 // export const userProgress = [
 //   {
 //     "project_name": "Sandbox",

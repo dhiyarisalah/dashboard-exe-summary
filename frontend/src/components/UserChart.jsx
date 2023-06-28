@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Dropdown, Container, Row, Col, Table } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
-import { projectStatus, projectPriority, userDetails } from "../data/index.js";
+import { projectStatus, projectPriority, userDetails, wpDetails } from "../data/index.js";
 
 function UserChart() {
   const dropdownItems = [
@@ -14,6 +14,7 @@ function UserChart() {
   const [totalProjectCount, setTotalProjectCount] = useState(0); // Initialize with 0
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
+  const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
     const label = getLabelFromURL(); // Get the label from the URL
@@ -25,8 +26,9 @@ function UserChart() {
     if (selectedUser) {
       handleChartDataUpdate(selectedItem);
       handleTotalProjectCountUpdate(selectedItem);
+      updateTableData(selectedUser, selectedProject);
     }
-  }, [selectedUser, selectedItem]);
+  }, [selectedUser, selectedItem, selectedProject]);
 
   function getLabelFromURL() {
     // Logic to extract the label from the URL
@@ -52,17 +54,18 @@ function UserChart() {
     }
   }
 
-  const handleDropdownSelect = (eventKey) => {
+  function handleDropdownSelect(eventKey) {
     setSelectedItem(eventKey);
     handleChartDataUpdate(eventKey);
     handleTotalProjectCountUpdate(eventKey);
-  };
+  }
 
   function handleChartClick(event, elements) {
     if (elements.length > 0) {
       const selectedIndex = elements[0].index;
       const selectedProject = selectedUser.projects[selectedIndex];
       setSelectedProject(selectedProject);
+      updateTableData(selectedUser, selectedProject);
     }
   }
 
@@ -95,61 +98,74 @@ function UserChart() {
     };
   }
 
-  if (!selectedUser) {
-    return <div>Loading...</div>; // Display a loading state while fetching the user data
+  function updateTableData(selectedUser, selectedProject) {
+    if (selectedUser && selectedProject) {
+      const userWpDetails = wpDetails.find((user) => user.user_name === selectedUser.user_name);
+      const projectWpDetails = userWpDetails.projects.find(
+        (project) => project.project_name === selectedProject.project_name
+      );
+      const wpAssigned = projectWpDetails.wp_assigned;
+
+      const tableData = wpAssigned.map((wp) => ({
+        wp_name: wp.wp_name,
+        progress: wp.progress,
+        story_points: wp.story_points,
+      }));
+
+      setTableData(tableData);
+    }
   }
 
   return (
     <div className="ProjectChart">
-      <Container className="project-box">
+      <Container>
         <Row>
-          <Col>
-            <div className="title-count">
-              Total {selectedItem} <br />
-              <span className="count-project">
-                {totalProjectCount} {selectedItem}
-              </span>
+          <Col xs={12}>
+            <div className="dropdown-container">
+              <Dropdown onSelect={handleDropdownSelect}>
+                <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                  {selectedItem}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {dropdownItems.map((item, index) => (
+                    <Dropdown.Item key={index} eventKey={item.value}>
+                      {item.label}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+              <span>Total: {totalProjectCount}</span>
             </div>
           </Col>
-          <Col>
-            <Dropdown className="dropdown-custom" onSelect={handleDropdownSelect}>
-              <Dropdown.Toggle variant="secondary" id="dropdownMenu2">
-                {selectedItem}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {dropdownItems.map((item) => (
-                  <Dropdown.Item key={item.value} eventKey={item.value}>
-                    {item.label}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+        </Row>
+        <Row>
+          <Col xs={12} md={8}>
+            <Pie data={chartData} options={chartData.options} />
+          </Col>
+          <Col xs={12} md={4}>
+            <h3 className="overview">Project {selectedProject?.project_name}</h3>
+            {selectedProject && (
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Work Packages</th>
+                    <th>Progress</th>
+                    <th>Story Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((row, index) => (
+                    <tr key={index}>
+                      <td>{row.wp_name}</td>
+                      <td>{row.progress}</td>
+                      <td>{row.story_points}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            )}
           </Col>
         </Row>
-        <div style={{ width: "100%", height: "100%" }}>
-          <Pie data={chartData} options={chartData.options} />
-        </div>
-        <div>
-          <h3 className='overview'>Project {selectedProject?.project_name}</h3>
-          {selectedProject && (
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Work Packages</th>
-                  <th>Progress</th>
-                  <th>Story Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{selectedProject.project_name}</td>
-                  <td>{selectedProject.property1}</td>
-                  <td>{selectedProject.property2}</td>
-                </tr>
-              </tbody>
-            </Table>
-          )}
-        </div>
       </Container>
     </div>
   );

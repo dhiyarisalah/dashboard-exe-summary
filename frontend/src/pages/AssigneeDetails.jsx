@@ -11,14 +11,7 @@ function AssigneeDetails() {
     <div>
       <h1>{label}</h1>
       <h3 className='overview'>Overview</h3>
-      <div>
-        <UserChart />
-
-      </div>
-      <div>
-
-      </div>
-
+      <UserChart />
     </div>
   );
 }
