@@ -222,6 +222,74 @@ export const userProgress = [
   }  
 ]
 
+export const burdownData = [
+  {
+    "project_name": "Sandbox",
+    "versions": [
+      {
+        "version_name": "Sprint Sandbox",
+        "progress": [
+          {
+            "month": "03",
+            "wp_done": 0,
+            "wp_on_going": 2
+          },
+          {
+            "month": null,
+            "wp_done": 1,
+            "wp_on_going": 4
+          },
+          {
+            "month": "07",
+            "wp_done": 0,
+            "wp_on_going": 1
+          },
+          {
+            "month": "08",
+            "wp_done": 0,
+            "wp_on_going": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project_name": "DEXS23D",
+    "versions": [
+      {
+        "version_name": "Week III",
+        "progress": [
+          {
+            "month": null,
+            "wp_done": 3,
+            "wp_on_going": 2
+          }
+        ]
+      },
+      {
+        "version_name": "Week I",
+        "progress": [
+          {
+            "month": null,
+            "wp_done": 5,
+            "wp_on_going": 0
+          }
+        ]
+      },
+      {
+        "version_name": "Week II",
+        "progress": [
+          {
+            "month": null,
+            "wp_done": 5,
+            "wp_on_going": 0
+          }
+        ]
+      }
+    ]
+  }
+]
+
 // export const userProgress = [
 //   {
 //     "project_name": "Sandbox",
