@@ -1,10 +1,9 @@
 from work_package import get_all_wp
 from version import get_all_versions
 from collections import Counter
+from fastapi import HTTPException
 import requests
 from auth import header, url
-
-projects = requests.get(f"{url}/projects",headers=header)
 
 def count_all():
     all_projects = get_all_projects()
@@ -24,30 +23,43 @@ def count_all():
             "total_version": total_version}
 
 def get_all_projects():
-    all_projects = []
-    data = projects.json()
-    if "_embedded" in data and "elements" in data["_embedded"]:
-        elements = data["_embedded"]["elements"]
-        for element in elements:
-            project_id = element["id"]
-            project_name = element["name"]
-            project_status = element["_links"]["status"]["title"] # seluruh project harus di set status
-            project_priority = element["_links"]["customField5"]["title"] # seluruh project harus di set priority
-            project_parent = element["_links"].get("parent", {}).get("title")
+    try: 
+        projects = requests.get(f"{url}/projects",headers=header)
+        projects.raise_for_status()
+        all_projects = []
+        data = projects.json()
+        if "_embedded" in data and "elements" in data["_embedded"]:
+            elements = data["_embedded"]["elements"]
+            for element in elements:
+                project_id = element["id"]
+                project_name = element["name"]
+                project_status = element["_links"]["status"]["title"] # seluruh project harus di set status
+                project_priority = element["_links"]["customField5"]["title"] # seluruh project harus di set priority
+                project_parent = element["_links"].get("parent", {}).get("title")
 
-            if project_parent is None:
-                project_parent = None
+                if project_parent is None:
+                    project_parent = None
 
-            if len(project_name) == 7:
-                all_projects.append({"project_id": project_id, 
-                                    "project_name": project_name,
-                                    "project_parent": project_parent, 
-                                    "project_status": project_status, 
-                                    "project_priority": project_priority})
-    if all_projects:
-        return all_projects
-    else:
-        return {"message": "No projects found."}
+                if len(project_name) == 7:
+                    all_projects.append({"project_id": project_id, 
+                                        "project_name": project_name,
+                                        "project_parent": project_parent, 
+                                        "project_status": project_status, 
+                                        "project_priority": project_priority})
+            if all_projects:
+                return all_projects
+            else:
+                raise HTTPException(status_code=404, detail="No projects found.")   
+        else:
+            raise HTTPException(status_code=404, detail="Invalid response format.")
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail="Failed to connect to the API.")
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail="Invalid JSON response from the API.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
     
 def project_count_by_status():
     all_projects = get_all_projects()

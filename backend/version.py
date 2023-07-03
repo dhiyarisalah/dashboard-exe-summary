@@ -1,27 +1,44 @@
+from fastapi import HTTPException
 from work_package import get_all_wp
 import requests
 from auth import header, url
 
-versions = requests.get(f"{url}/versions",headers=header)
-
 def get_all_versions():
-    all_versions = []
-    data = versions.json()
-    if "_embedded" in data and "elements" in data["_embedded"]:
-        elements = data["_embedded"]["elements"]
-        for element in elements:
-            version_id = element["id"]
-            version_name = element["name"]
-            at_project = element["_links"]["definingProject"]["title"]
+    try:
+        versions = requests.get(f"{url}/versions", headers=header)
+        versions.raise_for_status() 
+        data = versions.json()
+        
+        if "_embedded" in data and "elements" in data["_embedded"]:
+            elements = data["_embedded"]["elements"]
+            all_versions = []
+            
+            for element in elements:
+                version_id = element["id"]
+                version_name = element["name"]
+                at_project = element["_links"]["definingProject"]["title"]
 
-            if len(at_project) == 7:
-                all_versions.append({"version_id": version_id, 
-                                    "version_name": version_name, 
-                                    "at_project": at_project}) 
-    if all_versions:
-        return all_versions
-    else:
-        return {"message": "No versions found."}
+                if len(at_project) == 7:
+                    all_versions.append({
+                        "version_id": version_id,
+                        "version_name": version_name,
+                        "at_project": at_project
+                    })
+
+            if all_versions:
+                return all_versions
+            else:
+                raise HTTPException(status_code=404, detail="No versions found.")
+        else:
+            raise HTTPException(status_code=404, detail="Invalid response format.")
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail="Failed to connect to the API.")
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail="Invalid JSON response from the API.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+
 
 def get_progress_version():
     version_progress = {}
