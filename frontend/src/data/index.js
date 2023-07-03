@@ -114,7 +114,7 @@ export const userProgress = [
   }  
 ]
 
-export const burdownData = [
+export const burndownData = [
   {
     "project_name": "Sandbox",
     "versions": [
@@ -369,8 +369,8 @@ export const projectDetails = [
     "progress": [
       {
         "version_name": "Sprint Sandbox",
-        "percentage_done":100,
-        "percentage_undone":0,
+        "percentage_done": 100,
+        "percentage_undone": 0,
         "wpTotal": 10,
         "wpDone": 1
       }
@@ -381,80 +381,51 @@ export const projectDetails = [
     "progress": [
       {
         "version_name": "Week III",
-        "percentage_done":60,
-        "percentage_undone":40,
+        "percentage_done": 60,
+        "percentage_undone": 40,
         "wpTotal": 5,
         "wpDone": 1
       },
       {
         "version_name": "Week I",
-        "percentage_done":10,
-        "percentage_undone":90,
+        "percentage_done": 10,
+        "percentage_undone": 90,
         "wpTotal": 5,
         "wpDone": 5
       },
       {
         "version_name": "Week II",
-        "percentage_done":100,
-        "percentage_undone":0,
+        "percentage_done": 100,
+        "percentage_undone": 0,
         "wpTotal": 5,
         "wpDone": 5
       }
     ]
   }
+  ]
+  
+export const projectAssignee = [
+  {
+    "Sandbox": [
+      {
+        "Sprint Sandbox": [
+          {
+            "member_name": "Salsabila",
+            "wpTotal": 9,
+            "wpDone": 1,
+            "storyPoints": 40,
+            "progress": 11.11111111111111
+          },
+          {
+            "member_name": "Dhiya",
+            "wpTotal": 9,
+            "wpDone": 1,
+            "storyPoints": 40,
+            "progress": 11.11111111111111
+          }
+        ]
+      }
+    ]
+  }
 ]
-// export const userProgress = [
-//   {
-//     "project_name": "Sandbox",
-//     "progress": [
-//       {
-//         "userName": "Salsabila Asyifa",
-//         "wpTotal": 9,
-//         "wpDone": 1,
-//         "storyPoints": 40,
-//         "progress": 11.11111111111111
-//       },
-//       {
-//         "userName": "Dhiya Risalah Ghaida",
-//         "wpTotal": 7,
-//         "wpDone": 0,
-//         "storyPoints": 303,
-//         "progress": 0
-//       },
-//       {
-//         "userName": "Anonymous Software",
-//         "wpTotal": 1,
-//         "wpDone": 1,
-//         "storyPoints": 0,
-//         "progress": 100
-//       }
-//     ]
-//   },
-//   {
-//     "project_name": "DEXS23D",
-//     "progress": [
-//       {
-//         "userName": "Software-Intern ITB",
-//         "wpTotal": 11,
-//         "wpDone": 11,
-//         "storyPoints": 0,
-//         "progress": 100
-//       },
-//       {
-//         "userName": "Dhiya Risalah Ghaida",
-//         "wpTotal": 2,
-//         "wpDone": 2,
-//         "storyPoints": 0,
-//         "progress": 100
-//       },
-//       {
-//         "userName": "Salsabila Asyifa",
-//         "wpTotal": 2,
-//         "wpDone": 2,
-//         "storyPoints": 0,
-//         "progress": 100
-//       }
-//     ]
-//   }
-
 

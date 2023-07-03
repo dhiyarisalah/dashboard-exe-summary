@@ -52,7 +52,15 @@ const LandingPage = () => {
           </Row>
           <Row className="second-row">
           </Row>
-          <Row className= "w=100 min-vh-100">
+        </Container>
+        <div>
+          <h2 className='project'>All Assignees</h2>
+        </div>
+        <div>
+          <h3 className='overview'>Work Packages</h3>
+        </div>
+        <Container className='container-project'>
+          <Row className= "third-row">
             <UserProgress />
           </Row>
         </Container>

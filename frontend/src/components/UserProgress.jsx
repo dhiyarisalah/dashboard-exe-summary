@@ -107,7 +107,7 @@ function Progress() {
     <div className="UserProgress">
       <Container className="userprogress-box">
         <Row>
-          <Dropdown onSelect={handleDropdownChange} value={selectedMonth}>
+          <Dropdown onSelect={handleDropdownChange} value={selectedMonth} className="ml-auto"> {/* Add ml-auto class to move the dropdown to the right */}
             <Dropdown.Toggle variant="secondary" id="dropdown-basic">
               {selectedMonth ? selectedMonth : "Select month"}
             </Dropdown.Toggle>
