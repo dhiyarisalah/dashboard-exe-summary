@@ -1,27 +1,45 @@
 from work_package import get_all_wp
 import requests
+from fastapi import HTTPException
 from auth import header, url
 
-memberships = requests.get(f"{url}/memberships",headers=header)
-
 def get_all_memberships():
-    all_memberships = []
-    data = memberships.json()
-    if "_embedded" in data and "elements" in data["_embedded"]:
-        elements = data["_embedded"]["elements"]
-        for element in elements:
-            memberships_id = element["id"]
-            member_name = element["_links"]["self"]["title"]
-            project_name = element["_links"]["project"]["title"]
-            role = element["_links"]["roles"][0]["title"]
-            all_memberships.append({"memberships_id": memberships_id, 
-                                     "member_name": member_name, 
-                                     "project_name": project_name,
-                                     "role": role}) 
-    if all_memberships:
-        return all_memberships
-    else:
-        return {"message": "No memberships found."}
+    try:
+        memberships = requests.get(f"{url}/memberships", headers=header)
+        memberships.raise_for_status() 
+        data = memberships.json()
+
+        all_memberships = []
+        if "_embedded" in data and "elements" in data["_embedded"]:
+            elements = data["_embedded"]["elements"]
+            
+            for element in elements:
+                memberships_id = element["id"]
+                member_name = element["_links"]["self"]["title"]
+                project_name = element["_links"]["project"]["title"]
+                role = element["_links"]["roles"][0]["title"]
+                
+                all_memberships.append({
+                    "memberships_id": memberships_id,
+                    "member_name": member_name,
+                    "project_name": project_name,
+                    "role": role
+                })
+
+            if all_memberships:
+                return all_memberships
+            else:
+                raise HTTPException(status_code=404, detail="No memberships found.")
+        else:
+            raise HTTPException(status_code=404, detail="Invalid response format.")
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail="Failed to connect to the API.")
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail="Invalid JSON response from the API.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+
     
 def get_project_members():
     memberships = get_all_memberships()
@@ -71,14 +89,12 @@ def get_progress_assignee():
             if item.get("status") == "Done":
                 assignee_data["wp_done"] += 1
 
-    result = []
+    result = {}
     for month, progress in assignee_progress.items():
         for data in progress:
             data["progress"] = (data["wp_done"] / data["wp_total"]) * 100
-        result.append({
-            "month": month,
-            "progress": progress
-        })
+        result[month] = progress
+
     return result
 
 def get_assignee_details():
