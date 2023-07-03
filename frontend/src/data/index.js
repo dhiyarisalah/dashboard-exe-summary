@@ -122,22 +122,22 @@ export const burdownData = [
         "version_name": "Sprint Sandbox",
         "progress": [
           {
-            "month": "03",
+            "month": "March",
             "wp_done": 0,
             "wp_on_going": 2
           },
           {
-            "month": null,
+            "month": "May",
             "wp_done": 1,
             "wp_on_going": 4
           },
           {
-            "month": "07",
+            "month": "July",
             "wp_done": 0,
             "wp_on_going": 1
           },
           {
-            "month": "08",
+            "month": "August",
             "wp_done": 0,
             "wp_on_going": 2
           }
@@ -152,7 +152,7 @@ export const burdownData = [
         "version_name": "Week III",
         "progress": [
           {
-            "month": null,
+            "month": "January",
             "wp_done": 3,
             "wp_on_going": 2
           }
@@ -162,7 +162,7 @@ export const burdownData = [
         "version_name": "Week I",
         "progress": [
           {
-            "month": null,
+            "month": "February",
             "wp_done": 5,
             "wp_on_going": 0
           }
@@ -172,7 +172,7 @@ export const burdownData = [
         "version_name": "Week II",
         "progress": [
           {
-            "month": null,
+            "month": "March",
             "wp_done": 5,
             "wp_on_going": 0
           }
@@ -358,6 +358,47 @@ export const wpDetails = [
             "story_points": null
           }
         ]
+      }
+    ]
+  }
+]
+
+export const projectDetails = [
+  {
+    "project_name": "Sandbox",
+    "progress": [
+      {
+        "version_name": "Sprint Sandbox",
+        "percentage_done":100,
+        "percentage_undone":0,
+        "wpTotal": 10,
+        "wpDone": 1
+      }
+    ]
+  },
+  {
+    "project_name": "DEXS23D",
+    "progress": [
+      {
+        "version_name": "Week III",
+        "percentage_done":60,
+        "percentage_undone":40,
+        "wpTotal": 5,
+        "wpDone": 1
+      },
+      {
+        "version_name": "Week I",
+        "percentage_done":10,
+        "percentage_undone":90,
+        "wpTotal": 5,
+        "wpDone": 5
+      },
+      {
+        "version_name": "Week II",
+        "percentage_done":100,
+        "percentage_undone":0,
+        "wpTotal": 5,
+        "wpDone": 5
       }
     ]
   }

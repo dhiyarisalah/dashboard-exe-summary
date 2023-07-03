@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import ProjectBar from "../components/ProjectBar";
 
 function ProjectDetails() {
   const location = useLocation();
@@ -15,6 +16,7 @@ function ProjectDetails() {
     <div>
       <h1>{label}</h1>
       <h3 className='overview'>Overview</h3>
+      <ProjectBar />
     </div>
   );
 }
