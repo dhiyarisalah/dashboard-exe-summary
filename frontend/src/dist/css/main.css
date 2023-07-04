@@ -117,13 +117,15 @@ h3.overview {
     overflow-wrap: unset;
 }
 
-.landingpage .second-row{
+.landingpage .second-row {
     border-radius: 6px;
     background: var(--white, #FFF);
     box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
     overflow-wrap: unset;
-}
-
+    overflow: auto; /* Add overflow property to enable scrolling */
+    max-height: 500px;
+  }
+  
 .landingpage .container-project .third-row{
     border-radius: 6px;
     background: var(--white, #FFF);
