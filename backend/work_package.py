@@ -1,8 +1,9 @@
-from datetime import datetime
+
 from fastapi import HTTPException
-import requests
-import calendar
 from auth import header, url
+import requests
+from datetime import datetime
+import calendar
 
 def process_element(element):
     project_name = element["_links"]["project"]["title"]

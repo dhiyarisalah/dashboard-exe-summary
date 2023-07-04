@@ -1,7 +1,7 @@
 from fastapi import HTTPException
-from work_package import get_all_wp
-import requests
 from auth import header, url
+import requests
+from work_package import get_all_wp
 
 def get_all_versions():
     try:
@@ -18,7 +18,7 @@ def get_all_versions():
                 version_name = element["name"]
                 at_project = element["_links"]["definingProject"]["title"]
 
-                if len(at_project) == 7:
+                if len(at_project) == 7: # filter jumlah karakter
                     all_versions.append({
                         "version_id": version_id,
                         "version_name": version_name,
@@ -73,7 +73,8 @@ def get_progress_version():
     result = []
     for project_name, progress in version_progress.items():
         for data in progress:
-            data["progress"] = (data["wp_done"] / data["wp_total"]) * 100
+            data["percentage_done"] = (data["wp_done"] / data["wp_total"]) * 100
+            data["percentage_undone"] = 100 - data["percentage_done"]
         result.append({
             "project_name": project_name,
             "progress": progress
@@ -89,7 +90,7 @@ def get_burndown_chart():
         version_name = item.get("at_version")
         month = item.get("month")
 
-        if version_name is not None and project_name is not None:  
+        if version_name is not None and project_name is not None and month is not None:  
             if project_name not in burndown_chart:
                 burndown_chart[project_name] = []
 
