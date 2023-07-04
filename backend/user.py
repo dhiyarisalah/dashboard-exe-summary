@@ -1,12 +1,12 @@
-from work_package import get_all_wp
-import requests
 from fastapi import HTTPException
 from auth import header, url
+import requests
+from work_package import get_all_wp
 
 def get_all_memberships():
     try:
         memberships = requests.get(f"{url}/memberships", headers=header)
-        memberships.raise_for_status() 
+        memberships.raise_for_status()  
         data = memberships.json()
 
         all_memberships = []
@@ -92,7 +92,7 @@ def get_progress_assignee():
     result = {}
     for month, progress in assignee_progress.items():
         for data in progress:
-            data["progress"] = (data["wp_done"] / data["wp_total"]) * 100
+            data["progress"] = round((data["wp_done"] / data["wp_total"]) * 100)
         result[month] = progress
 
     return result
@@ -100,41 +100,61 @@ def get_progress_assignee():
 def get_assignee_details():
     assignee_details = {}
     all_wp = get_all_wp()
+    total_wp = 0  
+    total_sp = 0  
+
     for item in all_wp:
         user_name = item.get("assignee")
         project_name = item.get("project_name")
         story_points = item.get("story_points")
 
-        if user_name is not None and project_name is not None:
+        if user_name is not None:
             if user_name not in assignee_details:
-                assignee_details[user_name] = []
-
-            projects_data = None
-            for data in assignee_details[user_name]:
-                if data["project_name"] == project_name:
-                    projects_data = data
-                    break
-
-            if projects_data is None:
-                projects_data = {
-                    "project_name": project_name,
-                    "wp_assigned": 0,
-                    "story_points": 0
+                assignee_details[user_name] = {
+                    "total_wp": 0,  
+                    "total_sp": 0,
+                    "projects": [] 
                 }
-                assignee_details[user_name].append(projects_data)
 
-            projects_data["wp_assigned"] += 1
+            assignee_details[user_name]["total_wp"] += 1  
+            total_wp += 1 
 
             if story_points is not None:
-                projects_data["story_points"] += story_points
+                assignee_details[user_name]["total_sp"] += story_points  
+                total_sp += story_points 
+
+            # Check if the project is already added for the user
+            project_exists = any(
+                project["project_name"] == project_name for project in assignee_details[user_name]["projects"]
+            )
+            if not project_exists:
+                assignee_details[user_name]["projects"].append(
+                    {
+                        "project_name": project_name,
+                        "wp_assigned": 1,
+                        "story_points": story_points if story_points is not None else 0
+                    }
+                )
+            else:
+                for project in assignee_details[user_name]["projects"]:
+                    if project["project_name"] == project_name:
+                        project["wp_assigned"] += 1
+                        if story_points is not None:
+                            project["story_points"] += story_points
+                        break
 
     result = []
-    for user_name, projects in assignee_details.items():
-        result.append({
-            "user_name": user_name,
-            "projects": projects
-        })
+    for user_name, details in assignee_details.items():
+        result.append(
+            {
+                "user_name": user_name,
+                "total_wp": details["total_wp"],
+                "total_sp": details["total_sp"],
+                "projects": details["projects"]
+            }
+        )
     return result
+
 
 def get_assignee_wp_details():
     wp_details = {}

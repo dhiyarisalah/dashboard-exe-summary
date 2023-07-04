@@ -1,9 +1,9 @@
+from fastapi import HTTPException
+from auth import header, url
+import requests
 from work_package import get_all_wp
 from version import get_all_versions
 from collections import Counter
-from fastapi import HTTPException
-import requests
-from auth import header, url
 
 def count_all():
     all_projects = get_all_projects()
@@ -72,6 +72,16 @@ def project_count_by_priority():
     priority_list = [project.get("project_priority") for project in all_projects if project.get("project_priority")]
     priority_counts = dict(Counter(priority_list))
     return priority_counts
+
+
+def project_list():
+    all_projects = get_all_projects()
+    project_list = []
+    for project in all_projects:
+        project_name = project.get("project_name")
+        project_list.append(project_name)
+
+    return project_list
 
 def project_list_by_status():
     all_projects = get_all_projects()
@@ -153,6 +163,7 @@ def get_progress_assignee_project():
         project_name = item.get("project_name")
         assignee = item.get("assignee")
         story_points = item.get("story_points")
+        version = item.get("at_version")
 
         if project_name is not None and assignee is not None:
             if project_name not in assignee_progress:
@@ -184,7 +195,7 @@ def get_progress_assignee_project():
     result = []
     for project_name, progress in assignee_progress.items():
         for data in progress:
-            data["progress"] = (data["wp_done"] / data["wp_total"]) * 100
+            data["progress"] = round((data["wp_done"] / data["wp_total"]) * 100)
         result.append({
             "project_name": project_name,
             "progress": progress

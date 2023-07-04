@@ -27,6 +27,10 @@ def all_wp():
 def all_memberships():
     return get_all_memberships()
 
+@router.get("/get-project-list")
+def list():
+    return project_list()
+
 # ----------------------- OVERVIEW PAGE ----------------------- 
 
 # Pie Chart Overview
