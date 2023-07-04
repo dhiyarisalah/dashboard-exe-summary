@@ -429,3 +429,48 @@ export const projectAssignee = [
   }
 ]
 
+export const projectData = [
+  {
+    projectName: "Sandbox",
+    milestones: [
+      {
+        wpName: "Task 1",
+        date: "2027-07-07",
+      },
+      {
+        wpName: "Task 3",
+        date: "2024-11-07",
+      },
+      {
+        wpName: "Milestone 1",
+        date: "2023-04-10",
+      },
+      {
+        wpName: "Task 4",
+        date: "2023-08-11",
+      },
+    ],
+  },
+  {
+    projectName: "Sandbox 2",
+    milestones: [
+      {
+        wpName: "Task 1",
+        date: "2027-07-07",
+      },
+      {
+        wpName: "Task 3",
+        date: "2024-11-07",
+      },
+      {
+        wpName: "Milestone 1",
+        date: "2023-04-10",
+      },
+      {
+        wpName: "Task 4",
+        date: "2023-08-11",
+      },
+    ],
+  }
+  // Add more project objects as needed
+];

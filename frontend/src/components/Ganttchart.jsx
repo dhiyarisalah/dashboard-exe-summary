@@ -1,68 +1,138 @@
-import React, { useEffect, useRef } from "react";
-import { Chart } from "chart.js";
-import { LineController, LineElement, PointElement, LinearScale, Title } from "chart.js";
-Chart.register(LineController, LineElement, PointElement, LinearScale, Title);
+import React, { useState } from 'react';
+import { projectData } from '../data/index.js';
 
-function Ganttchart() {
-  const chartRef = useRef(null);
+const Ganttchart = () => {
+  const [view, setView] = useState('weekly'); // State variable for selected view
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // State variable for selected year
 
-  useEffect(() => {
-    // Setup
-    const data = {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [{
-        label: 'Weekly Sales',
-        data: [18, 12, 6, 9, 12, 3, 9],
-        backgroundColor: [
-          'rgba(255, 26, 104, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
-          'rgba(0, 0, 0, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 26, 104, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(0, 0, 0, 1)'
-        ],
-        borderWidth: 1
-      }]
-    };
+  // Generate an array of month names with all the dates
+  const months = [
+    { name: 'January', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    { name: 'February', dates: Array.from({ length: 28 }, (_, i) => i + 1) },
+    { name: 'March', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    { name: 'April', dates: Array.from({ length: 30 }, (_, i) => i + 1) },
+    { name: 'May', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    { name: 'June', dates: Array.from({ length: 30 }, (_, i) => i + 1) },
+    { name: 'July', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    { name: 'August', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    { name: 'September', dates: Array.from({ length: 30 }, (_, i) => i + 1) },
+    { name: 'October', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    { name: 'November', dates: Array.from({ length: 30 }, (_, i) => i + 1) },
+    { name: 'December', dates: Array.from({ length: 31 }, (_, i) => i + 1) },
+    // Add more months with their corresponding dates as needed
+  ];
 
-    // Config
-    const config = {
-      type: 'bar',
-      data: data,
-      options: {
-        indexAxis: 'y',
-        scales: {
-          x: {
-            type: 'time',
-            time: {
-              unit: 'day',
-            }
-          }
-        }
-      }
-    };
+  const currentYear = new Date().getFullYear();
+  const yearsToShow = 5;
+  const startYear = currentYear + 1;
+  const yearOptions = Array.from({ length: yearsToShow }, (_, i) => startYear + i);
 
-    // Render chart
-    const ctx = chartRef.current.getContext("2d");
-    new Chart(ctx, config);
+  const handleViewChange = (event) => {
+    setView(event.target.value);
+  };
 
-  }, []);
+  const handleYearChange = (event) => {
+    setSelectedYear(parseInt(event.target.value));
+  };
+
+  const getDates = (month) => {
+    if (view === 'weekly') {
+      return month.dates.filter((date) => date % 7 === 1);
+    } else {
+      return month.dates;
+    }
+  };
 
   return (
-    <div className="Progress">
-      <canvas ref={chartRef} id="myChart" width="400" height="400"></canvas>
+    <div>
+      <div>
+        <label>
+          <input
+            type="radio"
+            value="weekly"
+            checked={view === 'weekly'}
+            onChange={handleViewChange}
+          />
+          Weekly
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="daily"
+            checked={view === 'daily'}
+            onChange={handleViewChange}
+          />
+          Daily
+        </label>
+      </div>
+      <div>
+        <label htmlFor="year">Select Year:</label>
+        <select id="year" value={selectedYear} onChange={handleYearChange}>
+          {yearOptions.map((year) => (
+            <option value={year} key={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th colSpan={months.reduce((acc, month) => acc + getDates(month).length, 0) + 1}>
+              Year {selectedYear}
+            </th>
+          </tr>
+          <tr>
+            <th rowSpan="2">Projects</th>
+            {months.map((month) => (
+              <th colSpan={getDates(month).length} key={month.name}>
+                {month.name}
+              </th>
+            ))}
+          </tr>
+          <tr>
+            {months.map((month) =>
+              getDates(month).map((date) => (
+                <th key={`${month.name}-${date}`}>{date}</th>
+              ))
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {projectData.map((project) => (
+            <tr key={project.projectName}>
+              <td>{project.projectName}</td>
+              {months.map((month) =>
+                getDates(month).map((date) => (
+                  <td key={`${project.projectName}-${month.name}-${date}`}>
+                    {project.milestones.find(
+                      (milestone) =>
+                        milestone.date ===
+                        `${selectedYear}-${months.findIndex((m) => m.name === month.name) + 1}-${date}`
+                    )?.wpName || ''}
+                  </td>
+                ))
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <style>
+        {`
+          table {
+            border-collapse: collapse;
+          }
+          th, td {
+            border: 1px solid black;
+            padding: 8px;
+          }
+          th[colSpan="4"] {
+            text-align: center;
+          }
+        `}
+      </style>
     </div>
   );
-}
+};
 
 export default Ganttchart;

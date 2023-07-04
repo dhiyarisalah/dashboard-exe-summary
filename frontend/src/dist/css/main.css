@@ -130,3 +130,7 @@ h3.overview {
     box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
     overflow-wrap: unset;
 }
+
+.horizontal-scroll {
+    overflow-x: auto;
+  }
