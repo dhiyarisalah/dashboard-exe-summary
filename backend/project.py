@@ -156,6 +156,7 @@ def get_progress_project():
         })
     return result
 
+
 def get_progress_assignee_project():
     assignee_progress = {}
     all_wp = get_all_wp()
@@ -163,7 +164,6 @@ def get_progress_assignee_project():
         project_name = item.get("project_name")
         assignee = item.get("assignee")
         story_points = item.get("story_points")
-        version = item.get("at_version")
 
         if project_name is not None and assignee is not None:
             if project_name not in assignee_progress:
