@@ -1,10 +1,10 @@
 # Infoglobal Executive Summary Dashboard 
-Infoglobal Executive Summary Dashboard merupakan sebuah aplikasi berbasis web yang menampilkan informasi mengenai seluruh aktivitas proyek yang sedang berjalan di PT. Infoglobal Teknologi Semesta. Data dari dashboard ini bersifat real-time dengan mengakses API Open Project.
+_Infoglobal Executive Summary Dashboard_ merupakan sebuah aplikasi berbasis web yang menampilkan informasi mengenai seluruh aktivitas proyek yang sedang berjalan di PT. Infoglobal Teknologi Semesta. Data dari _dashboard_ ini bersifat real-time dengan mengakses [API Open Project](https://www.openproject.org/docs/api/).
 
 ## Tech Stack
 
-- Frontend: [React.js](https://react.dev/learn)
-- Backend: [FastAPI](https://devdocs.io/fastapi/)
+- Frontend: [React.js](https://react.dev/learn), [Chart.js](https://www.chartjs.org/docs/latest/)
+- Backend: [Python FastAPI](https://devdocs.io/fastapi/)
 
 ## Backend Setup and Installation
 
