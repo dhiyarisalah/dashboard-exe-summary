@@ -149,9 +149,9 @@ function ProjectBar() {
   };
 
   return (
-    <Container fluid>
-      <Row>
-        <Col>
+    <Container fluid className="project-components">
+      <div>
+        <Col className="button d-flex justify-content-end">
           <Dropdown onSelect={handleVersionSelect}>
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               {selectedVersion}
@@ -161,9 +161,11 @@ function ProjectBar() {
             </Dropdown.Menu>
           </Dropdown>
         </Col>
-      </Row>
-      <Row>
-        <div style={{ width: "100%", height: "100%" }}>
+      </div>
+      
+      <div>
+        <h3 className="sub-judul-project">Progress</h3>
+        <div className="projectProgress">
           <BarChart
             chartData={{
               labels: projectData.map((data) => data.project_name),
@@ -171,17 +173,18 @@ function ProjectBar() {
                 {
                   label: "Project Progress",
                   data: [projectData[0]?.percentage_done || 0],
-                  backgroundColor: ["rgba(75,192,192,1)"],
-                  barThickness: 30,
+                  backgroundColor: ["#327332"],
+                  barThickness: 50,
                 },
                 {
                   label: "Project Progress",
                   data: [projectData[0]?.percentage_undone || 0],
-                  backgroundColor: ["#ecf0f1"],
-                  barThickness: 30,
+                  backgroundColor: ["#F6C600"],
+                  barThickness: 50,
                 },
               ],
               options: {
+                maintainAspectRatio: false,
                 indexAxis: "y",
                 plugins: {
                   legend: {
@@ -209,24 +212,28 @@ function ProjectBar() {
               },
             }}
           />
+          </div>
+      </div>
+
+      <div> 
+        <h3 className="sub-judul-project">Burndown Chart</h3>
+        <div className="container-chart">
           {lineChartData && (
             <LineChart
               chartData={{
                 labels: lineChartData.map((data) => data.month),
                 datasets: [
                   {
-                    label: "WP Done",
+                    label: "Done",
                     data: lineChartData.map((data) => data.wp_done),
-                    borderColor: "rgba(75,192,192,1)",
-                    borderWidth: 2,
                     fill: false,
+                    backgroundColor: "#165BAA"
                   },
                   {
-                    label: "WP On Going",
+                    label: "Added",
                     data: lineChartData.map((data) => data.wp_on_going),
-                    borderColor: "#ecf0f1",
-                    borderWidth: 2,
                     fill: false,
+                    backgroundColor: "#A155B9"
                   },
                 ],
                 options: {
@@ -253,28 +260,33 @@ function ProjectBar() {
               }}
             />
           )}
-          <Table striped bordered>
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Member Name</th>
-                <th>Progress (%)</th>
-                <th>Story Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((data, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{data.member_name}</td>
-                  <td>{data.progress}</td>
-                  <td>{data.storyPoints}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          </div>
         </div>
-      </Row>
+        <div>
+          <h3 className="sub-judul-project">Assignees</h3>
+          <div className="container-chart">
+            <Table striped bordered>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Member Name</th>
+                  <th>Progress (%)</th>
+                  <th>Story Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((data, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{data.member_name}</td>
+                    <td>{data.progress}</td>
+                    <td>{data.storyPoints}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+        </div>
+      </div>
     </Container>
   );
 }

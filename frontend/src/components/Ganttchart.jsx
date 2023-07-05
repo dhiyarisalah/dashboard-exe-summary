@@ -50,26 +50,28 @@ const Ganttchart = () => {
       const milestoneYear = milestoneDate.getFullYear();
       const milestoneMonth = milestoneDate.getMonth() + 1;
       const milestoneDay = milestoneDate.getDate();
-
+  
       return (
         milestoneYear === selectedYear &&
         milestoneMonth === months.findIndex((m) => m.name === month) + 1 &&
         milestoneDay === date
       );
     });
-
+  
     if (!milestone) return '';
-
+  
     if (granularity === 'weekly') {
-      const firstDayOfMonth = new Date(selectedYear, months.findIndex((m) => m.name === month), 1);
-      const firstDayOfWeek = firstDayOfMonth.getDay();
-      const weekNumber = Math.ceil((date + firstDayOfWeek) / 7);
-
-      return `Week ${weekNumber} •`;
+      const monthObj = months.find((m) => m.name === month);
+      const firstWeekOfMonth = monthObj.weeks[0];
+      const weekNumber = date <= firstWeekOfMonth ? 1 : Math.ceil((date - firstWeekOfMonth + 1) / 7);
+  
+      return `W${weekNumber} •`;
     }
-
+  
     return '•';
   };
+  
+  
 
   return (
     <div className="container">
@@ -163,7 +165,7 @@ const Ganttchart = () => {
           <tbody>
             {projectData.map((project) => (
               <tr key={project.id}>
-                <td>{project.name}</td>
+                <td>{project.projectName}</td>
                 {months.map((month) => {
                   if (selectedMonth === '' || selectedMonth === month.name) {
                     return getDates(month).map((date) => (

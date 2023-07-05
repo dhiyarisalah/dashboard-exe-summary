@@ -2,6 +2,7 @@
     font-family: "Gill Sans";
 }
 
+/* Navbar */
 :root {
     --blue-black: #0E2735;
     --blue-tua: #2076BD;
@@ -18,20 +19,37 @@
     height: 119px;
 }
 
-h1.dashboard{
-    padding: 30px 0px 0px 30px;
-    font-family: 'Gill Sans';
+
+/* landing page */
+
+/* Title - subtitle landing page */
+.landingpage .page-text {
+    margin: 50px 30px 0px 30px
+}
+.landingpage .text {
+    padding: 0px
+}
+
+.date-updated {
     font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    color: #0E2735; 
+    margin-left: 5px;
+}
+
+
+h1.dashboard{
     font-weight: 700;
     font-size: 64px;
     line-height: 77px;
     color: #0E2735;
 }
 
-h2.project {
-    padding: 0px 0px 0px 30px;
-    font-family: 'Gill Sans';
-    font-style: normal;
+
+
+h2.judul {
     font-weight: 700;
     font-size: 48px;
     line-height: 58px;
@@ -39,15 +57,51 @@ h2.project {
     margin: 0px;
 }
 
-h3.overview {
-    padding: 20px 0px 20px 30px;
+h3.sub-judul {
     font-style: normal;
     font-weight: 600;
     font-size: 32px;
     line-height: 38px;   
-    margin: 0px
+    margin: 30px 0px
 }
 
+/* button */
+
+.refresh-button {
+    box-sizing: border-box;
+    background: #0D6EFD;
+    /* Theme/Primary */
+    border: 1px solid #0D6EFD;
+    display: flex;
+    border-radius: 4px;
+    text-align: center;
+    color: #FFFFFF;
+    width: 81px;
+    height: 38px;
+}
+
+/* container all chart */
+
+.landingpage .page-text .row {
+    margin: 0px -10px;
+}
+
+.landingpage .container-chart{
+    border-radius: 6px;
+    background: var(--white, #FFF);
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
+    overflow-wrap: unset;
+    padding: 0px;
+    margin: 0px 10px 40px 10px;
+}
+
+
+
+
+
+
+
+/* inside chart */
 .ProjectChart .title-count {
     font-weight: 600;
     size: 22.6px;
@@ -62,30 +116,6 @@ h3.overview {
     font-size: 56.4972px;
     line-height: 66px;
     letter-spacing: -0.0375em;
-}
-
-.date-updated {
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 16px;
-    color: #0E2735;
-    padding: 0px 0px 18px 30px;
-    
-}
-
-.refresh-button {
-    box-sizing: border-box;
-    background: #0D6EFD;
-    /* Theme/Primary */
-    border: 1px solid #0D6EFD;
-    display: flex;
-    border-radius: 4px;
-    text-align: center;
-    color: #FFFFFF;
-    margin: 30px 30px 0px 0px;
-    width: 81px;
-    height: 38px;
 }
 
 .dropdown-custom .btn-secondary{
@@ -105,34 +135,106 @@ h3.overview {
 
 }
 
-.landingpage .container-project .first-row {
-    width: auto;
-    height: auto;
-}
-
-.landingpage .container-project .first-row .first-column{
-    border-radius: 6px;
-    background: var(--white, #FFF);
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
-    overflow-wrap: unset;
-}
-
-.landingpage .second-row {
-    border-radius: 6px;
-    background: var(--white, #FFF);
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
-    overflow-wrap: unset;
-    overflow: auto; /* Add overflow property to enable scrolling */
-    max-height: 500px;
-  }
-  
-.landingpage .container-project .third-row{
-    border-radius: 6px;
-    background: var(--white, #FFF);
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
-    overflow-wrap: unset;
-}
-
 .horizontal-scroll {
     overflow-x: auto;
   }
+
+
+/* project detail page */
+
+.projectdetailspage .project-components {
+    margin: 0px;
+    padding: 0px
+}
+
+h2.projectName {
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 58px;
+    color: #2C2F33;
+    margin: 50px 0px 0px 30px
+}
+
+h3.sub-judul-project {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 38px;   
+    margin: 0px 0px 0px 30px;
+    padding: 0px
+}
+
+.projectdetailspage .project-components{
+    margin: 0px
+}
+
+.projectdetailspage .project-components .button{
+    margin-right: 30px
+}
+
+.projectdetailspage .project-components .projectProgress {
+    padding: 0px 30px
+}
+
+.projectdetailspage .project-components .container-chart{
+    border-radius: 6px;
+    background: var(--white, #FFF);
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
+    overflow-wrap: unset;
+    padding: 0px;
+    margin: 50px 30px 50px 30px;
+}
+
+/* assignee detail page */
+
+.assigneedetailspage .user-components {
+    margin: 0px;
+    padding: 0px
+}
+
+h2.assigneeName {
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 58px;
+    color: #2C2F33;
+    margin: 40px 0px 40px 30px
+}
+
+h3.sub-judul-assignee {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 38px;   
+    margin: 0px 0px 50px 30px;
+    padding: 0px
+}
+
+.assigneedetailspage .user-components .title-count  {
+    font-weight: 600;
+    size: 22.6px;
+    color: #828282
+}
+
+.assigneedetailspage .user-components .title-count .count-project {
+    color: #000000;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 56.4972px;
+    line-height: 66px;
+    letter-spacing: -0.0375em;
+}
+
+.assigneedetailspage .user-components .container-chart{
+    border-radius: 6px;
+    background: var(--white, #FFF);
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
+    overflow-wrap: wrap;
+    padding: 0px;
+    margin: 0px 30px 50px 30px;
+    width: 50%;
+    max-width: 800px;
+}
+
+.assigneedetailspage .user-components .container-chart .row{
+    margin: 0px;
+}

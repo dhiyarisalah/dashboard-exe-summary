@@ -117,12 +117,20 @@ function UserChart() {
   }
 
   return (
-    <div className="ProjectChart">
-      <Container>
-        <Row>
-          <Col xs={12}>
-            <div className="dropdown-container">
-              <Dropdown onSelect={handleDropdownSelect}>
+    <Container fluid className="user-components">
+      <h3 className='sub-judul-assignee'>Overview</h3>
+      <div className="container-chart">
+        <Row className="row">
+          <div className="title-count">
+            Total {selectedItem} <br /> 
+            <span className="count-project">
+              {totalProjectCount} {selectedItem}
+            </span>
+          </div>
+        </Row>
+        <Row className="row">
+          <Col className="d-flex justify-content-end">
+            <Dropdown onSelect={handleDropdownSelect}>
                 <Dropdown.Toggle variant="primary" id="dropdown-basic">
                   {selectedItem}
                 </Dropdown.Toggle>
@@ -133,41 +141,39 @@ function UserChart() {
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
-              </Dropdown>
-              <span>Total: {totalProjectCount}</span>
-            </div>
+            </Dropdown>  
           </Col>
         </Row>
-        <Row>
-          <Col xs={12} md={8}>
-            <Pie data={chartData} options={chartData.options} />
-          </Col>
-          <Col xs={12} md={4}>
-            <h3 className="overview">Project {selectedProject?.project_name}</h3>
-            {selectedProject && (
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Work Packages</th>
-                    <th>Progress</th>
-                    <th>Story Points</th>
+        <Row className="row">
+          <Pie data={chartData} options={chartData.options} />
+        </Row>
+      </div>
+      <h3 className="sub-judul-assignee">Project {selectedProject?.project_name}</h3>
+      <div>
+        <Row className="row">
+          {selectedProject && (
+            <Table striped bordered hover style={{ width: '60%', marginLeft: 40 }}>
+              <thead>
+                <tr>
+                  <th>Work Packages</th>
+                  <th>Progress</th>
+                  <th>Story Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((row, index) => (
+                  <tr key={index}>
+                    <td>{row.wp_name}</td>
+                    <td>{row.progress}</td>
+                    <td>{row.story_points}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {tableData.map((row, index) => (
-                    <tr key={index}>
-                      <td>{row.wp_name}</td>
-                      <td>{row.progress}</td>
-                      <td>{row.story_points}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            )}
-          </Col>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </Row>
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 }
 

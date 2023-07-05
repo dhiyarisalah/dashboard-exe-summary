@@ -464,7 +464,7 @@ export const projectData = [
       },
       {
         wpName: "Milestone 1",
-        date: "2023-04-10",
+        date: "2023-04-11",
       },
       {
         wpName: "Task 4",

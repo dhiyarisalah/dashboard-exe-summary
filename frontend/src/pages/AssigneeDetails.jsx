@@ -8,9 +8,8 @@ function AssigneeDetails() {
   const { label } = useParams();
 
   return (
-    <div>
-      <h1>{label}</h1>
-      <h3 className='overview'>Overview</h3>
+    <div className="assigneedetailspage">
+      <h2 className="assigneeName">{label}</h2>
       <UserChart />
     </div>
   );

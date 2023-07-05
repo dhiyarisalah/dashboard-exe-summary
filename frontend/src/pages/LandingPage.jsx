@@ -22,51 +22,50 @@ const LandingPage = () => {
   }
   return (
     <div className= "landingpage">
-      <header className= "w=100 min-vh-100">
-        <Row>
-          <Col>
-            <h1 className='dashboard'>Dashboard</h1>
+      <div>
+        <Row className='page-text'>
+          <Col className='text'>
+            <h1 className='dashboard'>Dashboard</h1> 
+            <text className='date-updated'> Last Update: {lastUpdate} </text>
           </Col>
-          <Col className="d-flex justify-content-end">
+          <Col className="text d-flex justify-content-end">
             <Button className='refresh-button' onClick={handleRefresh} >
               Refresh</Button>
           </Col>
         </Row>
-        <div className='date-updated'>
-          Last Update: {lastUpdate}
-        </div>
-        <div>
-          <h2 className='project'>Project</h2>
-        </div>
-        <div>
-          <h3 className='overview'>Overview</h3>
-        </div>
-        <Container className='container-project'>
-          <Row className='first-row'>
-            <Col className= 'first-column'>
+      </div>
+      <div> 
+        <div className='page-text'>
+          <h2 className='judul'>Project</h2>
+          <h3 className='sub-judul'>Overview</h3>
+          <Row className='row w=200 min-vh-200'>
+            <Col className= 'container-chart'>
               <ProjectChart />
             </Col>
-            <Col className= 'first-column'>
+            <Col className= 'container-chart'>
               <Progress />
             </Col>
           </Row>
-          <Row className="second-row">
-            <Ganttchart />
+          <h3 className='sub-judul'>Milestones</h3>
+          <Row className="row w=100 min-vh-100">
+            <Col className="container-chart"> 
+              <Ganttchart />
+            </Col>
           </Row>
-        </Container>
-        <div>
-          <h2 className='project'>All Assignees</h2>
         </div>
-        <div>
-          <h3 className='overview'>Work Packages</h3>
+      </div>
+      <div>
+        <div className='page-text'>
+          <h2 className='judul'>All Assignees</h2>
+          <h3 className='sub-judul'>Work Packages</h3>
+          <Row className= "row w=100 min-vh-100">
+            <Col className='container-chart'>
+              <UserProgress />
+            </Col>
+          </Row>  
         </div>
-        <Container className='container-project'>
-          <Row className= "third-row">
-            <UserProgress />
-          </Row>
-        </Container>
-     </header>
-    </div>
+     </div>
+  </div> 
   )
 }
 
