@@ -19,18 +19,18 @@ python -m venv env
 ```
 4. Aktifkan virtual env python
 ```
-./env/Scripts/activate
+source env/bin/activate
 ```
-4. Aktifkan virtual env python (mac)
+5. Aktifkan virtual env python (mac)
 ```
 ./env/bin
 source activate
 ```
-5. Install Python depedencies
+6. Install Python depedencies
 ```
 pip3 install -r requirements.txt
 ```
-6. Jalankan backend
+7. Jalankan backend
 ```
 uvicorn main:app --reload
 ```
