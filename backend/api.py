@@ -54,7 +54,7 @@ def list_by_status():
 def list_by_priority():
     return project_list_by_priority()
 
-# Bar Chart Overview (- : harusnya child aja parent gausa)
+# Bar Chart Overview 
 @router.get("/get-progress-project")
 def progress_projects():
     return get_progress_project()
