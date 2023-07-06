@@ -31,15 +31,9 @@ function Progress() {
         data: projectProgress.map((data) => data.progress.percentage),
         fill: false,
         backgroundColor: [
-          "rgba(75,192,192,1)",
-          "#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
+          "#2076BD",
         ],
-        borderColor: "black",
-        borderWidth: 1,
-        barThickness: 30,
+        barThickness: 40,
       },
     ];
 
@@ -53,9 +47,10 @@ function Progress() {
   return (
     <div className="Progress">
       <Container className="progress-box">
-        <Row>
-          <div className="title-count">Total Project</div>
+        <Row className="chart-info">
+          <div className="title-count">Project Progress</div>
         </Row>
+        <hr style={{ marginTop: '82px', height: '2px', background: 'black', border: 'none' }} />
         <Row>
           <div style={{ width: "100%", height: "100%" }}>
             <BarChart chartData={projectData} />

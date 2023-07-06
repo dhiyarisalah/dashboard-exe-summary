@@ -239,10 +239,22 @@ h3.sub-judul-assignee {
 .Progress .title-count {
     font-weight: 600;
     size: 22.6px;
-    color: #828282
+    color: #828282;
+    padding: 60px;
 
 }
 
 .horizontal-scroll {
     overflow-x: auto;
   }
+
+/* progress chart */
+
+.Progress .progress-box {
+    margin: 0px;
+    padding: 0px;
+}
+
+.Progress .progress-box .chart-info {
+    margin: 0px;
+}
