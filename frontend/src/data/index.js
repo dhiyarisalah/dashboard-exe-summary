@@ -14,6 +14,36 @@ export const projectPriority = [
     }
 ]
 
+export const projectListStatus = [
+  {
+    "On track": [
+      "DEXS23D",
+      "SOFTWARE-INTERN"
+    ],
+    "Discontinued": [
+      "tes"
+    ],
+    "At risk": [
+      "Sandbox"
+    ]
+  }
+  
+]
+
+export const projectListPriority = [
+  {
+    "NORMAL": [
+      "DEXS23D",
+      "tes",
+      "SOFTWARE-INTERN"
+    ],
+    "LOW": [
+      "Sandbox"
+    ]
+  }
+  
+]
+
 export const totalCount = [
   {
     "total_project": 4,

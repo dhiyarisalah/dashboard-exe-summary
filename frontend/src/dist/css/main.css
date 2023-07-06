@@ -47,8 +47,6 @@ h1.dashboard{
     color: #0E2735;
 }
 
-
-
 h2.judul {
     font-weight: 700;
     font-size: 48px;
@@ -94,51 +92,6 @@ h3.sub-judul {
     padding: 0px;
     margin: 0px 10px 40px 10px;
 }
-
-
-
-
-
-
-
-/* inside chart */
-.ProjectChart .title-count {
-    font-weight: 600;
-    size: 22.6px;
-    color: #828282
-
-}
-
-.ProjectChart .title-count .count-project {
-    color: #000000;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 56.4972px;
-    line-height: 66px;
-    letter-spacing: -0.0375em;
-}
-
-.dropdown-custom .btn-secondary{
-    background-color: #194375;
-    color: white;
-}
-
-.wrapper {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
-
-.Progress .title-count {
-    font-weight: 600;
-    size: 22.6px;
-    color: #828282
-
-}
-
-.horizontal-scroll {
-    overflow-x: auto;
-  }
-
 
 /* project detail page */
 
@@ -238,3 +191,58 @@ h3.sub-judul-assignee {
 .assigneedetailspage .user-components .container-chart .row{
     margin: 0px;
 }
+
+
+/* inside chart */
+
+/* projectchart */
+.ProjectChart .project-box {
+    margin: 0px;
+    padding: 0px;
+}
+
+.ProjectChart .project-box .chart-info {
+    margin: 0px;
+    padding: 40px;
+}
+
+.ProjectChart .title-count {
+    font-weight: 600;
+    size: 22.6px;
+    color: #828282;
+
+}
+
+.ProjectChart .title-count .count-project {
+    color: #000000;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 56.4972px;
+    line-height: 66px;
+    letter-spacing: -0.0375em;
+}
+
+.ProjectChart .project-box .pie-project {
+    margin: 30px;
+}
+
+.dropdown-custom .btn-secondary{
+    background-color: #194375;
+    color: white;
+}
+
+.wrapper {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+
+.Progress .title-count {
+    font-weight: 600;
+    size: 22.6px;
+    color: #828282
+
+}
+
+.horizontal-scroll {
+    overflow-x: auto;
+  }
