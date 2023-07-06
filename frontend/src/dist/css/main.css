@@ -258,3 +258,10 @@ h3.sub-judul-assignee {
 .Progress .progress-box .chart-info {
     margin: 0px;
 }
+
+/* User Progress */
+
+.UserProgress .userprogress-box .chart-info {
+    margin: 0px;
+    padding: 40px;
+}

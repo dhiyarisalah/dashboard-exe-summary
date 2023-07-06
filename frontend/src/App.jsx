@@ -8,7 +8,7 @@ function App() {
     <div>
       <NavbarComponents />
       <Routes>
-        <Route path="/dashboard-exe-summary" Component={LandingPage} />
+        <Route path="/" Component={LandingPage} />
         <Route path="/projectdetails" Component={ProjectDetails} />
         <Route path="/assigneedetails/:label" Component={AssigneeDetails}/>
       </Routes>

@@ -10,7 +10,7 @@ function UserChart() {
   ];
 
   const [selectedItem, setSelectedItem] = useState("select type");
-  const [chartData, setChartData] = useState(generateChartData(projectStatus));
+  const [chartData, setChartData] = useState(null);
   const [totalProjectCount, setTotalProjectCount] = useState(0); // Initialize with 0
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -29,6 +29,12 @@ function UserChart() {
       updateTableData(selectedUser, selectedProject);
     }
   }, [selectedUser, selectedItem, selectedProject]);
+
+  useEffect(() => {
+    if (selectedItem === "select type") {
+      setChartData(null);
+    }
+  }, [selectedItem]);
 
   function getLabelFromURL() {
     // Logic to extract the label from the URL
@@ -85,6 +91,7 @@ function UserChart() {
       options: {
         plugins: {
           legend: {
+
             position: "right",
             labels: {
               paddingLeft: 20,
@@ -145,7 +152,11 @@ function UserChart() {
           </Col>
         </Row>
         <Row className="row">
-          <Pie data={chartData} options={chartData.options} />
+          {chartData ? (
+            <Pie data={chartData} options={chartData.options} />
+          ) : (
+            <div className="chart-placeholder">Select type first from dropdown button</div>
+          )}
         </Row>
       </div>
       <h3 className="sub-judul-assignee">Project {selectedProject?.project_name}</h3>

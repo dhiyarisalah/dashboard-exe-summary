@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Container, Row } from "react-bootstrap";
+import { Dropdown, Container, Row, Col} from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { userProgress } from "../data/index.js";
 
@@ -35,10 +35,10 @@ function Progress() {
         stacked: true,
       },
       y: {
-        stacked: true
-    }
-  }
-};
+        stacked: false,
+      },
+    },
+  };
 
   const [selectedMonth, setSelectedMonth] = useState("");
   const [projectData, setProjectData] = useState({});
@@ -64,36 +64,24 @@ function Progress() {
     const datasets = [
       {
         indexAxis: "x",
-        label: "WP Total",
-        data: data.map((item) => item.wp_total),
+        label: "Done",
+        data: data.map((item) => item.wp_done),
         fill: false,
         backgroundColor: [
-          "rgba(75,192,192,1)",
-          "#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
+          "#327332"
         ],
-        borderColor: "black",
-        borderWidth: 1,
         barThickness: 30,
       },
       {
         indexAxis: "x",
-        label: "WP Done",
-        data: data.map((item) => item.wp_done),
+        label: "Total",
+        data: data.map((item) => item.wp_total),
         fill: false,
         backgroundColor: [
-          "rgba(75,192,192,1)",
-          "#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
+          "#F6C600"
         ],
-        borderColor: "black",
-        borderWidth: 1,
         barThickness: 30,
-      },
+      }
     ];
 
     setProjectData({
@@ -106,31 +94,39 @@ function Progress() {
   return (
     <div className="UserProgress">
       <Container className="userprogress-box">
-        <Row>
-          <Dropdown onSelect={handleDropdownChange} value={selectedMonth} className="ml-auto"> {/* Add ml-auto class to move the dropdown to the right */}
-            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-              {selectedMonth ? selectedMonth : "Select month"}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {dropdownItems.map((item) => (
-                <Dropdown.Item
-                  key={item.value}
-                  eventKey={item.value}
-                  active={selectedMonth === item.value}
-                >
-                  {item.label}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+        <Row className="chart-info">
+          <Col className="d-flex justify-content-end">
+            <Dropdown onSelect={handleDropdownChange} value={selectedMonth} className="dropdown-custom .btn-secondary ml-auto">
+              <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                {selectedMonth ? selectedMonth : "Select month"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+              <Dropdown.Item disabled>Select Month</Dropdown.Item>
+                {dropdownItems.map((item) => (
+                  <Dropdown.Item
+                    key={item.value}
+                    eventKey={item.value}
+                    active={selectedMonth === item.value}
+                  >
+                    {item.label}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          </Col>
         </Row>
+        <hr style={{ height: "2px", background: "black", border: "none" }} />
         <Row>
-          <div style={{ width: "100%", height: "100%" }}>
-            {projectData.labels ? (
+          <div style={{width: "100%", height: "100%" }}>
+          {selectedMonth !== "" ? (
+            projectData.labels && projectData.labels.length > 0 ? (
               <BarChart2 chartData={projectData} handleClick={handleBarClick} />
             ) : (
-              <p>No data available for the selected month.</p>
-            )}
+              <p className="text-align center">No data available for the selected month.</p>
+            )
+          ) : (
+            <p>Select month first from the dropdown button.</p>
+          )}
           </div>
         </Row>
       </Container>

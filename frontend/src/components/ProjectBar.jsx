@@ -166,18 +166,18 @@ function ProjectBar() {
       <div>
         <h3 className="sub-judul-project">Progress</h3>
         <div className="projectProgress">
-          <BarChart
+          <BarChart 
             chartData={{
               labels: projectData.map((data) => data.project_name),
               datasets: [
                 {
-                  label: "Project Progress",
+                  label: "Done",
                   data: [projectData[0]?.percentage_done || 0],
                   backgroundColor: ["#327332"],
                   barThickness: 50,
                 },
                 {
-                  label: "Project Progress",
+                  label: "Undone",
                   data: [projectData[0]?.percentage_undone || 0],
                   backgroundColor: ["#F6C600"],
                   barThickness: 50,
