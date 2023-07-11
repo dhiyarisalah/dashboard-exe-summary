@@ -1,37 +1,39 @@
 from fastapi import HTTPException
 from auth import header, url
+import httpx
 import requests
 from work_package import get_all_wp
 
-def get_all_memberships():
+async def get_all_memberships():
     try:
-        memberships = requests.get(f"{url}/memberships", headers=header)
-        memberships.raise_for_status()  
-        data = memberships.json()
+        async with httpx.AsyncClient() as client:
+            memberships = requests.get(f"{url}/memberships", headers=header)
+            memberships.raise_for_status()  
+            data = memberships.json()
 
-        all_memberships = []
-        if "_embedded" in data and "elements" in data["_embedded"]:
-            elements = data["_embedded"]["elements"]
-            
-            for element in elements:
-                memberships_id = element["id"]
-                member_name = element["_links"]["self"]["title"]
-                project_name = element["_links"]["project"]["title"]
-                role = element["_links"]["roles"][0]["title"]
+            all_memberships = []
+            if "_embedded" in data and "elements" in data["_embedded"]:
+                elements = data["_embedded"]["elements"]
                 
-                all_memberships.append({
-                    "memberships_id": memberships_id,
-                    "member_name": member_name,
-                    "project_name": project_name,
-                    "role": role
-                })
+                for element in elements:
+                    memberships_id = element["id"]
+                    member_name = element["_links"]["self"]["title"]
+                    project_name = element["_links"]["project"]["title"]
+                    role = element["_links"]["roles"][0]["title"]
+                    
+                    all_memberships.append({
+                        "memberships_id": memberships_id,
+                        "member_name": member_name,
+                        "project_name": project_name,
+                        "role": role
+                    })
 
-            if all_memberships:
-                return all_memberships
+                if all_memberships:
+                    return all_memberships
+                else:
+                    raise HTTPException(status_code=404, detail="No memberships found.")
             else:
-                raise HTTPException(status_code=404, detail="No memberships found.")
-        else:
-            raise HTTPException(status_code=404, detail="Invalid response format.")
+                raise HTTPException(status_code=404, detail="Invalid response format.")
 
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail="Failed to connect to the API.")
@@ -41,8 +43,8 @@ def get_all_memberships():
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
     
-def get_project_members():
-    memberships = get_all_memberships()
+async def get_project_members():
+    memberships = await get_all_memberships()
     project_details = {}
 
     for member in memberships:
@@ -59,9 +61,9 @@ def get_project_members():
     list_project_details = list(project_details.values())
     return list_project_details
     
-def get_progress_assignee():
+async def get_progress_assignee():
     assignee_progress = {}
-    all_wp = get_all_wp()
+    all_wp = await get_all_wp()
     for item in all_wp:
         month = item.get("month")
         assignee = item.get("assignee")
@@ -97,9 +99,9 @@ def get_progress_assignee():
 
     return result
 
-def get_assignee_details():
+async def get_assignee_details():
     assignee_details = {}
-    all_wp = get_all_wp()
+    all_wp = await get_all_wp()
     total_wp = 0  
     total_sp = 0  
 
@@ -156,9 +158,9 @@ def get_assignee_details():
     return result
 
 
-def get_assignee_wp_details():
+async def get_assignee_wp_details():
     wp_details = {}
-    all_wp = get_all_wp()
+    all_wp = await get_all_wp()
     for item in all_wp:
         user_name = item.get("assignee")
         project_name = item.get("project_name")
