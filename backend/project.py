@@ -1,14 +1,15 @@
 from fastapi import HTTPException
 from auth import header, url
+import httpx
 import requests
 from work_package import get_all_wp
 from version import get_all_versions
 from collections import Counter
 
-def count_all():
-    all_projects = get_all_projects()
-    all_wp = get_all_wp()
-    all_versions = get_all_versions()
+async def count_all():
+    all_projects = await get_all_projects()
+    all_wp = await get_all_wp()
+    all_versions = await get_all_versions()
     total_project = 0
     total_wp = 0
     total_version = 0
@@ -22,36 +23,37 @@ def count_all():
             "total_wp": total_wp, 
             "total_version": total_version}
 
-def get_all_projects():
+async def get_all_projects():
     try: 
-        projects = requests.get(f"{url}/projects",headers=header)
-        projects.raise_for_status()
-        all_projects = []
-        data = projects.json()
-        if "_embedded" in data and "elements" in data["_embedded"]:
-            elements = data["_embedded"]["elements"]
-            for element in elements:
-                project_id = element["id"]
-                project_name = element["name"]
-                project_status = element["_links"]["status"]["title"] # seluruh project harus di set status
-                project_priority = element["_links"]["customField5"]["title"] # seluruh project harus di set priority
-                project_parent = element["_links"].get("parent", {}).get("title")
+        async with httpx.AsyncClient() as client:
+            projects = requests.get(f"{url}/projects",headers=header)
+            projects.raise_for_status()
+            all_projects = []
+            data = projects.json()
+            if "_embedded" in data and "elements" in data["_embedded"]:
+                elements = data["_embedded"]["elements"]
+                for element in elements:
+                    project_id = element["id"]
+                    project_name = element["name"]
+                    project_status = element["_links"]["status"]["title"] # seluruh project harus di set status
+                    project_priority = element["_links"]["customField5"]["title"] # seluruh project harus di set priority
+                    project_parent = element["_links"].get("parent", {}).get("title")
 
-                if project_parent is None:
-                    project_parent = None
+                    if project_parent is None:
+                        project_parent = None
 
-                if len(project_name) == 7:
-                    all_projects.append({"project_id": project_id, 
-                                        "project_name": project_name,
-                                        "project_parent": project_parent, 
-                                        "project_status": project_status, 
-                                        "project_priority": project_priority})
-            if all_projects:
-                return all_projects
+                    if len(project_name) == 7:
+                        all_projects.append({"project_id": project_id, 
+                                            "project_name": project_name,
+                                            "project_parent": project_parent, 
+                                            "project_status": project_status, 
+                                            "project_priority": project_priority})
+                if all_projects:
+                    return all_projects
+                else:
+                    raise HTTPException(status_code=404, detail="No projects found.")   
             else:
-                raise HTTPException(status_code=404, detail="No projects found.")   
-        else:
-            raise HTTPException(status_code=404, detail="Invalid response format.")
+                raise HTTPException(status_code=404, detail="Invalid response format.")
 
     except requests.exceptions.RequestException as e:
         raise HTTPException(status_code=500, detail="Failed to connect to the API.")
@@ -61,21 +63,21 @@ def get_all_projects():
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
     
-def project_count_by_status():
-    all_projects = get_all_projects()
+async def project_count_by_status():
+    all_projects = await get_all_projects()
     status_list = [project.get("project_status") for project in all_projects if project.get("project_status")]
     status_counts = dict(Counter(status_list))
     return status_counts
 
-def project_count_by_priority():
-    all_projects = get_all_projects()
+async def project_count_by_priority():
+    all_projects = await get_all_projects()
     priority_list = [project.get("project_priority") for project in all_projects if project.get("project_priority")]
     priority_counts = dict(Counter(priority_list))
     return priority_counts
 
 
-def project_list():
-    all_projects = get_all_projects()
+async def project_list():
+    all_projects = await get_all_projects()
     project_list = []
     for project in all_projects:
         project_name = project.get("project_name")
@@ -83,8 +85,8 @@ def project_list():
 
     return project_list
 
-def project_list_by_status():
-    all_projects = get_all_projects()
+async def project_list_by_status():
+    all_projects = await get_all_projects()
     project_list = {}
     for project in all_projects:
         project_name = project.get("project_name")
@@ -98,8 +100,8 @@ def project_list_by_status():
 
     return project_list
     
-def project_list_by_priority():
-    all_projects = get_all_projects()
+async def project_list_by_priority():
+    all_projects = await get_all_projects()
     project_list = {}
     for project in all_projects:
         project_name = project.get("project_name")
@@ -113,8 +115,8 @@ def project_list_by_priority():
 
     return project_list
 
-def get_progress_project():
-    all_wp = get_all_wp()
+async def get_progress_project():
+    all_wp = await get_all_wp()
     progress_counts = {}
     for item in all_wp:
         value = item.get("project_name")
@@ -156,9 +158,8 @@ def get_progress_project():
         })
     return result
 
-
-def get_progress_assignee_project():
-    data = get_all_wp()
+async def get_progress_assignee_project():
+    data = await get_all_wp()
     result = []
 
     for item in data:
