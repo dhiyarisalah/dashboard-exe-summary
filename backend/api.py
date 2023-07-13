@@ -67,7 +67,9 @@ async def get_miles_by_project():
 # Phase Overview
 
 # Burndown Chart All Project
-# bikin wp done dan all tiap bulan tiap tahun
+@router.get("/get-burndown-chart-overview")
+async def burndown_chart_overview():
+    return await get_burndown_chart_overview()
 
 # User Progress Overview 
 # dibagi lagi per project dan per year
@@ -100,6 +102,10 @@ async def project_members():
 @router.get("/get-progress-assignee-project")
 async def progress_assignee_project():
     return await get_progress_assignee_project()
+
+@router.get("/get-progress-assignee-version")
+async def progress_assignee_version():
+    return await get_progress_assignee_version()
 
 # Milestone Project
 # pake endpoint Milestone Overview 

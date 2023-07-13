@@ -60,44 +60,47 @@ async def get_project_members():
 
     list_project_details = list(project_details.values())
     return list_project_details
-    
+
+
 async def get_progress_assignee():
     assignee_progress = {}
     all_wp = await get_all_wp()
     for item in all_wp:
-        month = item.get("month")
+        project_name = item.get("project_name")
         assignee = item.get("assignee")
+        year = item.get("year")
+        month = item.get("month")
 
-        if month is not None and assignee is not None:
-            if month not in assignee_progress:
-                assignee_progress[month] = []
-
-            assignee_data = None
-            for data in assignee_progress[month]:
-                if data["user_name"] == assignee:
-                    assignee_data = data
-                    break
-
-            if assignee_data is None:
-                assignee_data = {
-                    "user_name": assignee,
+        if project_name is not None and assignee is not None and year is not None and month is not None:
+            key = (year, month, assignee, project_name)
+            if key not in assignee_progress:
+                assignee_progress[key] = {
                     "wp_total": 0,
                     "wp_done": 0
                 }
-                assignee_progress[month].append(assignee_data)
 
+            assignee_data = assignee_progress[key]
             assignee_data["wp_total"] += 1
 
             if item.get("status") == "Done":
                 assignee_data["wp_done"] += 1
 
     result = {}
-    for month, progress in assignee_progress.items():
-        for data in progress:
-            data["progress"] = round((data["wp_done"] / data["wp_total"]) * 100)
-        result[month] = progress
+    for key, progress in sorted(assignee_progress.items()):
+        year, month, assignee, project_name = key
+        if year not in result:
+            result[year] = {}
+        if month not in result[year]:
+            result[year][month] = {}
+        if assignee not in result[year][month]:
+            result[year][month][assignee] = {}
+        if project_name not in result[year][month][assignee]:
+            result[year][month][assignee][project_name] = {}
+
+        result[year][month][assignee][project_name] = progress
 
     return result
+
 
 async def get_assignee_details():
     assignee_details = {}
@@ -167,6 +170,7 @@ async def get_assignee_wp_details():
         wp_name = item.get("wp_name")
         progress = item.get("percentage_done")
         story_points = item.get("story_points")
+        date = item.get("date")
 
         if user_name is not None and project_name is not None:  
             if user_name not in wp_details:
@@ -187,6 +191,7 @@ async def get_assignee_wp_details():
             
             wp_assigned_data = {
                 "wp_name": wp_name,
+                "date": date,
                 "progress": progress,
                 "story_points": story_points
             }

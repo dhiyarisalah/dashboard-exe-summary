@@ -23,7 +23,7 @@ def process_element(element):
 
     if story_points is None:
         story_points = 0
-
+    
     date_field = "date" if wp_type == "Milestone" else "startDate"
     date = element.get(date_field)
     if date is not None:
@@ -133,3 +133,43 @@ async def miles_by_project():
 
     milestones_list = list(milestones.values())
     return milestones_list
+
+
+async def get_burndown_chart_overview():
+    burndown_chart = {}
+    all_wp = await get_all_wp()
+    for item in all_wp:
+        month = item.get("month")
+        year = item.get("year")
+
+        if month is not None and year is not None:  
+            if year not in burndown_chart:
+                burndown_chart[year] = []
+
+            progress_data = None
+            for data in burndown_chart[year]:
+                if data["month"] == month:
+                    progress_data = data
+                    break
+
+            if progress_data is None:
+                progress_data = {
+                    "month": month,
+                    "wp_done": 0,
+                    "wp_on_going": 0
+                }
+                burndown_chart[year].append(progress_data)
+
+            if item.get("status") == "Done":
+                progress_data["wp_done"] += 1
+            else:
+                progress_data["wp_on_going"] += 1
+
+
+    result = []
+    for year, progress in burndown_chart.items():
+        result.append({
+            "year": year,
+            "progress": progress
+        })
+    return result
