@@ -286,3 +286,8 @@ h3.sub-judul-assignee {
 .projectdetailspage .project-components .container-chart .row {
     padding-top: 20px;
 }
+
+.BurdownAll .burdownall-box .chart-info {
+    margin: 0px;
+    padding: 40px;
+}

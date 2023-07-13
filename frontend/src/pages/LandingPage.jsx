@@ -50,12 +50,13 @@ const LandingPage = () => {
               <Progress />
             </Col>
           </Row>
-          <h3 className="sub-judul">Milestones</h3>
+          <h3 className="sub-judul">Burndown Chart</h3>
           <Row className="row">
             <Col className="container-chart">
               <BurndownChart />
             </Col>
           </Row>
+          <h3 className="sub-judul">Milestones</h3>
           <Row className="row">
             <Col className="container-chart">
               <Ganttchart />

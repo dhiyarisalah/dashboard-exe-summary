@@ -95,7 +95,7 @@ function UserProgress() {
 
   return (
     <div className="UserProgress">
-      <Container className="userprogress-box">
+      <div className="userprogress-box">
         <Row className="chart-info">
           <Col className="d-flex justify-content-end">
             <Dropdown
@@ -135,7 +135,7 @@ function UserProgress() {
             )}
           </div>
         </Row>
-      </Container>
+      </div>
     </div>
   );
 }
