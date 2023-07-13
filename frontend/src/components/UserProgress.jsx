@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Container, Row, Col} from "react-bootstrap";
+import { Dropdown, Container, Row, Col } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { userProgress } from "../data/index.js";
 
-function BarChart2({ chartData, handleClick }) {
+function StackedChart({ chartData, handleClick }) {
   return <Bar data={chartData} options={{ ...chartData.options, onClick: handleClick }} />;
 }
 
-function Progress() {
+function UserProgress() {
   const dropdownItems = [
     { label: "January", value: "January" },
     { label: "February", value: "February" },
@@ -40,7 +40,13 @@ function Progress() {
     },
   };
 
-  const [selectedMonth, setSelectedMonth] = useState("");
+  const getCurrentMonth = () => {
+    const currentDate = new Date();
+    const month = currentDate.toLocaleString("default", { month: "long" });
+    return month;
+  };
+
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
   const [projectData, setProjectData] = useState({});
 
   const handleDropdownChange = (eventKey) => {
@@ -67,21 +73,17 @@ function Progress() {
         label: "Done",
         data: data.map((item) => item.wp_done),
         fill: false,
-        backgroundColor: [
-          "#327332"
-        ],
-        barThickness: 30,
+        backgroundColor: ["#327332"],
+        barThickness: 50,
       },
       {
         indexAxis: "x",
         label: "Total",
         data: data.map((item) => item.wp_total),
         fill: false,
-        backgroundColor: [
-          "#F6C600"
-        ],
-        barThickness: 30,
-      }
+        backgroundColor: ["#F6C600"],
+        barThickness: 50,
+      },
     ];
 
     setProjectData({
@@ -96,12 +98,16 @@ function Progress() {
       <Container className="userprogress-box">
         <Row className="chart-info">
           <Col className="d-flex justify-content-end">
-            <Dropdown onSelect={handleDropdownChange} value={selectedMonth} className="dropdown-custom .btn-secondary ml-auto">
+            <Dropdown
+              onSelect={handleDropdownChange}
+              value={selectedMonth}
+              className="dropdown-custom .btn-secondary ml-auto"
+            >
               <Dropdown.Toggle variant="secondary" id="dropdown-basic">
                 {selectedMonth ? selectedMonth : "Select month"}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-              <Dropdown.Item disabled>Select Month</Dropdown.Item>
+                <Dropdown.Item disabled>Select Month</Dropdown.Item>
                 {dropdownItems.map((item) => (
                   <Dropdown.Item
                     key={item.value}
@@ -117,16 +123,16 @@ function Progress() {
         </Row>
         <hr style={{ height: "2px", background: "black", border: "none" }} />
         <Row>
-          <div style={{width: "100%", height: "100%" }}>
-          {selectedMonth !== "" ? (
-            projectData.labels && projectData.labels.length > 0 ? (
-              <BarChart2 chartData={projectData} handleClick={handleBarClick} />
+          <div style={{ width: "100%", height: "100%" }}>
+            {selectedMonth !== "" ? (
+              projectData.labels && projectData.labels.length > 0 ? (
+                <StackedChart chartData={projectData} handleClick={handleBarClick} />
+              ) : (
+                <p className="text-align center">No data available for the selected month.</p>
+              )
             ) : (
-              <p className="text-align center">No data available for the selected month.</p>
-            )
-          ) : (
-            <p>Select month first from the dropdown button.</p>
-          )}
+              <p>Select month first from the dropdown button.</p>
+            )}
           </div>
         </Row>
       </Container>
@@ -134,4 +140,4 @@ function Progress() {
   );
 }
 
-export default Progress;
+export default UserProgress;

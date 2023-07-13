@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import ProjectBar from "../components/ProjectBar";
 
 
 function ProjectDetails() {
-  const location = useLocation();
-  const [label, setLabel] = useState("");
-
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const label = queryParams.get("label");
-    setLabel(label || "Project Details");
-  }, [location]);
+  // Get the total_project value from totalCount dataset
+  const { label } = useParams();
 
   return (
     <div className="projectdetailspage">

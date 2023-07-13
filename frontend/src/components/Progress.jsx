@@ -1,17 +1,16 @@
 import { useState } from "react";
 import BarChart from "./BarChart";
 import { projectProgress } from "../data/index.js";
-import { Container, Col, Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 
 function Progress() {
-  const handleBarClick = (event, barElement) => {
-    if (barElement.length > 0) {
-      const dataIndex = barElement[0].index;
-      const label = projectData.labels[dataIndex];
-      window.location.href = "/projectdetails?label=" + label;
+  const handleBarClick = (event, elements) => {
+    if (elements.length > 0) {
+      const clickedIndex = elements[0].index;
+      const clickedLabel = projectData.labels[clickedIndex];
+      window.location.href = `/projectdetails/${clickedLabel}`;
     }
   };
-
   const options = {
     plugins: {
       legend: {
@@ -43,6 +42,7 @@ function Progress() {
       options: options,
     };
   });
+
 
   return (
     <div className="Progress">

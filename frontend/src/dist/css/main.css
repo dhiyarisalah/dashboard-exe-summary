@@ -265,3 +265,24 @@ h3.sub-judul-assignee {
     margin: 0px;
     padding: 40px;
 }
+
+.container-chart .milestonesProject .row {
+   padding: 40px;
+}
+
+.container-chart .milestonesProject .table-responsive {
+    margin: 40px;
+ }
+
+ .assigneedetailspage .user-components .row .table-placeholder {
+    padding: 0px;
+    margin: 0px 0px 0px 50px;
+ }
+
+ .assigneedetailspage .user-components .container-chart .row {
+    padding: 30px 20px 20px 40px;
+ }
+
+.projectdetailspage .project-components .container-chart .row {
+    padding-top: 20px;
+}

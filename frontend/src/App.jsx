@@ -9,7 +9,7 @@ function App() {
       <NavbarComponents />
       <Routes>
         <Route path="/" Component={LandingPage} />
-        <Route path="/projectdetails" Component={ProjectDetails} />
+        <Route path="/projectdetails/:label" Component={ProjectDetails} />
         <Route path="/assigneedetails/:label" Component={AssigneeDetails}/>
       </Routes>
     </div>

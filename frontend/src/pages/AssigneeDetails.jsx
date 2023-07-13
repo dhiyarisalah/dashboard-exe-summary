@@ -4,7 +4,6 @@ import UserChart from "../components/UserChart";
 
 
 function AssigneeDetails() {
-  // Get the total_project value from totalCount dataset
   const { label } = useParams();
 
   return (

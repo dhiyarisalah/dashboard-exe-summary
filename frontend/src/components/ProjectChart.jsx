@@ -14,16 +14,10 @@ function ProjectChart() {
   const [chartData, setChartData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [clickedLabel, setClickedLabel] = useState("");
-  const [projectList, setProjectList] = useState([]);
-  const [showMessage, setShowMessage] = useState(true);
 
   useEffect(() => {
-    setChartData(generateChartData(null));
+    setChartData(generateChartData(projectPriority));
   }, []);
-
-  useEffect(() => {
-    setShowMessage(selectedItem === "Select Type");
-  }, [selectedItem]);
 
   function handleChartDataUpdate(selectedValue) {
     if (selectedValue === "Status") {
@@ -70,14 +64,12 @@ function ProjectChart() {
             labels: {
               padding: 30,
               boxWidth: 15,
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
             },
           },
         },
         onClick: (_, activeElements) => {
           if (activeElements.length > 0) {
-            const legendItem = activeElements[0];
-            const clickedLabel = labels[legendItem.index];
+            const clickedLabel = labels[activeElements[0].index];
             handleLegendClick(clickedLabel);
           }
         },
@@ -98,7 +90,7 @@ function ProjectChart() {
           <Col className="d-flex justify-content-end">
             <Dropdown className="dropdown-custom" onSelect={handleDropdownSelect}>
               <Dropdown.Toggle variant="secondary" id="dropdownMenu2">
-                {selectedItem === "Select Type" ? "Select Type" : selectedItem}
+                {selectedItem}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item disabled>Select Type</Dropdown.Item>
@@ -112,25 +104,16 @@ function ProjectChart() {
           </Col>
         </Row>
         <hr style={{ height: "2px", background: "black", border: "none" }} />
-
-        <div
-          className={`pie-project ${showMessage ? "chart-hidden" : ""} chart-container`}
-        >
-          {showMessage ? (
-            <div className="chart-message">Select type first from dropdown button</div>
-          ) : chartData ? (
-            <Pie
-              data={chartData}
-              options={chartData.options}
-              style={{
-                opacity: chartData ? 1 : 0,
-                transition: "opacity 0.5s ease, width 0.5s ease"
-              }}
-            />
-          ) : (
-            <div>Loading chart...</div>
-          )}
-        </div>
+        {chartData && (
+          <Pie
+            data={chartData}
+            options={chartData.options}
+            style={{
+              opacity: 1,
+              transition: "opacity 0.5s ease, width 0.5s ease"
+            }}
+          />
+        )}
       </Container>
       <Modal show={modalVisible} onHide={handleCloseModal}>
         <Modal.Header closeButton>
@@ -147,10 +130,8 @@ function ProjectChart() {
             )}
             {selectedItem === "Priority" && (
               <ul>
-                {Object.entries(projectPriority[0]).map(([key, value]) => (
-                  <li key={key}>
-                    {key}: {value}
-                  </li>
+                {projectListPriority[0][clickedLabel]?.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
             )}

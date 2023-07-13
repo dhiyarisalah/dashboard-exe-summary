@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Dropdown, Container, Row, Col, Table } from "react-bootstrap";
+import {Dropdown, Container, Row, Col, Table } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
-import { projectStatus, projectPriority, userDetails, wpDetails } from "../data/index.js";
+import {userDetails, wpDetails } from "../data/index.js";
 
 function UserChart() {
   const dropdownItems = [
-    { label: "work packages", value: "work packages" },
-    { label: "user points", value: "story points" },
+    { label: "Work Packages", value: "Work Packages" },
+    { label: "User Points", value: "Story Points" },
   ];
 
-  const [selectedItem, setSelectedItem] = useState("select type");
+  const [selectedItem, setSelectedItem] = useState("Work Packages");
   const [chartData, setChartData] = useState(null);
-  const [totalProjectCount, setTotalProjectCount] = useState(0); // Initialize with 0
+  const [totalProjectCount, setTotalProjectCount] = useState(0);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedProject, setSelectedProject] = useState(null);
   const [tableData, setTableData] = useState([]);
+  const [showTableMessage, setShowTableMessage] = useState(true);
 
   useEffect(() => {
-    const label = getLabelFromURL(); // Get the label from the URL
-    const user = userDetails.find((user) => user.user_name === label); // Find the user based on the label
-    setSelectedUser(user); // Set the selected user
+    const label = getLabelFromURL();
+    const user = userDetails.find((user) => user.user_name === label);
+    setSelectedUser(user);
   }, []);
 
   useEffect(() => {
@@ -31,13 +32,12 @@ function UserChart() {
   }, [selectedUser, selectedItem, selectedProject]);
 
   useEffect(() => {
-    if (selectedItem === "select type") {
+    if (selectedItem === "Select Type") {
       setChartData(null);
     }
   }, [selectedItem]);
 
   function getLabelFromURL() {
-    // Logic to extract the label from the URL
     const url = window.location.href;
     const parts = url.split("/");
     const label = parts[parts.length - 1];
@@ -45,17 +45,17 @@ function UserChart() {
   }
 
   function handleTotalProjectCountUpdate(selectedValue) {
-    if (selectedValue === "work packages") {
+    if (selectedValue === "Work Packages") {
       setTotalProjectCount(selectedUser.total_wp);
-    } else if (selectedValue === "story points") {
+    } else if (selectedValue === "Story Points") {
       setTotalProjectCount(selectedUser.total_sp);
     }
   }
 
   function handleChartDataUpdate(selectedValue) {
-    if (selectedValue === "work packages") {
+    if (selectedValue === "Work Packages") {
       setChartData(generateChartData(selectedUser.projects, "wp_assigned"));
-    } else if (selectedValue === "story points") {
+    } else if (selectedValue === "Story Points") {
       setChartData(generateChartData(selectedUser.projects, "story_points"));
     }
   }
@@ -64,6 +64,7 @@ function UserChart() {
     setSelectedItem(eventKey);
     handleChartDataUpdate(eventKey);
     handleTotalProjectCountUpdate(eventKey);
+    setShowTableMessage(true);
   }
 
   function handleChartClick(event, elements) {
@@ -72,6 +73,7 @@ function UserChart() {
       const selectedProject = selectedUser.projects[selectedIndex];
       setSelectedProject(selectedProject);
       updateTableData(selectedUser, selectedProject);
+      setShowTableMessage(false);
     }
   }
 
@@ -91,12 +93,10 @@ function UserChart() {
       options: {
         plugins: {
           legend: {
-
             position: "right",
             labels: {
-              paddingLeft: 20,
-              boxWidth: 12,
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+              padding: 30,
+              boxWidth: 15   
             },
           },
         },
@@ -125,45 +125,49 @@ function UserChart() {
 
   return (
     <Container fluid className="user-components">
-      <h3 className='sub-judul-assignee'>Overview</h3>
+      <h3 className="sub-judul-assignee">Overview</h3>
       <div className="container-chart">
         <Row className="row">
           <div className="title-count">
-            Total {selectedItem} <br /> 
-            <span className="count-project">
+            Total {selectedItem} <br />
+            <span style={{ marginTop: "20px" }} className="count-project">
               {totalProjectCount} {selectedItem}
             </span>
           </div>
         </Row>
+
         <Row className="row">
           <Col className="d-flex justify-content-end">
             <Dropdown onSelect={handleDropdownSelect}>
-                <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                  {selectedItem}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {dropdownItems.map((item, index) => (
-                    <Dropdown.Item key={index} eventKey={item.value}>
-                      {item.label}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-            </Dropdown>  
+              <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                {selectedItem}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {dropdownItems.map((item, index) => (
+                  <Dropdown.Item key={index} eventKey={item.value}>
+                    {item.label}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           </Col>
         </Row>
+        <hr style={{ height: "2px", background: "black", border: "none" }} />
         <Row className="row">
           {chartData ? (
             <Pie data={chartData} options={chartData.options} />
           ) : (
-            <div className="chart-placeholder">Select type first from dropdown button</div>
+            <div className="chart-placeholder">
+              {selectedItem !== "Select Type" ? "Select type first from dropdown button" : null}
+            </div>
           )}
         </Row>
       </div>
       <h3 className="sub-judul-assignee">Project {selectedProject?.project_name}</h3>
       <div>
         <Row className="row">
-          {selectedProject && (
-            <Table striped bordered hover style={{ width: '60%', marginLeft: 40 }}>
+          {selectedProject ? (
+            <Table striped bordered hover style={{ width: "60%", marginLeft: 40 }}>
               <thead>
                 <tr>
                   <th>Work Packages</th>
@@ -181,6 +185,10 @@ function UserChart() {
                 ))}
               </tbody>
             </Table>
+          ) : (
+            <div className="table-placeholder">
+              {showTableMessage ? "Select project first" : "No project selected"}
+            </div>
           )}
         </Row>
       </div>

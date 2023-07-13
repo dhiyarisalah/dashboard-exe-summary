@@ -4,6 +4,7 @@ import ProjectChart from '../components/ProjectChart';
 import Progress from '../components/Progress';
 import Ganttchart  from '../components/Ganttchart';
 import UserProgress from '../components/UserProgress';
+import BurndownChart from '../components/BurndownChart';
 
 const LandingPage = () => {
   const [lastUpdate, setLastUpdate] = useState('');
@@ -28,7 +29,7 @@ const LandingPage = () => {
         <Row className="page-text">
           <Col className="text">
             <h1 className="dashboard">Dashboard</h1>
-            <text className="date-updated"> Last Update: {lastUpdate} </text>
+            <div className="date-updated"> Last Update: {lastUpdate} </div>
           </Col>
           <Col className="text d-flex justify-content-end">
             <Button className="refresh-button" onClick={handleRefresh}>
@@ -41,7 +42,7 @@ const LandingPage = () => {
         <div className="page-text" key="project-overview">
           <h2 className="judul">Project</h2>
           <h3 className="sub-judul">Overview</h3>
-          <Row className="row w=200 min-vh-200">
+          <Row className="row">
             <Col className="container-chart">
               <ProjectChart />
             </Col>
@@ -50,7 +51,12 @@ const LandingPage = () => {
             </Col>
           </Row>
           <h3 className="sub-judul">Milestones</h3>
-          <Row className="row w=100 min-vh-100">
+          <Row className="row">
+            <Col className="container-chart">
+              <BurndownChart />
+            </Col>
+          </Row>
+          <Row className="row">
             <Col className="container-chart">
               <Ganttchart />
             </Col>
@@ -61,7 +67,7 @@ const LandingPage = () => {
         <div className="page-text" key="all-assignees">
           <h2 className="judul">All Assignees</h2>
           <h3 className="sub-judul">Work Packages</h3>
-          <Row className="row w=100 min-vh-100">
+          <Row className="row">
             <Col className="container-chart">
               <UserProgress />
             </Col>

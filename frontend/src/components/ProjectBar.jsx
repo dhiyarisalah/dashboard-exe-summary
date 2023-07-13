@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from "react";
 import BarChart from "./BarChart";
 import LineChart from "./LineChart";
-import { projectDetails, burndownData, projectAssignee } from "../data/index.js";
-import { Container, Col, Row, Dropdown, Table } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { projectDetails, burndownData, assigneeProject } from "../data/index";
+import { Container, Col, Dropdown, Row } from "react-bootstrap";
+import { Bar } from "react-chartjs-2";
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
 function ProjectBar() {
-  const query = useQuery();
-  const labelParam = query.get("label");
 
   const [selectedVersion, setSelectedVersion] = useState(null);
-  const [isVersionSelected, setIsVersionSelected] = useState(false);
-  const [projectData, setProjectData] = useState([]);
+  const [projectData, setProjectData] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
-  const [tableData, setTableData] = useState([]);
+  const [assigneeData, setAssigneeData] = useState(null);
+  const [selectedDropdown, setSelectedDropdown] = useState("progress");
+
+  function getLabelFromURL() {
+    const url = window.location.href;
+    const parts = url.split("/");
+    const label = parts[parts.length - 1];
+    return decodeURIComponent(label);
+  }
+  
+  const labelParam = getLabelFromURL();
 
   useEffect(() => {
     if (labelParam) {
@@ -26,110 +30,58 @@ function ProjectBar() {
       );
 
       if (project) {
-        const versions = project.progress.map((version) => version.version_name);
-
-        if (!isVersionSelected) {
-          setSelectedVersion(versions[0]);
-        }
-
-        const filteredData = project.progress.find(
-          (version) => version.version_name === selectedVersion
+        const versions = project.progress.map(
+          (version) => version.version_name
         );
 
-        setProjectData([
-          {
-            project_name: project.project_name,
-            percentage_done: filteredData ? filteredData.percentage_done : 0,
-            percentage_undone: filteredData ? filteredData.percentage_undone : 0,
-          },
-        ]);
+        const latestVersion = versions[versions.length - 1];
+        setSelectedVersion(latestVersion);
+
+        const filteredData = project.progress.find(
+          (version) => version.version_name === latestVersion
+        );
+
+        setProjectData({
+          project_name: project.project_name,
+          percentage_done: filteredData ? filteredData.percentage_done : 0,
+          percentage_undone: filteredData ? filteredData.percentage_undone : 0,
+        });
 
         const burndownProject = burndownData.find(
           (burndownProject) => burndownProject.project_name === labelParam
         );
 
-        if (burndownProject) {
-          const burndownVersion = burndownProject.versions.find(
-            (version) => version.version_name === selectedVersion
-          );
-
-          setLineChartData(burndownVersion ? burndownVersion.progress : null);
-        }
-
-        const assigneeData = projectAssignee.find(
-          (project) => project.hasOwnProperty(labelParam)
+        const burndownVersion = burndownProject?.versions.find(
+          (version) => version.version_name === latestVersion
         );
 
-        if (assigneeData) {
-          const assigneeVersionData = assigneeData[labelParam][0][selectedVersion];
+        setLineChartData(burndownVersion?.progress || null);
 
-          if (assigneeVersionData) {
-            setTableData([...assigneeVersionData]);
-          } else {
-            setTableData([]);
-          }
-        } else {
-          setTableData([]);
-        }
+        const assigneeData = assigneeProject.find(
+          (project) => project.project_name === labelParam
+        );
+
+        const assigneeVersionData = assigneeData?.versions.find(
+          (version) => version.version_name === latestVersion
+        );
+
+        setAssigneeData(assigneeVersionData || null);
+      } else {
+        setSelectedVersion(null);
+        setProjectData(null);
+        setLineChartData(null);
+        setAssigneeData(null);
       }
-    } else {
-      setSelectedVersion(null);
-      setIsVersionSelected(false);
-      setProjectData([]);
-      setLineChartData(null);
-      setTableData([]);
     }
-  }, [labelParam, selectedVersion, isVersionSelected]);
+  }, [labelParam]);
 
   const handleVersionSelect = (eventKey) => {
     setSelectedVersion(eventKey);
-    setIsVersionSelected(true);
+    setSelectedDropdown("progress");
+  };
 
-    const project = projectDetails.find(
-      (project) => project.project_name === labelParam
-    );
-
-    if (project) {
-      const filteredData = project.progress.find(
-        (version) => version.version_name === eventKey
-      );
-
-      setProjectData([
-        {
-          project_name: project.project_name,
-          percentage_done: filteredData ? filteredData.percentage_done : 0,
-          percentage_undone: filteredData ? filteredData.percentage_undone : 0,
-        },
-      ]);
-
-      const burndownProject = burndownData.find(
-        (burndownProject) => burndownProject.project_name === labelParam
-      );
-
-      if (burndownProject) {
-        const burndownVersion = burndownProject.versions.find(
-          (version) => version.version_name === eventKey
-        );
-
-        setLineChartData(burndownVersion ? burndownVersion.progress : null);
-      }
-
-      const assigneeData = projectAssignee.find(
-        (project) => project.hasOwnProperty(labelParam)
-      );
-
-      if (assigneeData) {
-        const assigneeVersionData = assigneeData[labelParam][0][eventKey];
-
-        if (assigneeVersionData) {
-          setTableData([...assigneeVersionData]);
-        } else {
-          setTableData([]);
-        }
-      } else {
-        setTableData([]);
-      }
-    }
+  const handleDropdownSelect = (eventKey) => {
+    setSelectedDropdown(eventKey);
   };
 
   const getDropdownItems = () => {
@@ -139,7 +91,10 @@ function ProjectBar() {
 
     if (project) {
       return project.progress.map((version) => (
-        <Dropdown.Item key={version.version_name} eventKey={version.version_name}>
+        <Dropdown.Item
+          key={version.version_name}
+          eventKey={version.version_name}
+        >
           {version.version_name}
         </Dropdown.Item>
       ));
@@ -150,72 +105,73 @@ function ProjectBar() {
 
   return (
     <Container fluid className="project-components">
-      <div>
-        <Col className="button d-flex justify-content-end">
-          <Dropdown onSelect={handleVersionSelect}>
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              {selectedVersion}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {getDropdownItems()}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Col>
-      </div>
-      
+      <Col className="button d-flex justify-content-end">
+        <Dropdown className="dropdown-custom" onSelect={handleVersionSelect}>
+          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+            {selectedVersion}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item disabled>Select Version</Dropdown.Item>
+            {getDropdownItems()}
+          </Dropdown.Menu>
+        </Dropdown>
+      </Col>
+
       <div>
         <h3 className="sub-judul-project">Progress</h3>
         <div className="projectProgress">
-          <BarChart 
-            chartData={{
-              labels: projectData.map((data) => data.project_name),
-              datasets: [
-                {
-                  label: "Done",
-                  data: [projectData[0]?.percentage_done || 0],
-                  backgroundColor: ["#327332"],
-                  barThickness: 50,
-                },
-                {
-                  label: "Undone",
-                  data: [projectData[0]?.percentage_undone || 0],
-                  backgroundColor: ["#F6C600"],
-                  barThickness: 50,
-                },
-              ],
-              options: {
-                maintainAspectRatio: false,
-                indexAxis: "y",
-                plugins: {
-                  legend: {
-                    display: false,
+          {projectData && (
+            <BarChart
+              chartData={{
+                labels: [projectData.project_name],
+                datasets: [
+                  {
+                    label: "Done",
+                    data: [projectData.percentage_done],
+                    backgroundColor: ["#327332"],
+                    barThickness: 50,
                   },
-                },
-                scales: {
-                  x: {
-                    display: false,
-                    stacked: true,
-                    beginAtZero: true,
-                    grid: {
+                  {
+                    label: "Undone",
+                    data: [projectData.percentage_undone],
+                    backgroundColor: ["#F6C600"],
+                    barThickness: 50,
+                  },
+                ],
+                options: {
+                  maintainAspectRatio: false,
+                  indexAxis: "y",
+                  plugins: {
+                    legend: {
                       display: false,
                     },
                   },
-                  y: {
-                    display: false,
-                    stacked: true,
-                    beginAtZero: true,
-                    grid: {
+                  scales: {
+                    x: {
                       display: false,
+                      stacked: true,
+                      beginAtZero: true,
+                      grid: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      display: false,
+                      stacked: true,
+                      beginAtZero: true,
+                      grid: {
+                        display: false,
+                      },
                     },
                   },
                 },
-              },
-            }}
-          />
-          </div>
+              }}
+            />
+          )}
+        </div>
       </div>
 
-      <div> 
+      <div>
         <h3 className="sub-judul-project">Burndown Chart</h3>
         <div className="container-chart">
           {lineChartData && (
@@ -227,64 +183,100 @@ function ProjectBar() {
                     label: "Done",
                     data: lineChartData.map((data) => data.wp_done),
                     fill: false,
-                    backgroundColor: "#165BAA"
+                    backgroundColor: "#165BAA",
+                    borderColor: "#165BAA",
                   },
                   {
                     label: "Added",
                     data: lineChartData.map((data) => data.wp_on_going),
                     fill: false,
-                    backgroundColor: "#A155B9"
+                    backgroundColor: "#A155B9",
+                    borderColor: "#A155B9",
                   },
                 ],
                 options: {
                   plugins: {
                     legend: {
                       display: true,
-                    },
-                  },
-                  scales: {
-                    x: {
-                      beginAtZero: true,
-                      grid: {
-                        display: true,
-                      },
-                    },
-                    y: {
-                      beginAtZero: true,
-                      grid: {
-                        display: true,
-                      },
+                      position: "bottom",
                     },
                   },
                 },
               }}
             />
           )}
-          </div>
         </div>
-        <div>
-          <h3 className="sub-judul-project">Assignees</h3>
-          <div className="container-chart">
-            <Table striped bordered>
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th>Member Name</th>
-                  <th>Progress (%)</th>
-                  <th>Story Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((data, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{data.member_name}</td>
-                    <td>{data.progress}</td>
-                    <td>{data.storyPoints}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+      </div>
+
+      <div>
+        <h3 className="sub-judul-project">Assignees</h3>
+        <div className="container-chart">
+          <Row className="row">
+            <Col className="button d-flex justify-content-end">
+              <Dropdown
+                onSelect={handleDropdownSelect}
+                className="dropdown-custom .btn-secondary"
+              >
+                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+                  {selectedDropdown === "progress" ? "Progress" : "Story Points"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item eventKey="progress">Progress</Dropdown.Item>
+                  <Dropdown.Item eventKey="storyPoints">
+                    Story Points
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          </Row>
+          <hr style={{ height: "2px", background: "black", border: "none" }} />
+          <div>
+            {assigneeData && (
+              <Bar
+                data={{
+                  labels: assigneeData.member_data.map(
+                    (member) => member.member_name
+                  ),
+                  datasets: [
+                    {
+                      label:
+                        selectedDropdown === "progress"
+                          ? "Progress"
+                          : "Story Points",
+                      data: assigneeData.member_data.map((member) =>
+                        selectedDropdown === "progress"
+                          ? member.progress
+                          : member.storyPoints
+                      ),
+                      backgroundColor: "#2076BD",
+                    },
+                  ],
+                }}
+                options={{
+                  maintainAspectRatio: false,
+                  indexAxis: "y",
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                  },
+                  scales: {
+                    x: {
+                      beginAtZero: true,
+                      grid: {
+                        display: false,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        display: false,
+                      },
+                    },
+                  },
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
     </Container>

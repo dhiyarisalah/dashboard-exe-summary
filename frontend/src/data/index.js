@@ -80,54 +80,7 @@ export const projectProgress = [
       "percentage": 0,
       "story_points": 0
     }
-  },
-  {
-    "project_name": "SOFTWARE-INTERN",
-    "progress": {
-      "wp_total": 3,
-      "wp_done": 3,
-      "percentage": 100,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "Sandbox",
-    "progress": {
-      "wp_total": 17,
-      "wp_done": 2,
-      "percentage": 11.76470588235294,
-      "story_points": 343
-    }
-  },
-  {
-    "project_name": "DEXS23D",
-    "progress": {
-      "wp_total": 20,
-      "wp_done": 14,
-      "percentage": 70,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "tes",
-    "progress": {
-      "wp_total": 1,
-      "wp_done": 0,
-      "percentage": 0,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "SOFTWARE-INTERN",
-    "progress": {
-      "wp_total": 3,
-      "wp_done": 3,
-      "percentage": 100,
-      "story_points": 0
-    }
   }
-
-  
 ]
 
 export const userProgress = [
@@ -181,6 +134,24 @@ export const userProgress = [
   }  
 ]
 
+export const burndownAll = [
+  {
+    "year": 2023,
+    "progress" :[
+      {
+        "month": "March",
+        "wp_done": 0,
+        "wp_on_going": 2
+      },
+      {
+        "month": "April",
+        "wp_done": 10,
+        "wp_on_going": 50
+      },
+    ]
+  } 
+]
+
 export const burndownData = [
   {
     "project_name": "Sandbox",
@@ -216,7 +187,7 @@ export const burndownData = [
     "project_name": "DEXS23D",
     "versions": [
       {
-        "version_name": "Week III",
+        "version_name": "Week 3",
         "progress": [
           {
             "month": "January",
@@ -226,7 +197,7 @@ export const burndownData = [
         ]
       },
       {
-        "version_name": "Week I",
+        "version_name": "Week 1",
         "progress": [
           {
             "month": "February",
@@ -236,7 +207,7 @@ export const burndownData = [
         ]
       },
       {
-        "version_name": "Week II",
+        "version_name": "Week 2",
         "progress": [
           {
             "month": "March",
@@ -447,21 +418,21 @@ export const projectDetails = [
     "project_name": "DEXS23D",
     "progress": [
       {
-        "version_name": "Week III",
+        "version_name": "Week 1",
         "percentage_done": 60,
         "percentage_undone": 40,
         "wpTotal": 5,
         "wpDone": 1
       },
       {
-        "version_name": "Week I",
+        "version_name": "Week 2",
         "percentage_done": 10,
         "percentage_undone": 90,
         "wpTotal": 5,
         "wpDone": 5
       },
       {
-        "version_name": "Week II",
+        "version_name": "Week 3",
         "percentage_done": 100,
         "percentage_undone": 0,
         "wpTotal": 5,
@@ -471,30 +442,141 @@ export const projectDetails = [
   }
   ]
   
-export const projectAssignee = [
+export const assigneeProject = [
   {
-    "Sandbox": [
+    "project_name": "Sandbox",
+    "versions": [
       {
-        "Sprint Sandbox": [
+        "version_name": "Sprint Sandbox",
+        "member_data": [
           {
-            "member_name": "Salsabila",
-            "wpTotal": 9,
-            "wpDone": 1,
+            "member_name": "Salsabila Asyifa",
+            "wpTotal": 4,
+            "wpDone": 0,
             "storyPoints": 40,
-            "progress": 11.11111111111111
+            "progress": 0
           },
           {
-            "member_name": "Dhiya",
-            "wpTotal": 9,
+            "member_name": "Dhiya Risalah Ghaida",
+            "wpTotal": 5,
+            "wpDone": 0,
+            "storyPoints": 303,
+            "progress": 0
+          },
+          {
+            "member_name": "Anonymous Software",
+            "wpTotal": 1,
             "wpDone": 1,
-            "storyPoints": 40,
-            "progress": 11.11111111111111
+            "storyPoints": 0,
+            "progress": 100
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project_name": "DEXS23D",
+    "versions": [
+      {
+        "version_name": "Week V",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 2,
+            "storyPoints": 0,
+            "progress": 40
+          }
+        ]
+      },
+      {
+        "version_name": "Week VI",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 0,
+            "storyPoints": 0,
+            "progress": 0
+          }
+        ]
+      },
+      {
+        "version_name": "Week VII",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 0,
+            "storyPoints": 0,
+            "progress": 0
+          }
+        ]
+      },
+      {
+        "version_name": "Week VIII",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 0,
+            "storyPoints": 0,
+            "progress": 0
+          }
+        ]
+      },
+      {
+        "version_name": "Week I",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 0,
+            "progress": 100
+          }
+        ]
+      },
+      {
+        "version_name": "Week II",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 0,
+            "progress": 100
+          }
+        ]
+      },
+      {
+        "version_name": "Week III",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 0,
+            "progress": 100
+          }
+        ]
+      },
+      {
+        "version_name": "Week IV",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 0,
+            "progress": 100
           }
         ]
       }
     ]
   }
 ]
+  
 
 export const projectData = [
   {
