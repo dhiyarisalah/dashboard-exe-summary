@@ -76,7 +76,6 @@ async def burndown_chart_overview():
     return await get_burndown_chart_overview()
 
 # User Progress Overview 
-# dibagi lagi per project dan per year
 @router.get("/get-progress-assignee")
 async def progress_assignee():
     return await get_progress_assignee()
