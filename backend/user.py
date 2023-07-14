@@ -62,6 +62,42 @@ async def get_project_members():
     list_project_details = list(project_details.values())
     return list_project_details
 
+async def get_progress_assignee_total():
+    assignee_progress = {}
+    all_wp = await get_all_wp()
+    for item in all_wp:
+        assignee = item.get("assignee")
+        year = item.get("year")
+        month = item.get("month")
+
+        if assignee is not None and year is not None and month is not None:
+            key = (year, month, assignee)
+            if key not in assignee_progress:
+                assignee_progress[key] = {
+                    "wp_total": 0,
+                    "wp_done": 0
+                }
+
+            assignee_data = assignee_progress[key]
+            assignee_data["wp_total"] += 1
+
+            if item.get("status") == "Done":
+                assignee_data["wp_done"] += 1
+
+    result = {}
+    for key, progress in sorted(assignee_progress.items()):
+        year, month, assignee= key
+        if year not in result:
+            result[year] = {}
+        if month not in result[year]:
+            result[year][month] = {}
+        if assignee not in result[year][month]:
+            result[year][month][assignee] = {}
+
+        result[year][month][assignee] = progress
+
+    return result
+
 
 async def get_progress_assignee():
     assignee_progress = {}

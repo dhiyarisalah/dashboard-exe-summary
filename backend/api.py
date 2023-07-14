@@ -75,7 +75,11 @@ async def get_phase_by_project():
 async def burndown_chart_overview():
     return await get_burndown_chart_overview()
 
-# User Progress Overview 
+# User Progress Overview
+@router.get("/get-progress-assignee-total")
+async def progress_assignee_total():
+    return await get_progress_assignee_total()
+ 
 @router.get("/get-progress-assignee")
 async def progress_assignee():
     return await get_progress_assignee()
