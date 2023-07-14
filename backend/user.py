@@ -3,6 +3,7 @@ from auth import header, url
 import httpx
 import requests
 from work_package import get_all_wp
+import datetime
 
 async def get_all_memberships():
     try:
@@ -102,51 +103,59 @@ async def get_progress_assignee():
     return result
 
 
-async def get_assignee_details():
+async def get_assignee_details(start_date=None, end_date=None):
     assignee_details = {}
     all_wp = await get_all_wp()
-    total_wp = 0  
-    total_sp = 0  
+    total_wp = 0
+    total_sp = 0
+
+    if start_date is not None:
+        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+    if end_date is not None:
+        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
 
     for item in all_wp:
         user_name = item.get("assignee")
         project_name = item.get("project_name")
         story_points = item.get("story_points")
+        date = item.get("date")
 
-        if user_name is not None:
-            if user_name not in assignee_details:
-                assignee_details[user_name] = {
-                    "total_wp": 0,  
-                    "total_sp": 0,
-                    "projects": [] 
-                }
+        if user_name is not None and date is not None:
+            wp_date = date
 
-            assignee_details[user_name]["total_wp"] += 1  
-            total_wp += 1 
-
-            if story_points is not None:
-                assignee_details[user_name]["total_sp"] += story_points  
-                total_sp += story_points 
-
-            # Check if the project is already added for the user
-            project_exists = any(
-                project["project_name"] == project_name for project in assignee_details[user_name]["projects"]
-            )
-            if not project_exists:
-                assignee_details[user_name]["projects"].append(
-                    {
-                        "project_name": project_name,
-                        "wp_assigned": 1,
-                        "story_points": story_points if story_points is not None else 0
+            if (start_date is None or wp_date >= start_date) and (end_date is None or wp_date <= end_date):
+                if user_name not in assignee_details:
+                    assignee_details[user_name] = {
+                        "total_wp": 0,
+                        "total_sp": 0,
+                        "projects": []
                     }
+
+                assignee_details[user_name]["total_wp"] += 1
+                total_wp += 1
+
+                if story_points is not None:
+                    assignee_details[user_name]["total_sp"] += story_points
+                    total_sp += story_points
+
+                project_exists = any(
+                    project["project_name"] == project_name for project in assignee_details[user_name]["projects"]
                 )
-            else:
-                for project in assignee_details[user_name]["projects"]:
-                    if project["project_name"] == project_name:
-                        project["wp_assigned"] += 1
-                        if story_points is not None:
-                            project["story_points"] += story_points
-                        break
+                if not project_exists:
+                    assignee_details[user_name]["projects"].append(
+                        {
+                            "project_name": project_name,
+                            "wp_assigned": 1,
+                            "story_points": story_points if story_points is not None else 0
+                        }
+                    )
+                else:
+                    for project in assignee_details[user_name]["projects"]:
+                        if project["project_name"] == project_name:
+                            project["wp_assigned"] += 1
+                            if story_points is not None:
+                                project["story_points"] += story_points
+                            break
 
     result = []
     for user_name, details in assignee_details.items():
@@ -161,9 +170,16 @@ async def get_assignee_details():
     return result
 
 
-async def get_assignee_wp_details():
+
+async def get_assignee_wp_details(start_date=None, end_date=None):
     wp_details = {}
     all_wp = await get_all_wp()
+
+    if start_date is not None:
+        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+    if end_date is not None:
+        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+
     for item in all_wp:
         user_name = item.get("assignee")
         project_name = item.get("project_name")
@@ -172,30 +188,33 @@ async def get_assignee_wp_details():
         story_points = item.get("story_points")
         date = item.get("date")
 
-        if user_name is not None and project_name is not None:  
-            if user_name not in wp_details:
-                wp_details[user_name] = []
+        if user_name is not None and project_name is not None and date is not None:
+            wp_date = date
 
-            project_data = None
-            for data in wp_details[user_name]:
-                if data["project_name"] == project_name:
-                    project_data = data
-                    break
+            if (start_date is None or wp_date >= start_date) and (end_date is None or wp_date <= end_date):
+                if user_name not in wp_details:
+                    wp_details[user_name] = []
 
-            if project_data is None:
-                project_data = {
-                    "project_name": project_name,
-                    "wp_assigned": []
+                project_data = None
+                for data in wp_details[user_name]:
+                    if data["project_name"] == project_name:
+                        project_data = data
+                        break
+
+                if project_data is None:
+                    project_data = {
+                        "project_name": project_name,
+                        "wp_assigned": []
+                    }
+                    wp_details[user_name].append(project_data)
+                
+                wp_assigned_data = {
+                    "wp_name": wp_name,
+                    "date": date,
+                    "progress": progress,
+                    "story_points": story_points
                 }
-                wp_details[user_name].append(project_data)
-            
-            wp_assigned_data = {
-                "wp_name": wp_name,
-                "date": date,
-                "progress": progress,
-                "story_points": story_points
-            }
-            project_data["wp_assigned"].append(wp_assigned_data)
+                project_data["wp_assigned"].append(wp_assigned_data)
 
     result = []
     for user_name, projects in wp_details.items():
@@ -204,3 +223,5 @@ async def get_assignee_wp_details():
             "projects": projects
         })
     return result
+
+

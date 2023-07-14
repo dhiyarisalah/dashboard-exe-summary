@@ -118,12 +118,16 @@ async def project_list_by_priority():
 async def get_progress_project():
     all_wp = await get_all_wp()
     progress_counts = {}
+    wp_types = []
     for item in all_wp:
         value = item.get("project_name")
         status = item.get("status")
         story_points = item.get("story_points")
         type = item.get("wp_type")
         percentage_done = item.get("percentage_done")
+
+        if type not in wp_types:
+            wp_types.append(type)
 
         if value is not None:
             if value not in progress_counts:
@@ -149,49 +153,53 @@ async def get_progress_project():
     for progress_name, counts in progress_counts.items():
         result.append({
             "project_name": progress_name,
+            "wp_types": wp_types,
             "progress": {
                 "wp_total": counts["wp_total"],
                 "wp_done": counts["wp_done"],
-                "progress": counts["progress"],
+                "progress_by_initiative": counts["progress"],
+                "progress_by_wp": round((counts["wp_done"]/counts["wp_total"])*100),
                 "story_points": counts["story_points"]
             }
         })
     return result
 
-async def get_progress_assignee_project():
+async def get_progress_assignee_project(wp_types=None):
     assignee_progress = {}
     all_wp = await get_all_wp()
     for item in all_wp:
         project_name = item.get("project_name")
         assignee = item.get("assignee")
         story_points = item.get("story_points")
+        wp_type = item.get("wp_type")
 
         if project_name is not None and assignee is not None:
-            if project_name not in assignee_progress:
-                assignee_progress[project_name] = []
+            if wp_types is None or wp_type in wp_types:
+                if project_name not in assignee_progress:
+                    assignee_progress[project_name] = []
 
-            assignee_data = None
-            for data in assignee_progress[project_name]:
-                if data["user_name"] == assignee:
-                    assignee_data = data
-                    break
+                assignee_data = None
+                for data in assignee_progress[project_name]:
+                    if data["user_name"] == assignee:
+                        assignee_data = data
+                        break
 
-            if assignee_data is None:
-                assignee_data = {
-                    "user_name": assignee,
-                    "wp_total": 0,
-                    "wp_done": 0,
-                    "story_points": 0
-                }
-                assignee_progress[project_name].append(assignee_data)
+                if assignee_data is None:
+                    assignee_data = {
+                        "user_name": assignee,
+                        "wp_total": 0,
+                        "wp_done": 0,
+                        "story_points": 0
+                    }
+                    assignee_progress[project_name].append(assignee_data)
 
-            assignee_data["wp_total"] += 1
+                assignee_data["wp_total"] += 1
 
-            if item.get("status") == "Done":
-                assignee_data["wp_done"] += 1
+                if item.get("status") == "Done":
+                    assignee_data["wp_done"] += 1
 
-            if story_points is not None:
-                assignee_data["story_points"] += story_points
+                if story_points is not None:
+                    assignee_data["story_points"] += story_points
 
     result = []
     for project_name, progress in assignee_progress.items():
@@ -201,79 +209,4 @@ async def get_progress_assignee_project():
             "project_name": project_name,
             "progress": progress
         })
-    return result
-
-
-async def get_progress_assignee_version():
-    data = await get_all_wp()
-    result = []
-
-    for item in data:
-        project_name = item['project_name']
-        at_version = item['at_version']
-        assignee = item['assignee']
-        status = item['status']
-        story_points = item['story_points']
-
-        if at_version is not None: 
-            project_exists = False
-            for project in result:
-                if project['project_name'] == project_name:
-                    project_exists = True
-                    version_exists = False
-                    for version in project['versions']:
-                        if version['version_name'] == at_version:
-                            version_exists = True
-                            member_exists = False
-                            for member in version['progress']:
-                                if member['member_name'] == assignee:
-                                    member_exists = True
-                                    member['wp_total'] += 1
-                                    if story_points is not None:
-                                        member['story_points'] += story_points
-                                    if status == 'Done':
-                                        member['wp_done'] += 1
-                                    break
-                            if not member_exists:
-                                version['progress'].append({
-                                    'member_name': assignee,
-                                    'wp_total': 1,
-                                    'wp_done': 1 if status == 'Done' else 0,
-                                    'story_points': story_points,
-                                    'progress': 0
-                                })
-                            break
-                    if not version_exists:
-                        project['versions'].append({
-                            'version_name': at_version,
-                            'progress': [{
-                                'member_name': assignee,
-                                'wp_total': 1,
-                                'wp_done': 1 if status == 'Done' else 0,
-                                'story_points': story_points,
-                                'progress': 0
-                            }]
-                        })
-                    break
-
-            if not project_exists:
-                result.append({
-                    'project_name': project_name,
-                    'versions': [{
-                        'version_name': at_version,
-                        'progress': [{
-                            'member_name': assignee,
-                            'wp_total': 1,
-                            'wp_done': 1 if status == 'Done' else 0,
-                            'story_points': story_points,
-                            'progress': 0
-                        }]
-                    }]
-                })
-
-    for project in result:
-        for version in project['versions']:
-            for member in version['progress']:
-                member['progress'] = (member['wp_done'] / member['wp_total']) * 100
-
     return result
