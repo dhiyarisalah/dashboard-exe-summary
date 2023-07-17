@@ -10,7 +10,7 @@ function ProjectChart() {
     { label: "Status", value: "Status" },
   ];
 
-  const [selectedItem, setSelectedItem] = useState("Select Type");
+  const [selectedItem, setSelectedItem] = useState("Priority");
   const [chartData, setChartData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [clickedLabel, setClickedLabel] = useState("");
@@ -60,30 +60,30 @@ function ProjectChart() {
       options: {
         plugins: {
           legend: {
-            position: "right",
+            position: "bottom",
             labels: {
-              padding: 30,
               boxWidth: 15,
             },
           },
         },
         onClick: (_, activeElements) => {
-          if (activeElements.length > 0) {
+          if (activeElements.length > 0) { /* retrieves the value of the index property from the first element */
             const clickedLabel = labels[activeElements[0].index];
             handleLegendClick(clickedLabel);
           }
         },
+        aspectRatio: 2
       },
     };
   }
 
   return (
     <div className="ProjectChart">
-      <Container className="project-box" style={{ marginTop: "20px" }}>
+      <Container className="project-box">
         <Row className="chart-info">
           <Col>
             <div className="title-count">
-              <div style={{ marginBottom: "20px" }}>Total Project</div>
+              <div style={{ marginBottom: "10px"}}>Total Project</div>
               <span className="count-project">{totalProjectCount} Projects</span>
             </div>
           </Col>
@@ -103,17 +103,20 @@ function ProjectChart() {
             </Dropdown>
           </Col>
         </Row>
-        <hr style={{ height: "2px", background: "black", border: "none" }} />
-        {chartData && (
-          <Pie
-            data={chartData}
-            options={chartData.options}
-            style={{
-              opacity: 1,
-              transition: "opacity 0.5s ease, width 0.5s ease"
-            }}
-          />
-        )}
+        <hr style={{ marginTop:"0px", height: "2px", background: "black", border: "none" }} />
+        <div className="chart-wrapper d-flex justify-content-center align-items-center"> 
+          {chartData && (
+            <Pie
+              data={chartData}
+              options={chartData.options}
+              style={{
+                opacity: 1,
+                transition: "opacity 0.5s ease, width 0.5s ease",
+              }}
+            />
+          )}
+        </div>
+
       </Container>
       <Modal show={modalVisible} onHide={handleCloseModal}>
         <Modal.Header closeButton>

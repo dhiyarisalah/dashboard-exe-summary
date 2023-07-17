@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import ProjectChart from '../components/ProjectChart';
 import Progress from '../components/Progress';
-import Ganttchart  from '../components/Ganttchart';
+import Timeline from '../components/Timeline';
 import UserProgress from '../components/UserProgress';
 import BurndownChart from '../components/BurndownChart';
 
@@ -29,7 +29,7 @@ const LandingPage = () => {
         <Row className="page-text">
           <Col className="text">
             <h1 className="dashboard">Dashboard</h1>
-            <div className="date-updated"> Last Update: {lastUpdate} </div>
+            <div className="date-updated">Last Update: {lastUpdate}</div>
           </Col>
           <Col className="text d-flex justify-content-end">
             <Button className="refresh-button" onClick={handleRefresh}>
@@ -53,13 +53,15 @@ const LandingPage = () => {
           <h3 className="sub-judul">Burndown Chart</h3>
           <Row className="row">
             <Col className="container-chart">
-              <BurndownChart />
+              <div style={{ height: '400px' }}>
+                <BurndownChart />
+              </div>
             </Col>
           </Row>
-          <h3 className="sub-judul">Milestones</h3>
+          <h3 className="sub-judul">Timeline</h3>
           <Row className="row">
             <Col className="container-chart">
-              <Ganttchart />
+              <Timeline />
             </Col>
           </Row>
         </div>
@@ -70,7 +72,9 @@ const LandingPage = () => {
           <h3 className="sub-judul">Work Packages</h3>
           <Row className="row">
             <Col className="container-chart">
-              <UserProgress />
+              <div style={{ height: '400px' }}>
+                <UserProgress />
+              </div>
             </Col>
           </Row>
         </div>

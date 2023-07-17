@@ -5,9 +5,7 @@ import { projectDetails, burndownData, assigneeProject } from "../data/index";
 import { Container, Col, Dropdown, Row } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 
-
 function ProjectBar() {
-
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [projectData, setProjectData] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
@@ -78,6 +76,28 @@ function ProjectBar() {
   const handleVersionSelect = (eventKey) => {
     setSelectedVersion(eventKey);
     setSelectedDropdown("progress");
+
+    const filteredData = projectDetails.find(
+      (project) => project.project_name === labelParam
+    )?.progress.find((version) => version.version_name === eventKey);
+
+    setProjectData({
+      project_name: labelParam,
+      percentage_done: filteredData ? filteredData.percentage_done : 0,
+      percentage_undone: filteredData ? filteredData.percentage_undone : 0,
+    });
+
+    const burndownVersion = burndownData
+      .find((burndownProject) => burndownProject.project_name === labelParam)
+      ?.versions.find((version) => version.version_name === eventKey);
+
+    setLineChartData(burndownVersion?.progress || null);
+
+    const assigneeVersionData = assigneeProject
+      .find((project) => project.project_name === labelParam)
+      ?.versions.find((version) => version.version_name === eventKey);
+
+    setAssigneeData(assigneeVersionData || null);
   };
 
   const handleDropdownSelect = (eventKey) => {
@@ -88,9 +108,9 @@ function ProjectBar() {
     const project = projectDetails.find(
       (project) => project.project_name === labelParam
     );
-
+  
     if (project) {
-      return project.progress.map((version) => (
+      const dropdownItems = project.progress.map((version) => (
         <Dropdown.Item
           key={version.version_name}
           eventKey={version.version_name}
@@ -98,10 +118,20 @@ function ProjectBar() {
           {version.version_name}
         </Dropdown.Item>
       ));
+  
+      // Add "All Version" dropdown item
+      dropdownItems.unshift(
+        <Dropdown.Item key="All Version" eventKey="All Version">
+          All Version
+        </Dropdown.Item>
+      );
+  
+      return dropdownItems;
     }
-
+  
     return null;
   };
+  
 
   return (
     <Container fluid className="project-components">

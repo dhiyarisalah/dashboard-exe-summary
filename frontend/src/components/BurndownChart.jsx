@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Line } from "react-chartjs-2";
 import { burndownAll } from "../data";
-import { Dropdown, Row, Col, Container} from "react-bootstrap";
+import { Dropdown, Row, Col, Container } from "react-bootstrap";
 
 function BurndownChart() {
   const currentYear = new Date().getFullYear();
@@ -55,6 +55,7 @@ function BurndownChart() {
       },
     ],
     options: {
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           display: true,
@@ -66,6 +67,7 @@ function BurndownChart() {
           beginAtZero: true,
         },
       },
+      aspectRatio: 3
     },
   };
 
@@ -73,27 +75,26 @@ function BurndownChart() {
     <div className="BurdownAll">
       <div className="burdownall-box">
         <Row className="chart-info">
-            <Col className="d-flex justify-content-end">
-              <Dropdown className= "dropdown-custom"onSelect={handleYearChange}>
+          <Col className="d-flex justify-content-end">
+            <Dropdown className="dropdown-custom" onSelect={handleYearChange}>
               <Dropdown.Toggle variant="secondary" id="yearSelect">
                 {selectedYear}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 {[0, 1, 2, 3, 4].map((index) => (
-                  <Dropdown.Item
-                    key={index}
-                    eventKey={currentYear + index}
-                  >
+                  <Dropdown.Item key={index} eventKey={currentYear + index}>
                     {currentYear + index}
                   </Dropdown.Item>
                 ))}
               </Dropdown.Menu>
-              </Dropdown>
-            </Col>
-          </Row>
-          <hr style={{ height: "2px", background: "black", border: "none" }} />
+            </Dropdown>
+          </Col>
+        </Row>
+        <hr style={{ marginTop:"0px", height: "2px", background: "black", border: "none" }} />
+        <div style={{ height: "300px" }}>
           <Line data={chartData} options={chartData.options} />
         </div>
+      </div>
     </div>
   );
 }

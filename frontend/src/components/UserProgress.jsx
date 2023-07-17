@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Container, Row, Col } from "react-bootstrap";
+import { Dropdown,  Row, Col } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
 import { userProgress } from "../data/index.js";
 
@@ -28,14 +28,6 @@ function UserProgress() {
       legend: {
         display: true,
         position: "bottom",
-      },
-    },
-    scales: {
-      x: {
-        stacked: true,
-      },
-      y: {
-        stacked: false,
       },
     },
   };
@@ -70,19 +62,19 @@ function UserProgress() {
     const datasets = [
       {
         indexAxis: "x",
-        label: "Done",
-        data: data.map((item) => item.wp_done),
-        fill: false,
-        backgroundColor: ["#327332"],
-        barThickness: 50,
-      },
-      {
-        indexAxis: "x",
         label: "Total",
         data: data.map((item) => item.wp_total),
         fill: false,
         backgroundColor: ["#F6C600"],
-        barThickness: 50,
+        barThickness: 100,
+      },
+      {
+        indexAxis: "x",
+        label: "Done",
+        data: data.map((item) => item.wp_done),
+        fill: false,
+        backgroundColor: ["#327332"],
+        barThickness: 100,
       },
     ];
 
@@ -123,7 +115,7 @@ function UserProgress() {
         </Row>
         <hr style={{ height: "2px", background: "black", border: "none" }} />
         <Row>
-          <div style={{ width: "100%", height: "100%" }}>
+          <div style={{ width: "100%", height: "" }}>
             {selectedMonth !== "" ? (
               projectData.labels && projectData.labels.length > 0 ? (
                 <StackedChart chartData={projectData} handleClick={handleBarClick} />
@@ -141,3 +133,7 @@ function UserProgress() {
 }
 
 export default UserProgress;
+
+
+
+

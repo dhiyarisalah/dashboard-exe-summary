@@ -1,3 +1,5 @@
+/*PROJECT CHART */
+
 export const projectStatus = [
   {
     "On track": 2,
@@ -52,6 +54,8 @@ export const totalCount = [
   }
 ]
 
+/* BAR CHART PROGRESS */
+
 
 export const projectProgress = [
   {
@@ -59,7 +63,16 @@ export const projectProgress = [
     "progress": {
       "wp_total": 17,
       "wp_done": 2,
-      "percentage": 11.76470588235294,
+      "percentage": 11,
+      "story_points": 343
+    }
+  },
+  {
+    "project_name": "Sandbox",
+    "progress": {
+      "wp_total": 17,
+      "wp_done": 2,
+      "percentage": 11,
       "story_points": 343
     }
   },
@@ -77,11 +90,178 @@ export const projectProgress = [
     "progress": {
       "wp_total": 1,
       "wp_done": 0,
-      "percentage": 0,
+      "percentage": 20,
       "story_points": 0
     }
   }
 ]
+
+/* BURNDOWN ALL */
+export const burndownAll = [
+  {
+    "year": 2023,
+    "progress" :[
+      {
+        "month": "March",
+        "wp_done": 0,
+        "wp_on_going": 2
+      },
+      {
+        "month": "April",
+        "wp_done": 10,
+        "wp_on_going": 50
+      },
+    ]
+  } 
+]
+
+/* Milestone Chart */
+export const phaseTimeline = [
+  {
+  "projectName": "Sandbox",
+  "phase": [
+    {
+      "phase": "initiating",
+      "start_date": "2023-07-03",
+      "end_date": "2023-07-25",
+      "year": "2023"
+    },
+    {
+      "phase": "planning",
+      "start_date": "2023-09-04",
+      "end_date": "2023-10-31",
+      "year": "2023"
+    },
+    {
+      "phase": "executing",
+      "start_date": "2023-11-01",
+      "end_date": "2023-12-29",
+      "year": "2023"
+    },
+    {
+      "phase": "monitoring",
+      "start_date": "2024-01-01",
+      "end_date": "2024-02-29",
+      "year": "2023"
+    }]
+  },
+    {
+  "projectName": "11",
+  "phase": [
+    {
+      "phase": "initiating",
+      "start_date": "2023-07-03",
+      "end_date": "2023-07-25",
+      "year": "2023"
+    },
+    {
+      "phase": "planning",
+      "start_date": "2023-09-04",
+      "end_date": "2023-10-31",
+      "year": "2023"
+    },
+    {
+      "phase": "executing",
+      "start_date": "2023-11-01",
+      "end_date": "2023-12-29",
+      "year": "2023"
+    },
+    {
+      "phase": "monitoring",
+      "start_date": "2024-01-01",
+      "end_date": "2024-02-29",
+      "year": "2023"
+    }]
+  },
+  {
+  "projectName": "cc",
+  "phase": [
+    {
+      "phase": "initiating",
+      "start_date": "2023-01-02",
+      "end_date": "2023-07-25",
+      "year": "2023"
+    },
+    {
+      "phase": "planning",
+      "start_date": "2023-09-04",
+      "end_date": "2023-10-31",
+      "year": "2023"
+    },
+    {
+      "phase": "executing",
+      "start_date": "2023-11-01",
+      "end_date": "2023-12-29",
+      "year": "2023"
+    },
+    {
+      "phase": "monitoring",
+      "start_date": "2024-01-01",
+      "end_date": "2024-02-29",
+      "year": "2023"
+    }]
+  },
+  {
+  "projectName": "xx",
+  "phase": [
+    {
+      "phase": "initiating",
+      "start_date": "2023-07-03",
+      "end_date": "2023-07-25",
+      "year": "2023"
+    },
+    {
+      "phase": "planning",
+      "start_date": "2023-09-04",
+      "end_date": "2023-10-31",
+      "year": "2023"
+    },
+    {
+      "phase": "executing",
+      "start_date": "2023-11-01",
+      "end_date": "2023-12-29",
+      "year": "2023"
+    },
+    {
+      "phase": "monitoring",
+      "start_date": "2024-01-01",
+      "end_date": "2024-02-29",
+      "year": "2023"
+    }]
+  },
+  {
+    "projectName": "DRG",
+    "phase": [
+      {
+        "phase": "initiating",
+        "start_date": "2023-07-03",
+        "end_date": "2023-08-25",
+        "year": "2023"
+      },
+      {
+        "phase": "planning",
+        "start_date": "2023-09-04",
+        "end_date": "2023-10-31",
+        "year": "2023"
+      },
+      {
+        "phase": "executing",
+        "start_date": "2023-11-01",
+        "end_date": "2023-12-29",
+        "year": "2023"
+      },
+      {
+        "phase": "monitoring",
+        "start_date": "2024-01-01",
+        "end_date": "2024-05-29",
+        "year": "2023"
+      }
+    ]
+  },
+  
+]
+
+/* STACKED CHART USER PROGRESS*/
 
 export const userProgress = [
   {
@@ -134,24 +314,50 @@ export const userProgress = [
   }  
 ]
 
-export const burndownAll = [
+/*PROJECT DETAILS PAGE*/
+/*PROGRESS BAR */
+export const projectDetails = [
   {
-    "year": 2023,
-    "progress" :[
+    "project_name": "Sandbox",
+    "progress": [
       {
-        "month": "March",
-        "wp_done": 0,
-        "wp_on_going": 2
-      },
-      {
-        "month": "April",
-        "wp_done": 10,
-        "wp_on_going": 50
-      },
+        "version_name": "Sprint Sandbox",
+        "percentage_done": 100,
+        "percentage_undone": 0,
+        "wpTotal": 10,
+        "wpDone": 1
+      }
     ]
-  } 
-]
+  },
+  {
+    "project_name": "DEXS23D",
+    "progress": [
+      {
+        "version_name": "Week 1",
+        "percentage_done": 60,
+        "percentage_undone": 40,
+        "wpTotal": 5,
+        "wpDone": 1
+      },
+      {
+        "version_name": "Week 2",
+        "percentage_done": 10,
+        "percentage_undone": 90,
+        "wpTotal": 5,
+        "wpDone": 5
+      },
+      {
+        "version_name": "Week 3",
+        "percentage_done": 100,
+        "percentage_undone": 0,
+        "wpTotal": 5,
+        "wpDone": 5
+      }
+    ]
+  }
+  ]
 
+/*BURNDOWN CHART */
 export const burndownData = [
   {
     "project_name": "Sandbox",
@@ -220,6 +426,87 @@ export const burndownData = [
   }
 ]
 
+/*PROGRESS ASSIGNEE */
+
+export const assigneeProject = [
+  {
+    "project_name": "Sandbox",
+    "versions": [
+      {
+        "version_name": "Sprint Sandbox",
+        "member_data": [
+          {
+            "member_name": "Salsabila Asyifa",
+            "wpTotal": 4,
+            "wpDone": 0,
+            "storyPoints": 40,
+            "progress": 0
+          },
+          {
+            "member_name": "Dhiya Risalah Ghaida",
+            "wpTotal": 5,
+            "wpDone": 0,
+            "storyPoints": 303,
+            "progress": 0
+          },
+          {
+            "member_name": "Anonymous Software",
+            "wpTotal": 1,
+            "wpDone": 1,
+            "storyPoints": 0,
+            "progress": 100
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "project_name": "DEXS23D",
+    "versions": [
+      {
+        "version_name": "Week 1",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 0,
+            "progress": 100
+          }
+        ]
+      },
+      {
+        "version_name": "Week 2",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 10,
+            "progress": 100
+          }
+        ]
+      },
+      {
+        "version_name": "Week 3",
+        "member_data": [
+          {
+            "member_name": "Software-Intern ITB",
+            "wpTotal": 5,
+            "wpDone": 5,
+            "storyPoints": 30,
+            "progress": 100
+          }
+        ]
+      },
+    ]
+  }
+]
+
+/* USER DETAILS PAGE */
+
+/*PIE CHART PROJECT PER USER */
+
 export const userDetails = [
   {
     "user_name": "Salsabila Asyifa",
@@ -256,7 +543,7 @@ export const userDetails = [
     ]
   }
 ]
-
+/* TABEL DETAIL WP*/
 
 export const wpDetails = [
   {
@@ -400,182 +687,8 @@ export const wpDetails = [
     ]
   }
 ]
-
-export const projectDetails = [
-  {
-    "project_name": "Sandbox",
-    "progress": [
-      {
-        "version_name": "Sprint Sandbox",
-        "percentage_done": 100,
-        "percentage_undone": 0,
-        "wpTotal": 10,
-        "wpDone": 1
-      }
-    ]
-  },
-  {
-    "project_name": "DEXS23D",
-    "progress": [
-      {
-        "version_name": "Week 1",
-        "percentage_done": 60,
-        "percentage_undone": 40,
-        "wpTotal": 5,
-        "wpDone": 1
-      },
-      {
-        "version_name": "Week 2",
-        "percentage_done": 10,
-        "percentage_undone": 90,
-        "wpTotal": 5,
-        "wpDone": 5
-      },
-      {
-        "version_name": "Week 3",
-        "percentage_done": 100,
-        "percentage_undone": 0,
-        "wpTotal": 5,
-        "wpDone": 5
-      }
-    ]
-  }
-  ]
   
-export const assigneeProject = [
-  {
-    "project_name": "Sandbox",
-    "versions": [
-      {
-        "version_name": "Sprint Sandbox",
-        "member_data": [
-          {
-            "member_name": "Salsabila Asyifa",
-            "wpTotal": 4,
-            "wpDone": 0,
-            "storyPoints": 40,
-            "progress": 0
-          },
-          {
-            "member_name": "Dhiya Risalah Ghaida",
-            "wpTotal": 5,
-            "wpDone": 0,
-            "storyPoints": 303,
-            "progress": 0
-          },
-          {
-            "member_name": "Anonymous Software",
-            "wpTotal": 1,
-            "wpDone": 1,
-            "storyPoints": 0,
-            "progress": 100
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "project_name": "DEXS23D",
-    "versions": [
-      {
-        "version_name": "Week V",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 2,
-            "storyPoints": 0,
-            "progress": 40
-          }
-        ]
-      },
-      {
-        "version_name": "Week VI",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 0,
-            "storyPoints": 0,
-            "progress": 0
-          }
-        ]
-      },
-      {
-        "version_name": "Week VII",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 0,
-            "storyPoints": 0,
-            "progress": 0
-          }
-        ]
-      },
-      {
-        "version_name": "Week VIII",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 0,
-            "storyPoints": 0,
-            "progress": 0
-          }
-        ]
-      },
-      {
-        "version_name": "Week I",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 5,
-            "storyPoints": 0,
-            "progress": 100
-          }
-        ]
-      },
-      {
-        "version_name": "Week II",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 5,
-            "storyPoints": 0,
-            "progress": 100
-          }
-        ]
-      },
-      {
-        "version_name": "Week III",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 5,
-            "storyPoints": 0,
-            "progress": 100
-          }
-        ]
-      },
-      {
-        "version_name": "Week IV",
-        "member_data": [
-          {
-            "member_name": "Software-Intern ITB",
-            "wpTotal": 5,
-            "wpDone": 5,
-            "storyPoints": 0,
-            "progress": 100
-          }
-        ]
-      }
-    ]
-  }
-]
+
   
 
 export const projectData = [
@@ -623,3 +736,5 @@ export const projectData = [
   }
   // Add more project objects as needed
 ];
+
+

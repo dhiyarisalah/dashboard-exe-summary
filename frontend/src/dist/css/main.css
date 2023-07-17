@@ -1,3 +1,4 @@
+
 *{
     font-family: "Gill Sans";
 }
@@ -16,7 +17,7 @@
 
 .navbar.navbar-custom {
     background-color: #194375;
-    height: 119px;
+    height: 72px;
 }
 
 
@@ -24,11 +25,12 @@
 
 /* Title - subtitle landing page */
 .landingpage .page-text {
-    margin: 50px 30px 0px 30px
+    margin: 10px 30px 0px 30px
 }
 .landingpage .text {
     padding: 0px
 }
+
 
 .date-updated {
     font-style: normal;
@@ -42,14 +44,15 @@
 
 h1.dashboard{
     font-weight: 700;
-    font-size: 64px;
+    font-size: 40px;
     line-height: 77px;
     color: #0E2735;
+    margin: 0px;
 }
 
 h2.judul {
     font-weight: 700;
-    font-size: 48px;
+    font-size: 28px;
     line-height: 58px;
     color: #2C2F33;
     margin: 0px;
@@ -58,9 +61,9 @@ h2.judul {
 h3.sub-judul {
     font-style: normal;
     font-weight: 600;
-    font-size: 32px;
+    font-size: 20px;
     line-height: 38px;   
-    margin: 30px 0px
+
 }
 
 /* button */
@@ -74,8 +77,8 @@ h3.sub-judul {
     border-radius: 4px;
     text-align: center;
     color: #FFFFFF;
-    width: 81px;
-    height: 38px;
+    width: 77px;
+    height: 33px;
 }
 
 /* container all chart */
@@ -87,10 +90,12 @@ h3.sub-judul {
 .landingpage .container-chart{
     border-radius: 6px;
     background: var(--white, #FFF);
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.10);
+    box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.10);
     overflow-wrap: unset;
     padding: 0px;
-    margin: 0px 10px 40px 10px;
+    margin: 0px 5px 20px 0px;
+    overflow: auto;
+    height: 100%;
 }
 
 /* project detail page */
@@ -184,8 +189,6 @@ h3.sub-judul-assignee {
     overflow-wrap: wrap;
     padding: 0px;
     margin: 0px 30px 50px 30px;
-    width: 50%;
-    max-width: 800px;
 }
 
 .assigneedetailspage .user-components .container-chart .row{
@@ -203,12 +206,12 @@ h3.sub-judul-assignee {
 
 .ProjectChart .project-box .chart-info {
     margin: 0px;
-    padding: 40px;
+    padding: 20px;
 }
 
 .ProjectChart .title-count {
     font-weight: 600;
-    size: 22.6px;
+    font-size: 18px;
     color: #828282;
 
 }
@@ -217,7 +220,7 @@ h3.sub-judul-assignee {
     color: #000000;
     font-style: normal;
     font-weight: 500;
-    font-size: 56.4972px;
+    font-size: 40px;
     line-height: 66px;
     letter-spacing: -0.0375em;
 }
@@ -229,6 +232,8 @@ h3.sub-judul-assignee {
 .dropdown-custom .btn-secondary{
     background-color: #194375;
     color: white;
+    width: 81px;
+    height: 33px;
 }
 
 .wrapper {
@@ -240,7 +245,7 @@ h3.sub-judul-assignee {
     font-weight: 600;
     size: 22.6px;
     color: #828282;
-    padding: 60px;
+    padding: 20px;
 
 }
 
@@ -263,7 +268,7 @@ h3.sub-judul-assignee {
 
 .UserProgress .userprogress-box .chart-info {
     margin: 0px;
-    padding: 40px;
+    padding: 20px;
 }
 
 .container-chart .milestonesProject .row {
@@ -289,5 +294,49 @@ h3.sub-judul-assignee {
 
 .BurdownAll .burdownall-box .chart-info {
     margin: 0px;
-    padding: 40px;
+    padding: 20px;
 }
+
+.chart-wrapper {
+    display: flex;
+    align-items: stretch;
+    height: 100%;
+  }
+
+
+.burndown-chart-container {
+height: calc(100vh - 100px); /* Adjust the value based on your needs */
+}
+
+/* TimelineWithMarkers.css */
+
+.timeline-with-markers {
+    position: relative;
+  }
+  
+  .marker-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* To ensure the markers don't interfere with the chart */
+  }
+  
+  .marker {
+    position: absolute;
+    /* Adjust the position of the marker using top and left values */
+    /* For example, the marker is positioned at 50% from the left of the chart */
+    top: 50px;
+    left: 50%;
+    /* Adjust the marker icon's appearance as needed */
+    background-color: red;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {Dropdown, Container, Row, Col, Table } from "react-bootstrap";
+import { Dropdown, Container, Row, Col, Table } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
-import {userDetails, wpDetails } from "../data/index.js";
+import { userDetails, wpDetails } from "../data/index.js";
 
 function UserChart() {
   const dropdownItems = [
@@ -16,6 +16,7 @@ function UserChart() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [tableData, setTableData] = useState([]);
   const [showTableMessage, setShowTableMessage] = useState(true);
+  const [isProjectSelected, setIsProjectSelected] = useState(false);
 
   useEffect(() => {
     const label = getLabelFromURL();
@@ -23,26 +24,30 @@ function UserChart() {
     setSelectedUser(user);
   }, []);
 
-  useEffect(() => {
-    if (selectedUser) {
-      handleChartDataUpdate(selectedItem);
-      handleTotalProjectCountUpdate(selectedItem);
-      updateTableData(selectedUser, selectedProject);
-    }
-  }, [selectedUser, selectedItem, selectedProject]);
-
-  useEffect(() => {
-    if (selectedItem === "Select Type") {
-      setChartData(null);
-    }
-  }, [selectedItem]);
-
   function getLabelFromURL() {
     const url = window.location.href;
     const parts = url.split("/");
     const label = parts[parts.length - 1];
     return decodeURIComponent(label);
   }
+
+  useEffect(() => {
+    if (selectedUser) {
+      handleChartDataUpdate(selectedItem);
+      handleTotalProjectCountUpdate(selectedItem);
+      setShowTableMessage(true);
+    }
+  }, [selectedUser, selectedItem]);
+
+  useEffect(() => {
+    if (selectedUser && selectedProject) {
+      updateTableData(selectedUser, selectedProject);
+      setIsProjectSelected(true); // Set the project selection flag
+    } else {
+      setTableData([]);
+      setIsProjectSelected(false); // Reset the project selection flag
+    }
+  }, [selectedProject]);
 
   function handleTotalProjectCountUpdate(selectedValue) {
     if (selectedValue === "Work Packages") {
@@ -64,6 +69,7 @@ function UserChart() {
     setSelectedItem(eventKey);
     handleChartDataUpdate(eventKey);
     handleTotalProjectCountUpdate(eventKey);
+    setSelectedProject(null); // Reset selected project
     setShowTableMessage(true);
   }
 
@@ -72,8 +78,6 @@ function UserChart() {
       const selectedIndex = elements[0].index;
       const selectedProject = selectedUser.projects[selectedIndex];
       setSelectedProject(selectedProject);
-      updateTableData(selectedUser, selectedProject);
-      setShowTableMessage(false);
     }
   }
 
@@ -96,7 +100,7 @@ function UserChart() {
             position: "right",
             labels: {
               padding: 30,
-              boxWidth: 15   
+              boxWidth: 15,
             },
           },
         },
@@ -107,7 +111,9 @@ function UserChart() {
 
   function updateTableData(selectedUser, selectedProject) {
     if (selectedUser && selectedProject) {
-      const userWpDetails = wpDetails.find((user) => user.user_name === selectedUser.user_name);
+      const userWpDetails = wpDetails.find(
+        (user) => user.user_name === selectedUser.user_name
+      );
       const projectWpDetails = userWpDetails.projects.find(
         (project) => project.project_name === selectedProject.project_name
       );
@@ -125,73 +131,76 @@ function UserChart() {
 
   return (
     <Container fluid className="user-components">
-      <h3 className="sub-judul-assignee">Overview</h3>
-      <div className="container-chart">
-        <Row className="row">
-          <div className="title-count">
-            Total {selectedItem} <br />
-            <span style={{ marginTop: "20px" }} className="count-project">
-              {totalProjectCount} {selectedItem}
-            </span>
+      <Row>
+        <Col>
+          <h3 className="sub-judul-assignee">Overview</h3>
+          <div className="container-chart">
+            <div className="title-count">
+              Total {selectedItem} <br />
+              <span style={{ marginTop: "20px" }} className="count-project">
+                {totalProjectCount} {selectedItem}
+              </span>
+            </div>
+            <Row>
+              <Col className="d-flex justify-content-end">
+                <Dropdown onSelect={handleDropdownSelect}>
+                  <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                    {selectedItem}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {dropdownItems.map((item, index) => (
+                      <Dropdown.Item key={index} eventKey={item.value}>
+                        {item.label}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Col>
+            </Row>
+            <hr style={{ height: "2px", background: "black", border: "none" }} />
+            {chartData ? (
+              <Pie data={chartData} options={chartData.options} />
+            ) : (
+              <div className="chart-placeholder">
+                {selectedItem !== "Select Type"
+                  ? "Select type first from dropdown button"
+                  : null}
+              </div>
+            )}
           </div>
-        </Row>
-
-        <Row className="row">
-          <Col className="d-flex justify-content-end">
-            <Dropdown onSelect={handleDropdownSelect}>
-              <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                {selectedItem}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {dropdownItems.map((item, index) => (
-                  <Dropdown.Item key={index} eventKey={item.value}>
-                    {item.label}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Col>
-        </Row>
-        <hr style={{ height: "2px", background: "black", border: "none" }} />
-        <Row className="row">
-          {chartData ? (
-            <Pie data={chartData} options={chartData.options} />
-          ) : (
-            <div className="chart-placeholder">
-              {selectedItem !== "Select Type" ? "Select type first from dropdown button" : null}
-            </div>
-          )}
-        </Row>
-      </div>
-      <h3 className="sub-judul-assignee">Project {selectedProject?.project_name}</h3>
-      <div>
-        <Row className="row">
-          {selectedProject ? (
-            <Table striped bordered hover style={{ width: "60%", marginLeft: 40 }}>
-              <thead>
-                <tr>
-                  <th>Work Packages</th>
-                  <th>Progress</th>
-                  <th>Story Points</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.wp_name}</td>
-                    <td>{row.progress}</td>
-                    <td>{row.story_points}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          ) : (
-            <div className="table-placeholder">
-              {showTableMessage ? "Select project first" : "No project selected"}
-            </div>
-          )}
-        </Row>
-      </div>
+        </Col>
+        <Col >
+          <div className="container-chart" style={{ marginTop: 85}}>
+          <h3 className="sub-judul-assignee" >Project {selectedProject?.project_name}</h3>
+            <Row className="row">
+              {isProjectSelected ? (
+                <Table striped bordered hover style={{ width: "100%"}}>
+                  <thead>
+                    <tr>
+                      <th>Work Packages</th>
+                      <th>Progress</th>
+                      <th>Story Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tableData.map((row, index) => (
+                      <tr key={index}>
+                        <td>{row.wp_name}</td>
+                        <td>{row.progress}</td>
+                        <td>{row.story_points}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              ) : (
+                <div className="table-placeholder">
+                  {showTableMessage ? "Select project from the chart" : "No project selected"}
+                </div>
+              )}
+            </Row>
+          </div>
+        </Col>
+      </Row>
     </Container>
   );
 }
