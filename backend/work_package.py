@@ -24,31 +24,71 @@ def process_element(element):
     if story_points is None:
         story_points = 0
 
-    date_field = "date" if wp_type == "Milestone" else "startDate"
-    date = element.get(date_field)
-    if date is not None:
-        date_object = datetime.strptime(date, "%Y-%m-%d")
-        month = date_object.strftime("%m")
-        year = date_object.strftime("%Y")
-        month = calendar.month_name[int(month)]
-    else:
-        month = None
-        year = None
+    if wp_type == "Milestone":
+        date = element.get("date")
+        if date is not None:
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+            month = date.strftime("%m")
+            year = date.strftime("%Y")
+            month = calendar.month_name[int(month)]
+    elif wp_type == "Phase":
+        start_date = element.get("startDate")
+        end_date = element.get("dueDate")
+        date = element.get("updatedAt")
 
-    return {
+        if start_date is not None and end_date is not None:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+
+        if date is not None:
+            date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+            date = date_obj.date()
+            month = date_obj.strftime("%m")
+            year = date_obj.strftime("%Y")
+            month = calendar.month_name[int(month)]
+    else:
+        date = element.get("updatedAt")
+        if date is not None:
+            date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+            date = date_obj.date()
+            month = date_obj.strftime("%m")
+            year = date_obj.strftime("%Y")
+            month = calendar.month_name[int(month)]
+     
+        
+    if wp_type == "Phase":
+        result = {
         "wp_id": wp_id,
         "wp_name": wp_name,
         "project_name": project_name,
         "status": status,
         "wp_type": wp_type,
+        "date": date,
+        "start_date": start_date,
+        "end_date": end_date,
         "month": month,
         "year": year,
-        "date": date,
         "assignee": assignee,
         "percentage_done": percentage_done,
         "story_points": story_points,
         "at_version": at_version,
-    }
+        }
+    else:
+        result = {
+        "wp_id": wp_id,
+        "wp_name": wp_name,
+        "project_name": project_name,
+        "status": status,
+        "wp_type": wp_type,
+        "date": date,
+        "month": month,
+        "year": year,
+        "assignee": assignee,
+        "percentage_done": percentage_done,
+        "story_points": story_points,
+        "at_version": at_version,
+        } 
+    return result
 
 
 async def get_all_wp():
@@ -133,3 +173,70 @@ async def miles_by_project():
 
     milestones_list = list(milestones.values())
     return milestones_list
+
+async def phase_by_project():
+    all_wp = await get_all_wp()
+    phase = {}
+    for item in all_wp:
+        project_name = item.get("project_name")
+        wp_type = item.get("wp_type")
+        wp_name = item.get("wp_name")
+        start_date = item.get("start_date")
+        end_date = item.get("end_date")
+        year = item.get("year")
+
+        if wp_type == "Phase":
+            if project_name not in phase:
+                phase[project_name] = {
+                    "projectName": project_name,
+                    "phase": []
+                }
+            phase[project_name]["phase"].append({
+                "phase": wp_name,
+                "start_date": start_date,
+                "end_date": end_date,
+                "year": year
+            })
+
+    phase_list = list(phase.values())
+    return phase_list
+
+
+async def get_burndown_chart_overview():
+    burndown_chart = {}
+    all_wp = await get_all_wp()
+    for item in all_wp:
+        month = item.get("month")
+        year = item.get("year")
+
+        if month is not None and year is not None:  
+            if year not in burndown_chart:
+                burndown_chart[year] = []
+
+            progress_data = None
+            for data in burndown_chart[year]:
+                if data["month"] == month:
+                    progress_data = data
+                    break
+
+            if progress_data is None:
+                progress_data = {
+                    "month": month,
+                    "wp_done": 0,
+                    "wp_on_going": 0
+                }
+                burndown_chart[year].append(progress_data)
+
+            if item.get("status") == "Done":
+                progress_data["wp_done"] += 1
+            else:
+                progress_data["wp_on_going"] += 1
+
+
+    result = []
+    for year, progress in burndown_chart.items():
+        result.append({
+            "year": year,
+            "progress": progress
+        })
+    return result
