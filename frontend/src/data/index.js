@@ -258,8 +258,8 @@ export const phaseTimeline = [
       }
     ]
   },
-  
 ]
+
 
 /* STACKED CHART USER PROGRESS*/
 
@@ -691,50 +691,36 @@ export const wpDetails = [
 
   
 
-export const projectData = [
+export const milestoneData = [
   {
-    projectName: "Sandbox",
-    milestones: [
+    "projectName": "Sandbox",
+    "milestones": [
       {
-        wpName: "Task 1",
-        date: "2027-07-07",
+        "wpName": "Task 1",
+        "date": "2023-07-07",
+        "month": "July",
+        "year": "2027"
       },
       {
-        wpName: "Task 3",
-        date: "2024-11-07",
+        "wpName": "Task 3",
+        "date": "2024-11-07",
+        "month": "November",
+        "year": "2024"
       },
       {
-        wpName: "Milestone 1",
-        date: "2023-04-10",
+        "wpName": "Milestone 1",
+        "date": "2023-04-10",
+        "month": "April",
+        "year": "2023"
       },
       {
-        wpName: "Task 4",
-        date: "2023-08-11",
-      },
-    ],
-  },
-  {
-    projectName: "Sandbox 2",
-    milestones: [
-      {
-        wpName: "Task 1",
-        date: "2027-07-07",
-      },
-      {
-        wpName: "Task 3",
-        date: "2024-11-07",
-      },
-      {
-        wpName: "Milestone 1",
-        date: "2023-04-11",
-      },
-      {
-        wpName: "Task 4",
-        date: "2023-08-11",
-      },
-    ],
+        "wpName": "Task 4",
+        "date": "2023-08-11",
+        "month": "August",
+        "year": "2023"
+      }
+    ]
   }
-  // Add more project objects as needed
-];
+]
 
 
