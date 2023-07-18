@@ -60,41 +60,46 @@ export const totalCount = [
 export const projectProgress = [
   {
     "project_name": "Sandbox",
+    "wp_types": [
+      "Epic",
+      "User story",
+      "Feature",
+      "Milestone",
+      "Task",
+      "Bug",
+      "Initiative",
+      "Phase"
+    ],
     "progress": {
-      "wp_total": 17,
+      "wp_total": 21,
       "wp_done": 2,
-      "percentage": 11,
-      "story_points": 343
-    }
-  },
-  {
-    "project_name": "Sandbox",
-    "progress": {
-      "wp_total": 17,
-      "wp_done": 2,
-      "percentage": 11,
+      "progress_by_initiative": 0,
+      "progress_by_wp": 10,
       "story_points": 343
     }
   },
   {
     "project_name": "DEXS23D",
+    "wp_types": [
+      "Epic",
+      "User story",
+      "Feature",
+      "Milestone",
+      "Task",
+      "Bug",
+      "Initiative",
+      "Phase"
+    ],
     "progress": {
-      "wp_total": 20,
-      "wp_done": 14,
-      "percentage": 70,
-      "story_points": 0
-    }
-  },
-  {
-    "project_name": "tes",
-    "progress": {
-      "wp_total": 1,
-      "wp_done": 0,
-      "percentage": 20,
+      "wp_total": 45,
+      "wp_done": 33,
+      "progress_by_initiative": 73,
+      "progress_by_wp": 73,
       "story_points": 0
     }
   }
 ]
+  
 
 /* BURNDOWN ALL */
 export const burndownAll = [
@@ -880,5 +885,4 @@ export const projectData = [
       "story_points": 0
     }
   }
-  
 ]

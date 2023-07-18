@@ -1,13 +1,33 @@
+import React, { useState, useEffect } from "react";
 import BarChart from "./BarChart";
-import { projectProgress } from "../data/index.js";
 import { Container, Row } from "react-bootstrap";
+import axios from "axios";
 
 function Progress() {
+  const [projectProgress, setProjectProgress] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    try {
+      const response = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/get-progress-project");
+      const data = response.data;
+      setProjectProgress(data);
+      console.log("Data fetched successfully:", data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
   const handleBarClick = (event, elements) => {
     if (elements.length > 0) {
       const clickedIndex = elements[0].index;
-      const clickedLabel = projectProgress[clickedIndex].project_name;
-      window.location.href = `/projectdetails/${clickedLabel}`;
+      const clickedLabel = projectProgress[clickedIndex]?.project_name;
+      if (clickedLabel) {
+        window.location.href = `/projectdetails/${clickedLabel}`;
+      }
     }
   };
 
@@ -17,7 +37,6 @@ function Progress() {
       legend: {
         display: true,
         position: "bottom",
-        
       },
     },
     scales: {
@@ -34,13 +53,11 @@ function Progress() {
   const datasets = [
     {
       label: "Project Progress",
-      data: projectProgress.map((data) => data.progress.percentage),
+      data: projectProgress.map((data) => data.progress.progress_by_initiative),
       fill: false,
       backgroundColor: ["#2076BD"],
-
     },
   ];
-
 
   return (
     <div className="Progress">
@@ -58,7 +75,7 @@ function Progress() {
         />
         <Row>
           <div>
-            <BarChart 
+            <BarChart
               chartData={{ labels, datasets }}
               options={{
                 ...options,
