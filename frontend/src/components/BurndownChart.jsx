@@ -1,75 +1,103 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { burndownAll } from "../data";
-import { Dropdown, Row, Col, Container } from "react-bootstrap";
+import { Dropdown, Row, Col } from "react-bootstrap";
 
 function BurndownChart() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [chartData, setChartData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleYearChange = (eventKey) => {
     setSelectedYear(parseInt(eventKey));
   };
 
-  const selectedYearData = burndownAll.find((item) => item.year === selectedYear);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("https://sw.infoglobal.id/executive-summary-dashboard/get-burndown-chart-overview");
+        const data = await response.json();
+        console.log("API Data:", data);
+    
+        const selectedYearData = data.find((item) => item.year === selectedYear.toString());
+        console.log("Selected Year:", selectedYear);
+        console.log("Selected Year Data:", selectedYearData);
+    
+        if (selectedYearData && selectedYearData.progress) {
+          const months = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+          const doneData = months.map(() => 0);
+          const addedData = months.map(() => 0);
 
-  const chartData = {
-    labels: months,
-    datasets: [
-      {
-        label: "Done",
-        data: months.map((month) => {
-          const foundMonth = selectedYearData?.progress.find(
-            (item) => item.month === month
-          );
-          return foundMonth ? foundMonth.wp_done : 0;
-        }),
-        backgroundColor: "#165BAA",
-        borderColor: "#165BAA",
-      },
-      {
-        label: "Added",
-        data: months.map((month) => {
-          const foundMonth = selectedYearData?.progress.find(
-            (item) => item.month === month
-          );
-          return foundMonth ? foundMonth.wp_on_going : 0;
-        }),
-        backgroundColor: "#A155B9",
-        borderColor: "#A155B9",
-      },
-    ],
-    options: {
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: "bottom",
-        },
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-      aspectRatio: 3
-    },
-  };
+          selectedYearData.progress.forEach((item) => {
+            const index = months.indexOf(item.month);
+            if (index !== -1) {
+              doneData[index] = item.wp_done;
+              addedData[index] = item.wp_on_going;
+            }
+          });
+
+          setChartData({
+            labels: months,
+            datasets: [
+              {
+                label: "Done",
+                data: doneData,
+                backgroundColor: "#165BAA",
+                borderColor: "#165BAA",
+              },
+              {
+                label: "Added",
+                data: addedData,
+                backgroundColor: "#A155B9",
+                borderColor: "#A155B9",
+              },
+            ],
+            options: {
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: "bottom",
+                },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                },
+              },
+              aspectRatio: 3,
+            },
+          });
+
+          setLoading(false);
+        } else {
+          // Set chartData to null to indicate no data for the selected year
+          setChartData(null);
+          setLoading(false);
+        }
+      } catch (error) {
+        setLoading(false);
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [selectedYear]);
 
   return (
     <div className="BurdownAll">
@@ -90,9 +118,13 @@ function BurndownChart() {
             </Dropdown>
           </Col>
         </Row>
-        <hr style={{ marginTop:"0px", height: "2px", background: "black", border: "none" }} />
+        <hr style={{ marginTop: "0px", height: "2px", background: "black", border: "none" }} />
         <div style={{ height: "300px" }}>
-          <Line data={chartData} options={chartData.options} />
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            chartData ? <Line data={chartData} options={chartData.options} /> : <div>No data available for the selected year.</div>
+          )}
         </div>
       </div>
     </div>
