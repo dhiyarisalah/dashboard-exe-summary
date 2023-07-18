@@ -5,6 +5,7 @@ import axios from "axios";
 
 function Progress() {
   const [projectProgress, setProjectProgress] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -15,8 +16,10 @@ function Progress() {
       const response = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/get-progress-project");
       const data = response.data;
       setProjectProgress(data);
+      setLoading(false); // Data fetched, set loading to false
       console.log("Data fetched successfully:", data);
     } catch (error) {
+      setLoading(false); // Error occurred, set loading to false
       console.error("Error fetching data:", error);
     }
   }
@@ -74,14 +77,18 @@ function Progress() {
           }}
         />
         <Row>
-          <div>
-            <BarChart
-              chartData={{ labels, datasets }}
-              options={{
-                ...options,
-              }}
-            />
-          </div>
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <div>
+              <BarChart
+                chartData={{ labels, datasets }}
+                options={{
+                  ...options,
+                }}
+              />
+            </div>
+          )}
         </Row>
       </Container>
     </div>

@@ -16,10 +16,11 @@ function ProjectChart() {
   const [totalProjectCount, setTotalProjectCount] = useState(0);
   const [projectListStatus, setProjectListStatus] = useState(null);
   const [projectListPriority, setProjectListPriority] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTotalCount();
     fetchData("Priority");
+    fetchTotalCount();
   }, []);
 
   async function fetchTotalCount() {
@@ -39,6 +40,7 @@ function ProjectChart() {
 
   async function fetchData(selectedValue) {
     try {
+      setLoading(true);
       const url =
         selectedValue === "Status"
           ? "https://sw.infoglobal.id/executive-summary-dashboard/project-count-by-status"
@@ -59,8 +61,11 @@ function ProjectChart() {
         const projectListResponse = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/project-list-by-priority");
         setProjectListPriority(projectListResponse.data);
       }
+
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setLoading(false);
     }
   }
 
@@ -147,7 +152,9 @@ function ProjectChart() {
         </Row>
         <hr style={{ marginTop: "0px", height: "2px", background: "black", border: "none" }} />
         <div className="chart-wrapper d-flex justify-content-center align-items-center">
-          {chartData && (
+          {loading ? (
+            <div>Loading...</div>
+          ) : chartData ? (
             <Pie
               data={chartData}
               options={chartData.options}
@@ -156,6 +163,8 @@ function ProjectChart() {
                 transition: "opacity 0.5s ease, width 0.5s ease",
               }}
             />
+          ) : (
+            <div>No data available</div>
           )}
         </div>
       </Container>
