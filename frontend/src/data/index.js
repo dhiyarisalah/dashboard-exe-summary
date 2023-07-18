@@ -436,44 +436,40 @@ export const progressProject = [
 /*PROGRESS BAR */
 export const projectDetails = [
   {
-    "project_name": "Sandbox",
-    "progress": [
-      {
-        "version_name": "Sprint Sandbox",
-        "percentage_done": 100,
-        "percentage_undone": 0,
-        "wpTotal": 10,
-        "wpDone": 1
-      }
-    ]
-  },
-  {
     "project_name": "DEXS23D",
     "progress": [
       {
-        "version_name": "Week 1",
-        "percentage_done": 60,
-        "percentage_undone": 40,
-        "wpTotal": 5,
-        "wpDone": 1
+        "version_name": "Week VI",
+        "wp_total": 5,
+        "wp_done": 4,
+        "percentage_done": 80,
+        "percentage_undone": 20
       },
       {
-        "version_name": "Week 2",
-        "percentage_done": 10,
-        "percentage_undone": 90,
-        "wpTotal": 5,
-        "wpDone": 5
+        "version_name": "Week VII",
+        "wp_total": 5,
+        "wp_done": 0,
+        "percentage_done": 0,
+        "percentage_undone": 100
       },
       {
-        "version_name": "Week 3",
+        "version_name": "Week VIII",
+        "wp_total": 5,
+        "wp_done": 0,
+        "percentage_done": 0,
+        "percentage_undone": 100
+      },   
+      {
+        "version_name": "Week V",
+        "wp_total": 5,
+        "wp_done": 5,
         "percentage_done": 100,
-        "percentage_undone": 0,
-        "wpTotal": 5,
-        "wpDone": 5
+        "percentage_undone": 0
       }
     ]
   }
-  ]
+]
+  
 
 /*BURNDOWN CHART */
 export const burndownData = [
@@ -841,4 +837,48 @@ export const milestoneData = [
   }
 ]
 
+/* Project Type */
 
+export const projectData = [
+  {
+    "project_name": "Sandbox",
+    "wp_types": [
+      "Epic",
+      "User story",
+      "Feature",
+      "Milestone",
+      "Task",
+      "Bug",
+      "Initiative",
+      "Phase"
+    ],
+    "progress": {
+      "wp_total": 21,
+      "wp_done": 2,
+      "progress_by_initiative": 0,
+      "progress_by_wp": 10,
+      "story_points": 343
+    }
+  },
+  {
+    "project_name": "DEXS23D",
+    "wp_types": [
+      "Epic",
+      "User story",
+      "Feature",
+      "Milestone",
+      "Task",
+      "Bug",
+      "Initiative",
+      "Phase"
+    ],
+    "progress": {
+      "wp_total": 45,
+      "wp_done": 33,
+      "progress_by_initiative": 73,
+      "progress_by_wp": 73,
+      "story_points": 0
+    }
+  }
+  
+]

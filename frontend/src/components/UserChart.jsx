@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Dropdown, Container, Row, Col, Table } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
 import { userDetails, wpDetails } from "../data/index.js";
+import Select from "react-select";
 
 function UserChart() {
   const dropdownItems = [
@@ -131,6 +132,21 @@ function UserChart() {
 
   return (
     <Container fluid className="user-components">
+      <Row className="row">
+        <Col className="button d-flex justify-content-end">
+          <Select
+            isMulti
+
+            placeholder="Select Versions"
+          />
+        </Col>
+        <Col className="button d-flex justify-content-end">
+          <Select
+              isMulti
+              placeholder="Select Type"
+          />
+        </Col>
+      </Row>
       <Row>
         <Col>
           <h3 className="sub-judul-assignee">Overview</h3>

@@ -2,15 +2,18 @@ import React, { useState, useEffect } from "react";
 import BarChart from "./BarChart";
 import LineChart from "./LineChart";
 import { projectDetails, burndownData, assigneeProject } from "../data/index";
-import { Container, Col, Dropdown, Row } from "react-bootstrap";
+import { Container, Col, Row } from "react-bootstrap";
 import { Bar } from "react-chartjs-2";
+import Select from "react-select";
 
 function ProjectBar() {
+  const [selectedVersions, setSelectedVersions] = useState([]);
+  const [selectedType, setSelectedType] = useState(null);
+  const [selectedDropdown, setSelectedDropdown] = useState("progress");
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [projectData, setProjectData] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
   const [assigneeData, setAssigneeData] = useState(null);
-  const [selectedDropdown, setSelectedDropdown] = useState("progress");
 
   function getLabelFromURL() {
     const url = window.location.href;
@@ -18,7 +21,7 @@ function ProjectBar() {
     const label = parts[parts.length - 1];
     return decodeURIComponent(label);
   }
-  
+
   const labelParam = getLabelFromURL();
 
   useEffect(() => {
@@ -73,79 +76,60 @@ function ProjectBar() {
     }
   }, [labelParam]);
 
-  const handleVersionSelect = (eventKey) => {
-    setSelectedVersion(eventKey);
-    setSelectedDropdown("progress");
+  const handleVersionSelect = (selectedOptions) => {
+    const selectedVersionNames = selectedOptions.map((option) => option.value);
+    setSelectedVersions(selectedVersionNames);
 
-    const filteredData = projectDetails.find(
-      (project) => project.project_name === labelParam
-    )?.progress.find((version) => version.version_name === eventKey);
-
-    setProjectData({
-      project_name: labelParam,
-      percentage_done: filteredData ? filteredData.percentage_done : 0,
-      percentage_undone: filteredData ? filteredData.percentage_undone : 0,
-    });
-
-    const burndownVersion = burndownData
-      .find((burndownProject) => burndownProject.project_name === labelParam)
-      ?.versions.find((version) => version.version_name === eventKey);
-
-    setLineChartData(burndownVersion?.progress || null);
-
-    const assigneeVersionData = assigneeProject
-      .find((project) => project.project_name === labelParam)
-      ?.versions.find((version) => version.version_name === eventKey);
-
-    setAssigneeData(assigneeVersionData || null);
+    // Clear the selected version when selecting a new one
+    setSelectedVersion(null);
   };
 
-  const handleDropdownSelect = (eventKey) => {
+  const handleTypeSelect = (selectedOption) => {
+    setSelectedType(selectedOption.value);
+  };
+
+  const handleAssigneeDropdownSelect = (eventKey) => {
     setSelectedDropdown(eventKey);
   };
 
-  const getDropdownItems = () => {
-    const project = projectDetails.find(
-      (project) => project.project_name === labelParam
-    );
-  
-    if (project) {
-      const dropdownItems = project.progress.map((version) => (
-        <Dropdown.Item
-          key={version.version_name}
-          eventKey={version.version_name}
-        >
-          {version.version_name}
-        </Dropdown.Item>
-      ));
-  
-      // Add "All Version" dropdown item
-      dropdownItems.unshift(
-        <Dropdown.Item key="All Version" eventKey="All Version">
-          All Version
-        </Dropdown.Item>
-      );
-  
-      return dropdownItems;
-    }
-  
-    return null;
+  const handleVersionDropdownSelect = (eventKey) => {
+    setSelectedVersion(eventKey);
   };
-  
 
   return (
     <Container fluid className="project-components">
-      <Col className="button d-flex justify-content-end">
-        <Dropdown className="dropdown-custom" onSelect={handleVersionSelect}>
-          <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-            {selectedVersion}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item disabled>Select Version</Dropdown.Item>
-            {getDropdownItems()}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Col>
+      <Row className="row">
+        <Col className="button d-flex justify-content-end">
+          <Select
+            options={projectDetails.map((project) => ({
+              value: project.version_name,
+              label: project.version_name,
+            }))}
+            isMulti
+            onChange={handleVersionSelect}
+            value={selectedVersions.map((version) => ({
+              value: version,
+              label: version,
+            }))}
+            placeholder="Select Versions"
+          />
+        </Col>
+        <Col className="button d-flex justify-content-end">
+          <Select
+              options={projectDetails.map((project) => ({
+                value: project.version_name,
+                label: project.version_name,
+              }))}
+              isMulti
+              onChange={handleVersionSelect}
+              value={selectedVersions.map((version) => ({
+                value: version,
+                label: version,
+              }))}
+              placeholder="Select Type"
+          />
+        </Col>
+      </Row>
 
       <div>
         <h3 className="sub-judul-project">Progress</h3>
@@ -153,45 +137,45 @@ function ProjectBar() {
           {projectData && (
             <BarChart
               chartData={{
-                labels: [projectData.project_name],
+                labels: ["Project Progress"],
                 datasets: [
                   {
                     label: "Done",
                     data: [projectData.percentage_done],
-                    backgroundColor: ["#327332"],
-                    barThickness: 50,
+                    backgroundColor: "#327332",
+                    barThickness: 40,
                   },
                   {
                     label: "Undone",
                     data: [projectData.percentage_undone],
-                    backgroundColor: ["#F6C600"],
-                    barThickness: 50,
+                    backgroundColor: "#F6C600",
+                    barThickness: 40,
                   },
                 ],
-                options: {
-                  maintainAspectRatio: false,
-                  indexAxis: "y",
-                  plugins: {
-                    legend: {
+              }}
+              options={{
+                maintainAspectRatio: false,
+                indexAxis: "y",
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                scales: {
+                  x: {
+                    display: false,
+                    stacked: false,
+                    beginAtZero: true,
+                    grid: {
                       display: false,
                     },
                   },
-                  scales: {
-                    x: {
+                  y: {
+                    display: false,
+                    stacked: true,
+                    beginAtZero: true,
+                    grid: {
                       display: false,
-                      stacked: true,
-                      beginAtZero: true,
-                      grid: {
-                        display: false,
-                      },
-                    },
-                    y: {
-                      display: false,
-                      stacked: true,
-                      beginAtZero: true,
-                      grid: {
-                        display: false,
-                      },
                     },
                   },
                 },
@@ -224,12 +208,12 @@ function ProjectBar() {
                     borderColor: "#A155B9",
                   },
                 ],
-                options: {
-                  plugins: {
-                    legend: {
-                      display: true,
-                      position: "bottom",
-                    },
+              }}
+              options={{
+                plugins: {
+                  legend: {
+                    display: true,
+                    position: "bottom",
                   },
                 },
               }}
@@ -243,40 +227,36 @@ function ProjectBar() {
         <div className="container-chart">
           <Row className="row">
             <Col className="button d-flex justify-content-end">
-              <Dropdown
-                onSelect={handleDropdownSelect}
-                className="dropdown-custom .btn-secondary"
-              >
-                <Dropdown.Toggle variant="secondary" id="dropdown-basic">
-                  {selectedDropdown === "progress" ? "Progress" : "Story Points"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item eventKey="progress">Progress</Dropdown.Item>
-                  <Dropdown.Item eventKey="storyPoints">
-                    Story Points
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+              <Select
+                options={[
+                  { value: "progress", label: "Progress" },
+                  { value: "storyPoints", label: "Story Points" },
+                ]}
+                onChange={handleAssigneeDropdownSelect}
+                value={{ value: selectedDropdown, label: selectedDropdown }}
+                placeholder="Select Data Type"
+              />
             </Col>
           </Row>
-          <hr style={{ height: "2px", background: "black", border: "none" }} />
+          <hr
+            style={{
+              height: "2px",
+              background: "black",
+              border: "none",
+              margin: "10px 0",
+            }}
+          />
           <div>
             {assigneeData && (
               <Bar
                 data={{
-                  labels: assigneeData.member_data.map(
-                    (member) => member.member_name
-                  ),
+                  labels: assigneeData.member_data.map((member) => member.member_name),
                   datasets: [
                     {
                       label:
-                        selectedDropdown === "progress"
-                          ? "Progress"
-                          : "Story Points",
+                        selectedDropdown === "progress" ? "Progress" : "Story Points",
                       data: assigneeData.member_data.map((member) =>
-                        selectedDropdown === "progress"
-                          ? member.progress
-                          : member.storyPoints
+                        selectedDropdown === "progress" ? member.progress : member.storyPoints
                       ),
                       backgroundColor: "#2076BD",
                     },

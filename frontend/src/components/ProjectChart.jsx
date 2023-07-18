@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Dropdown, Container, Row, Col } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
-import { projectStatus, projectPriority, totalCount } from "../data/index.js";
-import { projectListStatus, projectListPriority } from "../data/index.js";
+import axios from "axios";
 
 function ProjectChart() {
   const dropdownItems = [
@@ -14,21 +13,63 @@ function ProjectChart() {
   const [chartData, setChartData] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [clickedLabel, setClickedLabel] = useState("");
+  const [totalProjectCount, setTotalProjectCount] = useState(0);
+  const [projectListStatus, setProjectListStatus] = useState(null);
+  const [projectListPriority, setProjectListPriority] = useState(null);
 
   useEffect(() => {
-    setChartData(generateChartData(projectPriority));
+    fetchTotalCount();
+    fetchData("Priority");
   }, []);
 
-  function handleChartDataUpdate(selectedValue) {
-    if (selectedValue === "Status") {
-      setChartData(generateChartData(projectStatus));
-    } else if (selectedValue === "Priority") {
-      setChartData(generateChartData(projectPriority));
+  async function fetchTotalCount() {
+    try {
+      const response = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/count-all");
+      const totalCountData = response.data;
+      console.log("Total Count Data:", totalCountData);
+      if (totalCountData && totalCountData.total_project) {
+        setTotalProjectCount(totalCountData.total_project);
+      } else {
+        console.error("Invalid total count data:", totalCountData);
+      }
+    } catch (error) {
+      console.error("Error fetching total count:", error);
     }
   }
 
+  async function fetchData(selectedValue) {
+    try {
+      const url =
+        selectedValue === "Status"
+          ? "https://sw.infoglobal.id/executive-summary-dashboard/project-count-by-status"
+          : "https://sw.infoglobal.id/executive-summary-dashboard/project-count-by-priority";
+
+      const response = await axios.get(url);
+      const data = response.data;
+
+      console.log("Data from API:", data);
+
+      const chartData = generateChartData(Array.isArray(data) ? data[0] : data);
+      setChartData(chartData);
+
+      if (selectedValue === "Status") {
+        const projectListResponse = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/project-list-by-status");
+        setProjectListStatus(projectListResponse.data);
+      } else {
+        const projectListResponse = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/project-list-by-priority");
+        setProjectListPriority(projectListResponse.data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  function handleChartDataUpdate(selectedValue) {
+    setSelectedItem(selectedValue);
+    fetchData(selectedValue);
+  }
+
   const handleDropdownSelect = (eventKey) => {
-    setSelectedItem(eventKey);
     handleChartDataUpdate(eventKey);
   };
 
@@ -41,13 +82,14 @@ function ProjectChart() {
     setModalVisible(false);
   };
 
-  const totalProjectCount = totalCount[0]?.total_project || 0;
-
   function generateChartData(data) {
-    const dataset = data ? data[0] : {};
-    const labels = Object.keys(dataset);
-    const values = Object.values(dataset);
-
+    if (!data || !Object.keys(data).length) {
+      return null;
+    }
+  
+    const labels = Object.keys(data);
+    const values = Object.values(data);
+  
     return {
       labels: labels,
       datasets: [
@@ -67,7 +109,7 @@ function ProjectChart() {
           },
         },
         onClick: (_, activeElements) => {
-          if (activeElements.length > 0) { /* retrieves the value of the index property from the first element */
+          if (activeElements.length > 0) {
             const clickedLabel = labels[activeElements[0].index];
             handleLegendClick(clickedLabel);
           }
@@ -83,7 +125,7 @@ function ProjectChart() {
         <Row className="chart-info">
           <Col>
             <div className="title-count">
-              <div style={{ marginBottom: "10px"}}>Total Project</div>
+              <div style={{ marginBottom: "10px" }}>Total Project</div>
               <span className="count-project">{totalProjectCount} Projects</span>
             </div>
           </Col>
@@ -103,8 +145,8 @@ function ProjectChart() {
             </Dropdown>
           </Col>
         </Row>
-        <hr style={{ marginTop:"0px", height: "2px", background: "black", border: "none" }} />
-        <div className="chart-wrapper d-flex justify-content-center align-items-center"> 
+        <hr style={{ marginTop: "0px", height: "2px", background: "black", border: "none" }} />
+        <div className="chart-wrapper d-flex justify-content-center align-items-center">
           {chartData && (
             <Pie
               data={chartData}
@@ -116,7 +158,6 @@ function ProjectChart() {
             />
           )}
         </div>
-
       </Container>
       <Modal show={modalVisible} onHide={handleCloseModal}>
         <Modal.Header closeButton>
@@ -126,14 +167,14 @@ function ProjectChart() {
           <Modal.Body>
             {selectedItem === "Status" && (
               <ul>
-                {projectListStatus[0][clickedLabel]?.map((item) => (
+                {projectListStatus && projectListStatus[clickedLabel]?.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             )}
             {selectedItem === "Priority" && (
               <ul>
-                {projectListPriority[0][clickedLabel]?.map((item) => (
+                {projectListPriority && projectListPriority[clickedLabel]?.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>

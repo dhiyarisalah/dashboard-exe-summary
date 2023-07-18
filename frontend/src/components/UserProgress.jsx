@@ -17,7 +17,7 @@ function StackedChart({ chartData, handleClick }) {
 function ProjectDetailsChart({ projectData, selectedLabel }) {
   return (
     <div>
-      <h3>Details for {selectedLabel}</h3>
+      <h3 style={{paddingLeft: "0px"}}>Details for {selectedLabel}</h3>
       <Bar data={projectData} options={{ ...projectData.options }} />
     </div>
   );
@@ -232,7 +232,7 @@ function UserProgress() {
         <hr style={{ margin: "0px 0px 20px 0px", height: "2px", background: "black", border: "none" }} />
         <Row>
           <Col md={3} className="d-flex flex-column" style={{borderColor: "black"}}>
-            <div className="assignees-container">
+            <div>
               <h3>List of Assignees</h3>
               <ListGroup style={{ flex: 1, overflowY: "auto"}}>
                 {userNames.map((userName) => (
@@ -268,7 +268,7 @@ function UserProgress() {
         <Row>
           <Col md={12} >
           <hr style={{ margin:"20px 0px 20px 0px", height: "2px", background: "black", border: "none" }} />
-            <div style={{ width: "60",alignItems: "center" }}>
+            <div>
               {selectedProjectData.labels && selectedProjectData.labels.length > 0 ? (
                 <ProjectDetailsChart projectData={selectedProjectData} selectedLabel={selectedProjectLabel} />
               ) : (
