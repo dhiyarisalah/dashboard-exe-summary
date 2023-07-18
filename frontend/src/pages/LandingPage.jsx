@@ -72,7 +72,7 @@ const LandingPage = () => {
           <h3 className="sub-judul">Work Packages</h3>
           <Row className="row">
             <Col className="container-chart">
-              <div style={{ height: '400px' }}>
+              <div>
                 <UserProgress />
               </div>
             </Col>

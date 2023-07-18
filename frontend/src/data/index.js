@@ -265,53 +265,171 @@ export const phaseTimeline = [
 
 export const userProgress = [
   {
-    "March": [
-      {
-        "user_name": "Salsabila Asyifa",
-        "wp_total": 5,
-        "wp_done": 1,
-        "progress": 20
+    "2023": {
+      "April": {
+        "Dhiya Risalah Ghaida": {
+          "wp_total": 1,
+          "wp_done": 0
+        }
       },
-      {
-        "user_name": "Dhiya Risalah Ghaida",
-        "wp_total": 1,
-        "wp_done": 0,
-        "progress": 0
+      "August": {
+        "Dhiya Risalah Ghaida": {
+          "wp_total": 1,
+          "wp_done": 0
+        }
+      },
+      "July": {
+        "Software-Intern ITB": {
+          "wp_total": 24,
+          "wp_done": 13
+        }
+      },
+      "June": {
+        "Dhiya Risalah Ghaida": {
+          "wp_total": 7,
+          "wp_done": 2
+        },
+        "Salsabila Asyifa": {
+          "wp_total": 9,
+          "wp_done": 3
+        },
+        "Software-Intern ITB": {
+          "wp_total": 16,
+          "wp_done": 16
+        },
+        "Salsabila d": {
+          "wp_total": 9,
+          "wp_done": 3
+        },
+        "Salsabila a": {
+          "wp_total": 9,
+          "wp_done": 3
+        },
+        "d Asyifa": {
+          "wp_total": 9,
+          "wp_done": 3
+        },
+        "d d": {
+          "wp_total": 9,
+          "wp_done": 3
+        },
+        "a a": {
+          "wp_total": 9,
+          "wp_done": 3
+        },
+        
+      },
+      "March": {
+        "Anonymous Software": {
+          "wp_total": 1,
+          "wp_done": 1
+        }
       }
-    ],
-    "July": [
-      {
-        "user_name": "Salsabila Asyifa",
-        "wp_total": 1,
-        "wp_done": 0,
-        "progress": 0
+    },
+    "2024": {
+      "November": {
+        "Salsabila Asyifa": {
+          "wp_total": 1,
+          "wp_done": 0
+        }
       }
-    ],
-    "August": [
-      {
-        "user_name": "Dhiya Risalah Ghaida",
-        "wp_total": 2,
-        "wp_done": 0,
-        "progress": 0
+    },
+    "2027": {
+      "July": {
+        "Salsabila Asyifa": {
+          "wp_total": 1,
+          "wp_done": 0
+        }
       }
-    ],
-    "November": [
-      {
-        "user_name": "Salsabila Asyifa",
-        "wp_total": 1,
-        "wp_done": 0,
-        "progress": 0
+    }
+  }
+]  
+
+export const progressProject = [
+  {
+    "2023": {
+      "April": {
+        "Dhiya Risalah Ghaida": {
+          "Sandbox": {
+            "wp_total": 1,
+            "wp_done": 0
+          }
+        }
+      },
+      "August": {
+        "Dhiya Risalah Ghaida": {
+          "Sandbox": {
+            "wp_total": 1,
+            "wp_done": 0
+          }
+        }
+      },
+      "July": {
+        "Software-Intern ITB": {
+          "DEXS23D": {
+            "wp_total": 24,
+            "wp_done": 13
+          }
+        }
+      },
+      "June": {
+        "Dhiya Risalah Ghaida": {
+          "DEXS23D": {
+            "wp_total": 2,
+            "wp_done": 2
+          },
+          "Sandbox": {
+            "wp_total": 5,
+            "wp_done": 0
+          }
+        },
+        "Salsabila Asyifa": {
+          "DEXS23D": {
+            "wp_total": 2,
+            "wp_done": 2
+          },
+          "Sandbox": {
+            "wp_total": 7,
+            "wp_done": 1
+          }
+        },
+        "Software-Intern ITB": {
+          "DEXS23D": {
+            "wp_total": 16,
+            "wp_done": 16
+          }
+        }
+      },
+      "March": {
+        "Anonymous Software": {
+          "Sandbox": {
+            "wp_total": 1,
+            "wp_done": 1
+          }
+        }
       }
-    ],
-    "April": [
-      {
-        "user_name": "Dhiya Risalah Ghaida",
-        "wp_total": 1,
-        "wp_done": 0,
-        "progress": 0
+    },
+    "2024": {
+      "November": {
+        "Salsabila Asyifa": {
+          "Sandbox": {
+            "wp_total": 1,
+            "wp_done": 0
+          }
+        }
       }
-    ]
-  }  
+    },
+    "2027": {
+      "July": {
+        "Salsabila Asyifa": {
+          "Sandbox": {
+            "wp_total": 1,
+            "wp_done": 0
+          }
+        }
+      }
+    }
+  }
 ]
 
 /*PROJECT DETAILS PAGE*/

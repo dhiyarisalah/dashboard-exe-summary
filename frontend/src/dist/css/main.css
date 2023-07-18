@@ -307,3 +307,12 @@ h3.sub-judul-assignee {
 height: calc(100vh - 100px); /* Adjust the value based on your needs */
 }
 
+/* In your CSS file or style block */
+.row .container-chart .UserProgress .userprogress-box .assignee .col .vertical-line {
+    border-left: 1px solid #000000;
+    height: 100%;
+    padding: 0px;
+  }
+  
+
+  
