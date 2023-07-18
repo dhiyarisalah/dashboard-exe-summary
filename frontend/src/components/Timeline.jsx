@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Chart } from 'react-google-charts';
-import { phaseTimeline, milestoneData } from '../data/index.js';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
 
 const colorArray = [
   '#FF5733',
@@ -14,71 +14,99 @@ const colorArray = [
 
 const Timeline = () => {
   const [selectedView, setSelectedView] = useState('Phase');
+  const [timelineData, setTimelineData] = useState([]);
+  const [phaseColorMap, setPhaseColorMap] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  // Generate the project timeline data for "Phase" view
-  const projectTimelineData = phaseTimeline.flatMap((project, projectIndex) => {
-    const projectName = project.projectName;
-    return project.phase.map((phase, phaseIndex) => {
-      const colorIndex = phaseIndex % colorArray.length; // To cycle through colors if there are more phases than colors
+  useEffect(() => {
+    fetchData(selectedView);
+  }, [selectedView]);
 
-      // Calculate the range of months for the phase
-      const startYear = new Date(phase.start_date).getFullYear();
-      const endYear = new Date(phase.end_date).getFullYear();
-      const startMonth = new Date(phase.start_date).getMonth();
-      const endMonth = new Date(phase.end_date).getMonth();
+  async function fetchData(view) {
+    setLoading(true);
+    try {
+      const url =
+        view === 'Phase'
+          ? 'https://sw.infoglobal.id/executive-summary-dashboard/get-phase-by-project'
+          : 'https://sw.infoglobal.id/executive-summary-dashboard/get-miles-by-project';
 
-      const startDate = new Date(startYear, startMonth, 1); // First day of the start month
-      const endDate = new Date(endYear, endMonth + 1, 0); // Last day of the end month
+      const response = await axios.get(url);
+      const data = response.data;
+      console.log('Data fetched successfully:', data);
 
-      return [
-        projectName, // Project ID
-        phase.phase, // Phase Name
-        startDate,
-        endDate,
-        undefined, // Use undefined to specify custom color for each phase
-        colorArray[colorIndex], // Assign a color from the colorArray based on the phaseIndex
-      ];
-    });
-  });
+      if (view === 'Phase') {
+        const projectTimelineData = data.flatMap((project, projectIndex) => {
+          const projectName = project.projectName;
+          return project.phase.map((phase, phaseIndex) => {
+            const colorIndex = phaseIndex % colorArray.length;
 
-  // Generate the project timeline data for "Milestone" view
-  const milestoneTimelineData = milestoneData.flatMap((project, projectIndex) => {
-    const projectName = project.projectName;
-    return project.milestones.map((milestone, milestoneIndex) => {
-      const colorIndex = milestoneIndex % colorArray.length; // To cycle through colors if there are more milestones than colors
+            const startYear = new Date(phase.start_date).getFullYear();
+            const endYear = new Date(phase.end_date).getFullYear();
+            const startMonth = new Date(phase.start_date).getMonth();
+            const endMonth = new Date(phase.end_date).getMonth();
 
-      // Calculate the date for the milestone
-      const milestoneDate = new Date(milestone.date);
-      const startDate = new Date(milestoneDate.getFullYear(), milestoneDate.getMonth(), milestoneDate.getDate()); // First day of the milestone date
-      const endDate = new Date(milestoneDate.getFullYear(), milestoneDate.getMonth(), milestoneDate.getDate()); // Same as start date
+            const startDate = new Date(startYear, startMonth, 1);
+            const endDate = new Date(endYear, endMonth + 1, 0);
 
-      return [
-        projectName, // Project ID
-        milestone.wpName, // Milestone Name
-        startDate,
-        endDate,
-        undefined, // Use undefined to specify custom color for each milestone
-        colorArray[colorIndex], // Assign a color from the colorArray based on the milestoneIndex
-      ];
-    });
-  });
+            return [
+              projectName,
+              phase.phase,
+              startDate,
+              endDate,
+              undefined,
+              colorArray[colorIndex],
+            ];
+          });
+        });
 
-  // Create a phaseColorMap to store the colors for each phase/milestone
-  const phaseColorMap = selectedView === 'Phase'
-    ? projectTimelineData.reduce((map, [, phaseName, , , , color]) => {
-        if (!map[phaseName]) {
-          map[phaseName] = color;
-        }
-        return map;
-      }, {})
-    : milestoneTimelineData.reduce((map, [, milestoneName, , , , color]) => {
-        if (!map[milestoneName]) {
-          map[milestoneName] = color;
-        }
-        return map;
-      }, {});
+        const phaseColors = projectTimelineData.reduce((map, [, phaseName, , , , color]) => {
+          if (!map[phaseName]) {
+            map[phaseName] = color;
+          }
+          return map;
+        }, {});
 
-  // Customize the tooltip content based on the selected view
+        setPhaseColorMap(phaseColors);
+        setTimelineData(projectTimelineData);
+      } else {
+        const milestoneTimelineData = data.flatMap((project, projectIndex) => {
+          const projectName = project.projectName;
+          return project.milestones.map((milestone, milestoneIndex) => {
+            const colorIndex = milestoneIndex % colorArray.length;
+
+            const milestoneDate = new Date(milestone.date);
+            const startDate = new Date(milestoneDate.getFullYear(), milestoneDate.getMonth(), milestoneDate.getDate());
+            const endDate = new Date(milestoneDate.getFullYear(), milestoneDate.getMonth(), milestoneDate.getDate());
+
+            return [
+              projectName,
+              milestone.wpName,
+              startDate,
+              endDate,
+              undefined,
+              colorArray[colorIndex],
+            ];
+          });
+        });
+
+        const milestoneColors = milestoneTimelineData.reduce((map, [, milestoneName, , , , color]) => {
+          if (!map[milestoneName]) {
+            map[milestoneName] = color;
+          }
+          return map;
+        }, {});
+
+        setPhaseColorMap(milestoneColors);
+        setTimelineData(milestoneTimelineData);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setLoading(false);
+    }
+  }
+
   const getTooltipContent = (view) => {
     if (view === 'Phase') {
       return `$start (Phase)<br>Project: $name<br>Phase: $phase<br>Start: $start<br>End: $end`;
@@ -86,6 +114,11 @@ const Timeline = () => {
       return `$start (Milestone)<br>Project: $name<br>Milestone: $wpName<br>Date: $start`;
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -116,15 +149,15 @@ const Timeline = () => {
             left: 0,
             width: '100%',
             height: '100%',
-            pointerEvents: 'none', // This makes the overlay not intercept hover events
-            zIndex: 1, // Make sure the overlay is above the chart
+            pointerEvents: 'none',
+            zIndex: 1,
           }}
         />
         <Chart
-          chartType="Timeline"
+          chartType='Timeline'
           data={[
             ['Project ID', 'Phase Name', 'Start Date', 'End Date', { type: 'string', role: 'style' }, { id: 'style', type: 'string', role: 'style' }],
-            ...(selectedView === 'Phase' ? projectTimelineData : milestoneTimelineData),
+            ...timelineData,
           ]}
           options={{
             timeline: {
@@ -132,9 +165,7 @@ const Timeline = () => {
               showBarLabels: false,
             },
             colors: Object.values(phaseColorMap),
-            // Conditionally hide the legend when the selectedView is "Milestone"
             legend: selectedView === 'Phase' ? { position: 'bottom' } : 'none',
-            // Customize the tooltip content based on the selected view
             tooltip: {
               trigger: '',
               isHtml: true,
@@ -143,11 +174,11 @@ const Timeline = () => {
                 color: '#444',
                 fontSize: 12,
               },
-              html: getTooltipContent(selectedView), // Call the function to get the tooltip content
+              html: getTooltipContent(selectedView),
             },
           }}
-          width="100%"
-          height="300px"
+          width='100%'
+          height='300px'
         />
       </div>
       <div style={{ textAlign: 'center' }}>
