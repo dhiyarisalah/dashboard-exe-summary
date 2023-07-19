@@ -1,19 +1,101 @@
 import React, { useState, useEffect } from "react";
-import BarChart from "./BarChart";
-import LineChart from "./LineChart";
-import { projectDetails, burndownData, assigneeProject } from "../data/index";
 import { Container, Col, Row } from "react-bootstrap";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import Select from "react-select";
+import axios from "axios";
 
 function ProjectBar() {
-  const [selectedVersions, setSelectedVersions] = useState([]);
-  const [selectedType, setSelectedType] = useState(null);
-  const [selectedDropdown, setSelectedDropdown] = useState("progress");
   const [selectedVersion, setSelectedVersion] = useState(null);
+  const [selectedTypes, setSelectedTypes] = useState([]);
   const [projectData, setProjectData] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
   const [assigneeData, setAssigneeData] = useState(null);
+  const [versionOptions, setVersionOptions] = useState([]);
+  const [typeOptions, setTypeOptions] = useState([]);
+  const [selectedAssigneeDropdown, setSelectedAssigneeDropdown] = useState(null);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch project details
+        const projectDetailsResponse = await axios.get(
+          "https://sw.infoglobal.id/executive-summary-dashboard/get-progress-project"
+        );
+        const projectDetails = projectDetailsResponse.data;
+
+        // Check if the label matches any project name
+        const labelParam = getLabelFromURL();
+        const filteredProject = projectDetails.find(
+          (project) => project.project_name === labelParam
+        );
+
+        if (filteredProject) {
+          // Fetch project versions
+          const projectVersionsResponse = await axios.get(
+            "https://sw.infoglobal.id/executive-summary-dashboard/get-all-version"
+          );
+          const projectVersions = projectVersionsResponse.data;
+
+          // Filter project versions based on selected project
+          const filteredVersions = projectVersions.filter(
+            (version) => version.at_project === filteredProject.project_name
+          );
+
+          // Set the version options for the dropdown
+          const versionOptions = filteredVersions.map((version) => ({
+            value: version.version_name,
+            label: version.version_name,
+          }));
+          setVersionOptions(versionOptions);
+
+          // Set the type options for the dropdown
+          const typeOptions = filteredProject.wp_types.map((type) => ({
+            value: type,
+            label: type,
+          }));
+          setTypeOptions(typeOptions);
+
+          // Fetch burndown data based on selected types
+          const burndownDataResponse = await axios.get(
+            "https://sw.infoglobal.id/executive-summary-dashboard/get-burndown-chart-project",
+            {
+              params: {
+                types: selectedTypes.map((type) => type.value).join(","),
+              },
+            }
+          );
+          const burndownData = burndownDataResponse.data;
+
+          // Fetch assignee data based on selected types
+          const assigneeDataResponse = await axios.get(
+            "https://sw.infoglobal.id/executive-summary-dashboard/get-progress-assignee-version",
+            {
+              params: {
+                types: selectedTypes.map((type) => type.value).join(","),
+              },
+            }
+          );
+          const assigneeData = assigneeDataResponse.data;
+
+          // Set the fetched data to state variables
+          setProjectData(filteredProject);
+          setLineChartData(burndownData);
+          setAssigneeData(assigneeData);
+        } else {
+          // Reset the data if the label doesn't match any project
+          setSelectedVersion(null);
+          setSelectedTypes([]);
+          setProjectData(null);
+          setLineChartData(null);
+          setAssigneeData(null);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, [selectedTypes, selectedVersion, selectedAssigneeDropdown]);
 
   function getLabelFromURL() {
     const url = window.location.href;
@@ -22,78 +104,16 @@ function ProjectBar() {
     return decodeURIComponent(label);
   }
 
-  const labelParam = getLabelFromURL();
-
-  useEffect(() => {
-    if (labelParam) {
-      const project = projectDetails.find(
-        (project) => project.project_name === labelParam
-      );
-
-      if (project) {
-        const versions = project.progress.map(
-          (version) => version.version_name
-        );
-
-        const latestVersion = versions[versions.length - 1];
-        setSelectedVersion(latestVersion);
-
-        const filteredData = project.progress.find(
-          (version) => version.version_name === latestVersion
-        );
-
-        setProjectData({
-          project_name: project.project_name,
-          percentage_done: filteredData ? filteredData.percentage_done : 0,
-          percentage_undone: filteredData ? filteredData.percentage_undone : 0,
-        });
-
-        const burndownProject = burndownData.find(
-          (burndownProject) => burndownProject.project_name === labelParam
-        );
-
-        const burndownVersion = burndownProject?.versions.find(
-          (version) => version.version_name === latestVersion
-        );
-
-        setLineChartData(burndownVersion?.progress || null);
-
-        const assigneeData = assigneeProject.find(
-          (project) => project.project_name === labelParam
-        );
-
-        const assigneeVersionData = assigneeData?.versions.find(
-          (version) => version.version_name === latestVersion
-        );
-
-        setAssigneeData(assigneeVersionData || null);
-      } else {
-        setSelectedVersion(null);
-        setProjectData(null);
-        setLineChartData(null);
-        setAssigneeData(null);
-      }
-    }
-  }, [labelParam]);
-
-  const handleVersionSelect = (selectedOptions) => {
-    const selectedVersionNames = selectedOptions.map((option) => option.value);
-    setSelectedVersions(selectedVersionNames);
-
-    // Clear the selected version when selecting a new one
-    setSelectedVersion(null);
+  const handleVersionSelect = (selectedOption) => {
+    setSelectedVersion(selectedOption);
   };
 
-  const handleTypeSelect = (selectedOption) => {
-    setSelectedType(selectedOption.value);
+  const handleTypeSelect = (selectedOptions) => {
+    setSelectedTypes(selectedOptions);
   };
 
-  const handleAssigneeDropdownSelect = (eventKey) => {
-    setSelectedDropdown(eventKey);
-  };
-
-  const handleVersionDropdownSelect = (eventKey) => {
-    setSelectedVersion(eventKey);
+  const handleAssigneeDropdownSelect = (selectedOption) => {
+    setSelectedAssigneeDropdown(selectedOption);
   };
 
   return (
@@ -101,32 +121,21 @@ function ProjectBar() {
       <Row className="row">
         <Col className="button d-flex justify-content-end">
           <Select
-            options={projectDetails.map((project) => ({
-              value: project.version_name,
-              label: project.version_name,
-            }))}
+            options={typeOptions}
             isMulti
-            onChange={handleVersionSelect}
-            value={selectedVersions.map((version) => ({
-              value: version,
-              label: version,
-            }))}
-            placeholder="Select Versions"
+            onChange={handleTypeSelect}
+            value={selectedTypes}
+            placeholder="Select Type"
           />
         </Col>
         <Col className="button d-flex justify-content-end">
           <Select
-              options={projectDetails.map((project) => ({
-                value: project.version_name,
-                label: project.version_name,
-              }))}
-              isMulti
-              onChange={handleVersionSelect}
-              value={selectedVersions.map((version) => ({
-                value: version,
-                label: version,
-              }))}
-              placeholder="Select Type"
+            options={versionOptions}
+            isClearable
+            isSearchable
+            onChange={handleVersionSelect}
+            value={selectedVersion}
+            placeholder="Select Version"
           />
         </Col>
       </Row>
@@ -135,19 +144,19 @@ function ProjectBar() {
         <h3 className="sub-judul-project">Progress</h3>
         <div className="projectProgress">
           {projectData && (
-            <BarChart
-              chartData={{
+            <Bar
+              data={{
                 labels: ["Project Progress"],
                 datasets: [
                   {
                     label: "Done",
-                    data: [projectData.percentage_done],
+                    data: [projectData.progress.progress_by_wp],
                     backgroundColor: "#327332",
                     barThickness: 40,
                   },
                   {
                     label: "Undone",
-                    data: [projectData.percentage_undone],
+                    data: [100 - projectData.progress.progress_by_wp],
                     backgroundColor: "#F6C600",
                     barThickness: 40,
                   },
@@ -189,8 +198,8 @@ function ProjectBar() {
         <h3 className="sub-judul-project">Burndown Chart</h3>
         <div className="container-chart">
           {lineChartData && (
-            <LineChart
-              chartData={{
+            <Line
+              data={{
                 labels: lineChartData.map((data) => data.month),
                 datasets: [
                   {
@@ -201,7 +210,7 @@ function ProjectBar() {
                     borderColor: "#165BAA",
                   },
                   {
-                    label: "Added",
+                    label: "On-going",
                     data: lineChartData.map((data) => data.wp_on_going),
                     fill: false,
                     backgroundColor: "#A155B9",
@@ -233,7 +242,7 @@ function ProjectBar() {
                   { value: "storyPoints", label: "Story Points" },
                 ]}
                 onChange={handleAssigneeDropdownSelect}
-                value={{ value: selectedDropdown, label: selectedDropdown }}
+                value={selectedAssigneeDropdown}
                 placeholder="Select Data Type"
               />
             </Col>
@@ -250,13 +259,19 @@ function ProjectBar() {
             {assigneeData && (
               <Bar
                 data={{
-                  labels: assigneeData.member_data.map((member) => member.member_name),
+                  labels: assigneeData[0]?.versions[0]?.progress.map(
+                    (member) => member.member_name
+                  ),
                   datasets: [
                     {
                       label:
-                        selectedDropdown === "progress" ? "Progress" : "Story Points",
-                      data: assigneeData.member_data.map((member) =>
-                        selectedDropdown === "progress" ? member.progress : member.storyPoints
+                        selectedAssigneeDropdown?.value === "progress"
+                          ? "Progress"
+                          : "Story Points",
+                      data: assigneeData[0]?.versions[0]?.progress.map((member) =>
+                        selectedAssigneeDropdown?.value === "progress"
+                          ? member.progress
+                          : member.storyPoints
                       ),
                       backgroundColor: "#2076BD",
                     },
