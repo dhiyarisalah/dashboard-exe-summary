@@ -40,9 +40,11 @@ async def get_all_versions():
     except Exception as e:
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
+import collections
 
 async def get_progress_version(wp_types=None):
-    version_progress = {}
+    project_versions = collections.defaultdict(lambda: collections.defaultdict(lambda: {"wp_total": 0, "wp_done": 0}))
+
     all_wp = await get_all_wp()
     for item in all_wp:
         project_name = item.get("project_name")
@@ -51,37 +53,38 @@ async def get_progress_version(wp_types=None):
 
         if project_name is not None and version_name is not None:
             if wp_types is None or wp_type in wp_types:
-                if project_name not in version_progress:
-                    version_progress[project_name] = []
-
-                version_data = None
-                for data in version_progress[project_name] :
-                    if data["version_name"] == version_name:
-                        version_data = data
-                        break
-
-                if version_data is None:
-                    version_data = {
-                        "version_name": version_name,
-                        "wp_total": 0,
-                        "wp_done": 0
-                    }
-                    version_progress[project_name].append(version_data)
-
-                version_data["wp_total"] += 1
+                project_versions[project_name][version_name]["wp_total"] += 1
 
                 if item.get("status") == "Done":
-                    version_data["wp_done"] += 1
+                    project_versions[project_name][version_name]["wp_done"] += 1
 
     result = []
-    for project_name, progress in version_progress.items():
-        for data in progress:
-            data["percentage_done"] = round((data["wp_done"] / data["wp_total"]) * 100)
-            data["percentage_undone"] = 100 - data["percentage_done"]
-        result.append({
+    for project_name, versions in project_versions.items():
+        project_total = {"wp_total": 0, "wp_done": 0}
+        progress = []
+        for version_name, data in versions.items():
+            wp_total = data["wp_total"]
+            wp_done = data["wp_done"]
+            percentage_done = round((wp_done / wp_total) * 100)
+            progress.append({
+                "version_name": version_name,
+                "wp_total": wp_total,
+                "wp_done": wp_done,
+                "percentage_done": percentage_done,
+                "percentage_undone": 100 - percentage_done
+            })
+            project_total["wp_total"] += wp_total
+            project_total["wp_done"] += wp_done
+
+        project_percentage_done = round((project_total["wp_done"] / project_total["wp_total"]) * 100)
+        project_progress = {
             "project_name": project_name,
+            "percentage_done_project": project_percentage_done,
+            "percentage_undone_project": 100 - project_percentage_done,
             "progress": progress
-        })
+        }
+        result.append(project_progress)
+
     return result
 
 async def get_burndown_chart_project(wp_types=None):
