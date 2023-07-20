@@ -1,4 +1,20 @@
-# URL dan Token API
+import yaml
 
-url = "https://nirmala.infoglobal.id/api/v3"
-header = {"Authorization": "Basic YXBpa2V5OmVlMjUzM2I0OTBjMmQ5M2M1ZDNkN2U2OGZlOGNkY2ViODAyMjc2ZTQxZjkyZTQxODU3MjBhM2M0OTgyMTM2ZjQ="}
+def get_config():
+    with open("config.yaml") as config_file:
+        config = yaml.safe_load(config_file)
+    return config
+
+def get_url():
+    config = get_config()
+    return config["url"]
+
+def get_header():
+    config = get_config()
+    return config["header"]
+
+
+url = get_url()
+header = get_header()
+
+
