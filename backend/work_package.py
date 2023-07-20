@@ -28,6 +28,7 @@ def process_element(element):
         date = element.get("date")
         if date is not None:
             date = datetime.strptime(date, "%Y-%m-%d").date()
+            day = date.strftime("%d")
             month = date.strftime("%m")
             year = date.strftime("%Y")
             month = calendar.month_name[int(month)]
@@ -43,6 +44,7 @@ def process_element(element):
         if date is not None:
             date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
             date = date_obj.date()
+            day = date.strftime("%d")
             month = date_obj.strftime("%m")
             year = date_obj.strftime("%Y")
             month = calendar.month_name[int(month)]
@@ -51,6 +53,7 @@ def process_element(element):
         if date is not None:
             date_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
             date = date_obj.date()
+            day = date.strftime("%d")
             month = date_obj.strftime("%m")
             year = date_obj.strftime("%Y")
             month = calendar.month_name[int(month)]
@@ -63,6 +66,7 @@ def process_element(element):
         "project_name": project_name,
         "status": status,
         "wp_type": wp_type,
+        "day": day,
         "date": date,
         "start_date": start_date,
         "end_date": end_date,
@@ -81,6 +85,7 @@ def process_element(element):
         "status": status,
         "wp_type": wp_type,
         "date": date,
+        "day": day,
         "month": month,
         "year": year,
         "assignee": assignee,

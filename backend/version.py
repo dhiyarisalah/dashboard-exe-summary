@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from auth import header, url
 import httpx
 from work_package import get_all_wp
+import collections
 
 async def get_all_versions():
     try:
@@ -39,8 +40,6 @@ async def get_all_versions():
         raise HTTPException(status_code=500, detail="Invalid JSON response from the API.")
     except Exception as e:
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
-
-import collections
 
 async def get_progress_version(wp_types=None):
     project_versions = collections.defaultdict(lambda: collections.defaultdict(lambda: {"wp_total": 0, "wp_done": 0}))
@@ -141,24 +140,23 @@ async def get_burndown_chart_project(wp_types=None):
         })
     return result
 
-
 async def get_burndown_chart_version(wp_types=None):
-    burndown_chart = {}
+    burndown_chart = collections.defaultdict(lambda: collections.defaultdict(list))
     all_wp = await get_all_wp()
-    
+
     for item in all_wp:
         project_name = item.get("project_name")
         version_name = item.get("at_version")
         date = item.get("date")
+        day = item.get("day")
+        month = item.get("month")
+        year = item.get("year")
         wp_type = item.get("wp_type")
 
         if project_name is not None and version_name is not None and date is not None:
             if wp_types is None or wp_type in wp_types:
-                if project_name not in burndown_chart:
-                    burndown_chart[project_name] = []
-
                 version_data = None
-                for data in burndown_chart[project_name]:
+                for data in burndown_chart[project_name][year]:
                     if data["version_name"] == version_name:
                         version_data = data
                         break
@@ -168,7 +166,7 @@ async def get_burndown_chart_version(wp_types=None):
                         "version_name": version_name,
                         "progress": []
                     }
-                    burndown_chart[project_name].append(version_data)
+                    burndown_chart[project_name][year].append(version_data)
 
                 progress_data = None
                 for data in version_data["progress"]:
@@ -179,6 +177,8 @@ async def get_burndown_chart_version(wp_types=None):
                 if progress_data is None:
                     progress_data = {
                         "date": date,
+                        "day": day,
+                        "month": month,
                         "wp_done": 0,
                         "wp_on_going": 0
                     }
@@ -190,11 +190,12 @@ async def get_burndown_chart_version(wp_types=None):
                     progress_data["wp_on_going"] += 1
 
     result = []
-    for project_name, versions in burndown_chart.items():
-        result.append({
-            "project_name": project_name,
-            "versions": versions
-        })
+    for project_name, year_versions in burndown_chart.items():
+        project_data = {"project_name": project_name, "progress": []}
+        for year, versions in year_versions.items():
+            project_data["progress"].append({"year": year, "versions": versions})
+        result.append(project_data)
+
     return result
 
 async def get_progress_assignee_version(wp_types=None):
