@@ -7,12 +7,111 @@ import axios from "axios";
 function ProjectBar() {
   const [selectedVersion, setSelectedVersion] = useState(null);
   const [selectedTypes, setSelectedTypes] = useState([]);
-  const [projectData, setProjectData] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
   const [assigneeData, setAssigneeData] = useState(null);
   const [versionOptions, setVersionOptions] = useState([]);
   const [typeOptions, setTypeOptions] = useState([]);
+  const [filteredVersions, setFilteredVersions] = useState([]);
   const [selectedAssigneeDropdown, setSelectedAssigneeDropdown] = useState(null);
+
+
+  async function fetchVersionOptions(selectedTypeValues) {
+    try {
+      // If "All Types" is selected or no types are selected, fetch all version options
+      if (selectedTypeValues.length === 0 || selectedTypeValues.includes("all")) {
+        const progressResponse = await axios.get(
+          "https://sw.infoglobal.id/executive-summary-dashboard/get-progress-version"
+        );
+        const progressData = progressResponse.data;
+  
+        const labelParam = getLabelFromURL();
+        const filteredProject = progressData.find(
+          (project) => project.project_name === labelParam
+        );
+  
+        if (filteredProject) {
+          // Update the version options based on the fetched data
+          const versionOptions = filteredProject.progress.map((data) => ({
+            value: data.version_name,
+            label: data.version_name,
+          }));
+  
+          // Add "All Version" option
+          versionOptions.unshift({
+            value: "all",
+            label: "All Versions",
+          });
+  
+          setVersionOptions(versionOptions);
+  
+          // If "All Types" is selected or no types are selected, do not reset the selected version
+          // Keep the current selected version if it exists in the versionOptions
+          if (
+            selectedVersion &&
+            versionOptions.some((option) => option.value === selectedVersion.value)
+          ) {
+            setSelectedVersion(selectedVersion);
+          }
+        } else {
+          // Reset the version options if the label doesn't match any project
+          setVersionOptions([]);
+          setSelectedVersion(null);
+        }
+      } else {
+        // Fetch version options based on selected types
+        const progressResponse = await axios.get(
+          "https://sw.infoglobal.id/executive-summary-dashboard/get-progress-version",
+          {
+            params: {
+              wp_types: selectedTypeValues.join(","),
+            },
+          }
+        );
+        const progressData = progressResponse.data;
+  
+        const labelParam = getLabelFromURL();
+        const filteredProject = progressData.find(
+          (project) => project.project_name === labelParam
+        );
+  
+        if (filteredProject) {
+          // Update the version options based on the fetched data
+          const versionOptions = filteredProject.progress.map((data) => ({
+            value: data.version_name,
+            label: data.version_name,
+          }));
+  
+          // Add "All Version" option
+          versionOptions.unshift({
+            value: "all",
+            label: "All Versions",
+          });
+  
+          setVersionOptions(versionOptions);
+  
+          // If the selected version is not in the filtered versions, reset the selection
+          if (
+            selectedVersion &&
+            !versionOptions.some((option) => option.value === selectedVersion.value)
+          ) {
+            setSelectedVersion(null);
+          }
+  
+          // Set the filtered versions state
+          const filteredVersions = filteredProject.progress.map((data) => data.version_name);
+          setFilteredVersions(filteredVersions);
+        } else {
+          // Reset the version options if the label doesn't match any project
+          setVersionOptions([]);
+          setSelectedVersion(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching version options:", error);
+    }
+  }
+  
+
 
   useEffect(() => {
     async function fetchData() {
@@ -30,62 +129,29 @@ function ProjectBar() {
         );
 
         if (filteredProject) {
-          // Fetch project versions
-          const projectVersionsResponse = await axios.get(
-            "https://sw.infoglobal.id/executive-summary-dashboard/get-all-version"
-          );
-          const projectVersions = projectVersionsResponse.data;
-
-          // Filter project versions based on selected project
-          const filteredVersions = projectVersions.filter(
-            (version) => version.at_project === filteredProject.project_name
-          );
-
-          // Set the version options for the dropdown
-          const versionOptions = filteredVersions.map((version) => ({
-            value: version.version_name,
-            label: version.version_name,
-          }));
-          setVersionOptions(versionOptions);
-
           // Set the type options for the dropdown
           const typeOptions = filteredProject.wp_types.map((type) => ({
             value: type,
             label: type,
           }));
+
+          // Add "All Types" option
+          typeOptions.unshift({
+            value: "all",
+            label: "All Types",
+          });
+
           setTypeOptions(typeOptions);
 
-          // Fetch burndown data based on selected types
-          const burndownDataResponse = await axios.get(
-            "https://sw.infoglobal.id/executive-summary-dashboard/get-burndown-chart-project",
-            {
-              params: {
-                types: selectedTypes.map((type) => type.value).join(","),
-              },
-            }
-          );
-          const burndownData = burndownDataResponse.data;
+          // Set the default selection to "All Types" if no types are selected
+          setSelectedTypes([]);
 
-          // Fetch assignee data based on selected types
-          const assigneeDataResponse = await axios.get(
-            "https://sw.infoglobal.id/executive-summary-dashboard/get-progress-assignee-version",
-            {
-              params: {
-                types: selectedTypes.map((type) => type.value).join(","),
-              },
-            }
-          );
-          const assigneeData = assigneeDataResponse.data;
-
-          // Set the fetched data to state variables
-          setProjectData(filteredProject);
-          setLineChartData(burndownData);
-          setAssigneeData(assigneeData);
+          // Fetch version options based on all types (passing an empty array for wp_types)
+          await fetchVersionOptions([]);
         } else {
           // Reset the data if the label doesn't match any project
           setSelectedVersion(null);
           setSelectedTypes([]);
-          setProjectData(null);
           setLineChartData(null);
           setAssigneeData(null);
         }
@@ -95,7 +161,23 @@ function ProjectBar() {
     }
 
     fetchData();
-  }, [selectedTypes, selectedVersion, selectedAssigneeDropdown]);
+  }, []);
+
+  useEffect(() => {
+    // Check if "All Versions" is selected
+    const isAllVersionsSelected = selectedVersion?.value === "all";
+
+    // Check if "All Types" is selected
+    const isAllTypesSelected = selectedTypes.some((option) => option.value === "all");
+
+    if (isAllVersionsSelected || isAllTypesSelected) {
+      // Fetch version options based on empty wp_types
+      fetchVersionOptions([]);
+    } else {
+      // Fetch version options based on selected types
+      fetchVersionOptions(selectedTypes.map((type) => type.value));
+    }
+  }, [selectedTypes, selectedVersion]);
 
   function getLabelFromURL() {
     const url = window.location.href;
@@ -109,7 +191,20 @@ function ProjectBar() {
   };
 
   const handleTypeSelect = (selectedOptions) => {
-    setSelectedTypes(selectedOptions);
+    // Check if "All Types" is selected
+    const isAllTypesSelected = selectedOptions.some((option) => option.value === "all");
+
+    if (isAllTypesSelected) {
+      // Set selected types to only "All Types"
+      setSelectedTypes([{ value: "all", label: "All Types" }]);
+      // Fetch version options based on empty wp_types (reset the selection)
+      fetchVersionOptions([]);
+    } else {
+      // Exclude "All Types" from the selected options
+      setSelectedTypes(selectedOptions.filter((option) => option.value !== "all"));
+      // Fetch version options based on selected types
+      fetchVersionOptions(selectedOptions.map((type) => type.value));
+    }
   };
 
   const handleAssigneeDropdownSelect = (selectedOption) => {
@@ -139,60 +234,6 @@ function ProjectBar() {
           />
         </Col>
       </Row>
-
-      <div>
-        <h3 className="sub-judul-project">Progress</h3>
-        <div className="projectProgress">
-          {projectData && (
-            <Bar
-              data={{
-                labels: ["Project Progress"],
-                datasets: [
-                  {
-                    label: "Done",
-                    data: [projectData.progress.progress_by_wp],
-                    backgroundColor: "#327332",
-                    barThickness: 40,
-                  },
-                  {
-                    label: "Undone",
-                    data: [100 - projectData.progress.progress_by_wp],
-                    backgroundColor: "#F6C600",
-                    barThickness: 40,
-                  },
-                ],
-              }}
-              options={{
-                maintainAspectRatio: false,
-                indexAxis: "y",
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                scales: {
-                  x: {
-                    display: false,
-                    stacked: false,
-                    beginAtZero: true,
-                    grid: {
-                      display: false,
-                    },
-                  },
-                  y: {
-                    display: false,
-                    stacked: true,
-                    beginAtZero: true,
-                    grid: {
-                      display: false,
-                    },
-                  },
-                },
-              }}
-            />
-          )}
-        </div>
-      </div>
 
       <div>
         <h3 className="sub-judul-project">Burndown Chart</h3>
