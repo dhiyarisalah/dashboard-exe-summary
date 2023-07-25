@@ -284,6 +284,7 @@ function handlePieSliceClick(_, elements) {
           </Button>
         </Col>
       </Row>
+      <hr style={{ height: "2px", background: "black", border: "none" }} />
       <Row>
         <Col style={{ width: "50%" }}>
           <h3 className="sub-judul-assignee">Overview</h3>
@@ -307,6 +308,7 @@ function handlePieSliceClick(_, elements) {
                         {selectedItem}
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
+                      <Dropdown.Item disabled>Select Type</Dropdown.Item>
                         {dropdownItems.map((item, index) => (
                           <Dropdown.Item key={index} eventKey={item.value}>
                             {item.label}

@@ -109,7 +109,7 @@ h2.projectName {
     font-size: 28px;
     line-height: 58px;
     color: #2C2F33;
-    margin: 0px;
+    margin: 30px 0px 10px 30px;
 }
 
 h3.sub-judul-project {
@@ -122,6 +122,10 @@ h3.sub-judul-project {
 .projectdetailspage .project-components{
     margin: 0px
 }
+
+.projectdetailspage .project-components .row{
+    margin-left: 20px
+} 
 
 .projectdetailspage .project-components .button{
     margin-right: 30px
@@ -152,7 +156,7 @@ h2.assigneeName {
     font-size: 28px;
     line-height: 58px;
     color: #2C2F33;
-    margin: 0px;
+    margin: 30px;
 }
 
 h3.sub-judul-assignee {
@@ -160,6 +164,7 @@ h3.sub-judul-assignee {
     font-weight: 600;
     font-size: 20px;
     line-height: 38px;  
+    margin-left:30px;
 }
 
 .assigneedetailspage .user-components .title-count  {
@@ -187,7 +192,7 @@ h3.sub-judul-assignee {
 }
 
 .assigneedetailspage .user-components .container-chart .row{
-    margin: 0px;
+    margin: 30px;
 }
 
 

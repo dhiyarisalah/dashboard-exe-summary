@@ -4,11 +4,10 @@ import { Button } from 'react-bootstrap';
 import axios from 'axios';
 
 const colorArray = [
-  '#FF5733',
   '#33FF57',
-  '#5733FF',
-  '#FF33C4',
-  '#33C4FF',
+  '#194375',
+  '#FF5733',
+  '#F6C600',
   // Add more colors here if needed...
 ];
 

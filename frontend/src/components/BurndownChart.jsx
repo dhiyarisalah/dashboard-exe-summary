@@ -57,18 +57,17 @@ function BurndownChart() {
               {
                 label: "Done",
                 data: doneData,
-                backgroundColor: "#165BAA",
                 borderColor: "#165BAA",
+                borderWidth: 5
               },
               {
                 label: "Added",
                 data: addedData,
-                backgroundColor: "#A155B9",
                 borderColor: "#A155B9",
+                borderWidth: 5
               },
             ],
             options: {
-              maintainAspectRatio: false,
               plugins: {
                 legend: {
                   display: true,
@@ -109,6 +108,7 @@ function BurndownChart() {
                 {selectedYear}
               </Dropdown.Toggle>
               <Dropdown.Menu>
+              <Dropdown.Item disabled>Select Year</Dropdown.Item>
                 {[0, 1, 2, 3, 4].map((index) => (
                   <Dropdown.Item key={index} eventKey={currentYear + index}>
                     {currentYear + index}

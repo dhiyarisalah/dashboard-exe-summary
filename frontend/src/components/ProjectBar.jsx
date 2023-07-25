@@ -50,17 +50,19 @@ function ProjectBar() {
               {
                 label: "Percentage Done",
                 data: [filteredProject.percentage_done_project],
-                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                backgroundColor: "#327332",
                 barThickness: 40,
                 stack: "progress", // Add stack property to indicate they should be stacked
               },
               {
                 label: "Percentage Undone",
                 data: [filteredProject.percentage_undone_project],
-                backgroundColor: "rgba(255, 99, 132, 0.6)",
+                backgroundColor: "#F6C600",
                 barThickness: 40,
                 stack: "progress", // Add stack property to indicate they should be stacked
-              },
+              }
+ 
+,
             ],
           };
           setChartData(chartData);
@@ -74,20 +76,22 @@ function ProjectBar() {
             const chartData = {
               labels: ["Progress"],
               datasets: [
+ 
                 {
                   label: "Percentage Done",
                   data: [selectedVersionData.percentage_done],
-                  backgroundColor: "rgba(75, 192, 192, 0.6)",
+                  backgroundColor: "#327332",
                   barThickness: 40,
                   stack: "progress", // Add stack property to indicate they should be stacked
                 },
                 {
                   label: "Percentage Undone",
                   data: [selectedVersionData.percentage_undone],
-                  backgroundColor: "rgba(255, 99, 132, 0.6)",
+                  backgroundColor: "#F6C600",
                   barThickness: 40,
                   stack: "progress", // Add stack property to indicate they should be stacked
-                },
+                }
+   ,
               ],
             };
             setChartData(chartData);
@@ -137,7 +141,7 @@ function ProjectBar() {
                 data: filteredProject.progress.map((progress) =>
                   selectedMetric === "Progress" ? progress.progress : progress.story_points
                 ),
-                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                backgroundColor: "#2076BD",
                 barThickness: 40,
               },
             ],
@@ -156,7 +160,7 @@ function ProjectBar() {
                   data: selectedVersionData.progress.map((progress) =>
                     selectedMetric === "Progress" ? progress.progress : progress.story_points
                   ),
-                  backgroundColor: "rgba(75, 192, 192, 0.6)",
+                  backgroundColor: "#2076BD",
                   barThickness: 40,
                 },
               ],
@@ -349,18 +353,16 @@ function ProjectBar() {
           labels: [], // Array to store the labels (months or dates)
           datasets: [
             {
-              label: "WP Done",
+              label: "Done",
               data: [], // Array to store wp_done values
-              borderColor: "rgba(75, 192, 192, 0.8)",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
-              fill: true,
+              borderColor: "#165BAA",
+              borderWidth: 5
             },
             {
-              label: "WP On Going",
+              label: "Added",
               data: [], // Array to store wp_on_going values
-              borderColor: "rgba(255, 99, 132, 0.8)",
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              fill: true,
+              borderColor: "#A155B9",
+              borderWidth: 5
             },
           ],
         };
@@ -460,7 +462,7 @@ function ProjectBar() {
         </Col>
       </Row>
       <hr style={{ height: "2px", background: "black", border: "none" }} />
-      <Row>
+      <Row className="container-chart">
       <h3 className="sub-judul-project">Progress Bar</h3>
       <Col>
         {chartData && (
@@ -476,14 +478,14 @@ function ProjectBar() {
                 indexAxis: "y",
                 scales: {
                   x: {
-                    stacked: false,
+                    stacked: true,
                     display: false,
                     grid: {
                       display: false,
                     },
                   },
                   y: {
-                    stacked: true,
+                    stacked: false,
                     display: true,
                     grid: {
                       display: false,
