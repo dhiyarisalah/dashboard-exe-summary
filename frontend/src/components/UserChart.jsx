@@ -19,7 +19,6 @@ function UserChart() {
   const [userNameFromURL, setUserNameFromURL] = useState(null);
   const [totalWP, setTotalWP] = useState(0);
   const [totalSP, setTotalSP] = useState(0);
-  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [selectedSliceIndex, setSelectedSliceIndex] = useState(null);
   const [selectedLabel, setSelectedLabel] = useState(null);
@@ -30,7 +29,6 @@ function UserChart() {
   }
 
   async function fetchUserData(start = "", end = "") {
-    setLoading(true);
     try {
       const url = "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-details";
       const response = await axios.get(
@@ -45,8 +43,6 @@ function UserChart() {
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -63,7 +59,6 @@ function UserChart() {
   }
 
   async function fetchDataWithoutDate() {
-    setLoading(true);
     try {
       const userResponse = await axios.get(
         "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-details"
@@ -77,8 +72,6 @@ function UserChart() {
       }
     } catch (error) {
       console.error("Error fetching data without date:", error);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -146,31 +139,64 @@ function UserChart() {
 
   async function handleGenerateChartClick() {
     setErrorMessage(null);
-
-    if (!startDate || !endDate) {
-      setLoading(true);
-      await fetchDataWithoutDate();
-      setLoading(false);
-    } else if (endDate <= startDate) {
-      setErrorMessage("End date should be greater than the start date.");
-    } else {
-      setLoading(true);
-      const formattedStartDate = formatDate(startDate);
-      const formattedEndDate = formatDate(endDate);
-      await fetchUserData(formattedStartDate, formattedEndDate);
-      setLoading(false);
+  
+    if (!startDate && !endDate) {
+      setErrorMessage("Please fill both start and end dates.");
+      return;
     }
+  
+    if (!startDate) {
+      setErrorMessage("Please fill the start date.");
+      return;
+    }
+  
+    if (!endDate) {
+      setErrorMessage("Please fill the end date.");
+      return;
+    }
+  
+    if (endDate <= startDate) {
+      setErrorMessage("End date should be greater than the start date.");
+      return;
+    }
+  
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+    await fetchUserData(formattedStartDate, formattedEndDate);
   }
+  
+  function validateDateInputs() {
+    if (!startDate && !endDate) {
+      setErrorMessage("Please fill both start and end dates.");
+      return false;
+    }
+  
+    if (!startDate) {
+      setErrorMessage("Please fill the start date.");
+      return false;
+    }
+  
+    if (!endDate) {
+      setErrorMessage("Please fill the end date.");
+      return false;
+    }
+  
+    if (endDate <= startDate) {
+      setErrorMessage("End date should be greater than the start date.");
+      return false;
+    }
+  
+    return true;
+  }
+  
 
   async function fetchTableDataWithoutDate() {
-    setLoading(true);
-  
     try {
       const url = "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-wp-details";
       const response = await axios.get(url);
-  
+
       const userData = response.data;
-  
+
       if (userData && Array.isArray(userData)) {
         const selectedUser = userData.find((user) => user.user_name === userNameFromURL);
         if (selectedUser) {
@@ -183,7 +209,7 @@ function UserChart() {
               progress: wp.progress,
               story_points: wp.story_points,
             }));
-  
+
             setTableData(projectTableData);
           } else {
             setTableData([]);
@@ -192,25 +218,21 @@ function UserChart() {
       }
     } catch (error) {
       console.error("Error fetching table data:", error);
-    } finally {
-      setLoading(false);
     }
   }
-  
+
   async function fetchTableData(selectedProjectName) {
     if (!startDate || !endDate) {
       await fetchTableDataWithoutDate();
     } else {
-      setLoading(true);
-  
       try {
         const url = "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-wp-details";
         const response = await axios.get(
           `${url}?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}`
         );
-  
+
         const userData = response.data;
-  
+
         if (userData && Array.isArray(userData)) {
           const selectedUser = userData.find((user) => user.user_name === userNameFromURL);
           if (selectedUser) {
@@ -223,7 +245,7 @@ function UserChart() {
                 progress: wp.progress,
                 story_points: wp.story_points,
               }));
-  
+
               setTableData(projectTableData);
             } else {
               setTableData([]);
@@ -232,29 +254,27 @@ function UserChart() {
         }
       } catch (error) {
         console.error("Error fetching table data:", error);
-      } finally {
-        setLoading(false);
       }
     }
   }
 
-function handlePieSliceClick(_, elements) {
-  if (elements.length > 0) {
-    const sliceIndex = elements[0].index;
-    setSelectedSliceIndex(sliceIndex);
+  function handlePieSliceClick(_, elements) {
+    if (elements.length > 0) {
+      const sliceIndex = elements[0].index;
+      setSelectedSliceIndex(sliceIndex);
 
-    const selectedLabel = chartData.labels[sliceIndex];
-    setSelectedLabel(selectedLabel);
+      const selectedLabel = chartData.labels[sliceIndex];
+      setSelectedLabel(selectedLabel);
 
-    // Fetch table data for the selected project
-    if (startDate && endDate) {
-      fetchTableData(selectedLabel);
-    } else {
-      setTableData([]);
+      // Fetch table data for the selected project
+      if (startDate && endDate) {
+        fetchTableData(selectedLabel);
+      } else {
+        setTableData([]);
+      }
     }
   }
-}
-  
+
   return (
     <Container fluid className="user-components">
       <Row className="date-inputs" style={{ margin: 20 }}>
@@ -279,63 +299,59 @@ function handlePieSliceClick(_, elements) {
             showYearDropdown
             scrollableYearDropdown
           />
-          <Button className="refresh-button" style={{ marginLeft: 30 }} onClick={handleGenerateChartClick} disabled={loading}>
+          <Button className="refresh-button" style={{ marginLeft: 30 }} onClick={handleGenerateChartClick}>
             Submit
           </Button>
         </Col>
       </Row>
+      {errorMessage && <div className="error-message" style={{marginLeft: 30}}>{errorMessage}</div>}
       <hr style={{ height: "2px", background: "black", border: "none" }} />
       <Row>
         <Col style={{ width: "50%" }}>
           <h3 className="sub-judul-assignee">Overview</h3>
           <div className="container-chart" style={{ width: 400 }}>
-            {loading ? (
-              <div>Loading...</div>
-            ) : (
-              <>
-                <div className="title-count">
-                  Total {selectedItem} <br />
-                  <span style={{ marginTop: "20px" }} className="count-project">
-                    {selectedItem === "Work Packages"
-                      ? `${totalWP} ${selectedItem}`
-                      : `${totalSP} ${selectedItem}`}
-                  </span>
-                </div>
-                <Row>
-                  <Col className="d-flex justify-content-end">
-                    <Dropdown onSelect={handleDropdownSelect}>
-                      <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                        {selectedItem}
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                      <Dropdown.Item disabled>Select Type</Dropdown.Item>
-                        {dropdownItems.map((item, index) => (
-                          <Dropdown.Item key={index} eventKey={item.value}>
-                            {item.label}
-                          </Dropdown.Item>
-                        ))}
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </Col>
-                </Row>
-                <hr style={{ height: "2px", background: "black", border: "none" }} />
-                {chartData ? (
-                  <Pie
-                    id="userChart"
-                    data={chartData}
-                    options={{ onClick: handlePieSliceClick }}
-                    style={{
-                      opacity: 1,
-                      transition: "opacity 0.5s ease, width 0.5s ease",
-                    }}
-                  />
-                ) : (
-                  <div className="no-data-message">No data available</div>
-                )}
-              </>
-            )}
+            <>
+              <div className="title-count">
+                Total {selectedItem} <br />
+                <span style={{ marginTop: "20px" }} className="count-project">
+                  {selectedItem === "Work Packages"
+                    ? `${totalWP} ${selectedItem}`
+                    : `${totalSP} ${selectedItem}`}
+                </span>
+              </div>
+              <Row>
+                <Col className="d-flex justify-content-end">
+                  <Dropdown onSelect={handleDropdownSelect}>
+                    <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                      {selectedItem}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      {dropdownItems.map((item, index) => (
+                        <Dropdown.Item key={index} eventKey={item.value}>
+                          {item.label}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+              </Row>
+              <hr style={{ height: "2px", background: "black", border: "none" }} />
+              {chartData ? (
+                <Pie
+                  id="userChart"
+                  data={chartData}
+                  options={{ onClick: handlePieSliceClick }}
+                  style={{
+                    opacity: 1,
+                    transition: "opacity 0.5s ease, width 0.5s ease",
+                  }}
+                />
+              ) : (
+                <div className="no-data-message">No data available</div>
+              )}
+            </>
           </div>
-          </Col>
+        </Col>
         {selectedSliceIndex !== null && (
           <Col style={{ width: "50%" }}>
             <h3 className="sub-judul-assignee">{selectedLabel}</h3>

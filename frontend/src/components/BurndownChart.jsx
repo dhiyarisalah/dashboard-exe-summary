@@ -58,12 +58,14 @@ function BurndownChart() {
                 label: "Done",
                 data: doneData,
                 borderColor: "#165BAA",
+                backgroundColor: "#165BAA",
                 borderWidth: 5
               },
               {
                 label: "Added",
                 data: addedData,
                 borderColor: "#A155B9",
+                backgroundColor: "#A155B9",
                 borderWidth: 5
               },
             ],
@@ -119,7 +121,7 @@ function BurndownChart() {
           </Col>
         </Row>
         <hr style={{ marginTop: "0px", height: "2px", background: "black", border: "none" }} />
-        <div style={{ height: "300px" }}>
+        <div style={{ height: "400px" }}>
           {loading ? (
             <div>Loading...</div>
           ) : (

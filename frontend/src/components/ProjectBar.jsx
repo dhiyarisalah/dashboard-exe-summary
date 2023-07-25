@@ -14,7 +14,7 @@ function ProjectBar() {
   const [chartData, setChartData] = useState(null);
   const [selectedMetric, setSelectedMetric] = useState("Progress");
   const [assigneeChartData, setAssigneeChartData] = useState(null);
-  const [lineChartData, setLineChartData] = useState(null); // New state for line chart data
+  const [lineChartData, setLineChartData] = useState(null);
 
   const getLabelFromURL = () => {
     const url = window.location.href;
@@ -120,12 +120,31 @@ function ProjectBar() {
           },
         });
       } else {
-        response = await axios.get(`${BASE_URL}/get-progress-assignee-version`, {
-          params: {
-            wp_types: selectedTypeValues.join(","),
-            project_name: getLabelFromURL(), // Include the project_name parameter for version-specific data
-          },
-        });
+        if (selectedTypeValues.includes("all")) {
+          // Fetch data for each type individually
+          const allTypesData = [];
+          for (const typeOption of typeOptions) {
+            if (typeOption.value !== "all") {
+              response = await axios.get(`${BASE_URL}/get-progress-assignee-version`, {
+                params: {
+                  wp_types: typeOption.value,
+                  project_name: getLabelFromURL(),
+                  version_name: selectedVersionValue, // Include the version_name parameter for version-specific data
+                },
+              });
+              allTypesData.push(...response.data);
+            }
+          }
+          response = { data: allTypesData };
+        } else {
+          response = await axios.get(`${BASE_URL}/get-progress-assignee-version`, {
+            params: {
+              wp_types: selectedTypeValues.join(","),
+              project_name: getLabelFromURL(), // Include the project_name parameter for version-specific data
+              version_name: selectedVersionValue, // Include the version_name parameter for version-specific data
+            },
+          });
+        }
       }
   
       const data = response.data;
@@ -175,6 +194,7 @@ function ProjectBar() {
       setAssigneeChartData(null);
     }
   };
+  
   
   
 
@@ -281,6 +301,8 @@ function ProjectBar() {
     }
   }, []);
 
+  
+
   useEffect(() => {
     // Check if "All Versions" is selected
     const isAllVersionsSelected = selectedVersion && selectedVersion.value === "all-versions";
@@ -327,12 +349,20 @@ function ProjectBar() {
   
       // If "All Types" is selected, fetch data for all types
       if (selectedTypeValues.includes("all")) {
-        response = await axios.get(apiEndpoint, {
-          params: {
-            wp_types: "all",
-            project_name: getLabelFromURL(),
-          },
-        });
+        // Fetch data for each type individually
+        const allTypesData = [];
+        for (const typeOption of typeOptions) {
+          if (typeOption.value !== "all") {
+            response = await axios.get(apiEndpoint, {
+              params: {
+                wp_types: typeOption.value,
+                project_name: getLabelFromURL(),
+              },
+            });
+            allTypesData.push(...response.data);
+          }
+        }
+        response = { data: allTypesData };
       } else {
         // Fetch data for specific types
         response = await axios.get(apiEndpoint, {
@@ -346,9 +376,9 @@ function ProjectBar() {
       const data = response.data;
       console.log("API Response:", data);
   
-      const filteredProject = data.find((project) => project.project_name === getLabelFromURL());
+      const filteredProjects = data.filter((project) => project.project_name === getLabelFromURL());
   
-      if (filteredProject) {
+      if (filteredProjects.length > 0) {
         const lineData = {
           labels: [], // Array to store the labels (months or dates)
           datasets: [
@@ -356,44 +386,50 @@ function ProjectBar() {
               label: "Done",
               data: [], // Array to store wp_done values
               borderColor: "#165BAA",
-              borderWidth: 5
+              backgroundColor: "#165BAA",
+              borderWidth: 5,
             },
             {
               label: "Added",
               data: [], // Array to store wp_on_going values
               borderColor: "#A155B9",
-              borderWidth: 5
+              backgroundColor: "#A155B9",
+              borderWidth: 5,
             },
           ],
         };
   
-        if (selectedVersionValue === "all-versions") {
-          // For "All Versions," retrieve labels from month and year values (string)
-          for (const yearData of filteredProject.progress) {
-            for (const entry of yearData.progress) {
-              const label = `${entry.month} ${yearData.year}`;
-              if (!lineData.labels.includes(label)) {
-                lineData.labels.push(label);
+        // For specific version, retrieve labels from date's value (string)
+        if (selectedVersionValue !== "all-versions") {
+          for (const filteredProject of filteredProjects) {
+            const selectedVersionData = filteredProject.progress.find(
+              (yearData) => yearData.versions.some((version) => version.version_name === selectedVersionValue)
+            );
+  
+            if (selectedVersionData) {
+              for (const version of selectedVersionData.versions) {
+                if (version.version_name === selectedVersionValue) {
+                  for (const entry of version.progress) {
+                    lineData.labels.push(entry.date);
+                    lineData.datasets[0].data.push(entry.wp_done);
+                    lineData.datasets[1].data.push(entry.wp_on_going);
+                  }
+                  break; // Break out of the loop once the selected version's progress is found
+                }
               }
-              lineData.datasets[0].data.push(entry.wp_done);
-              lineData.datasets[1].data.push(entry.wp_on_going);
             }
           }
         } else {
-          // For specific version, directly retrieve labels from date's value (string)
-          const selectedVersionData = filteredProject.progress.find(
-            (yearData) => yearData.versions.some((version) => version.version_name === selectedVersionValue)
-          );
-  
-          if (selectedVersionData) {
-            for (const version of selectedVersionData.versions) {
-              if (version.version_name === selectedVersionValue) {
-                for (const entry of version.progress) {
-                  lineData.labels.push(entry.date);
-                  lineData.datasets[0].data.push(entry.wp_done);
-                  lineData.datasets[1].data.push(entry.wp_on_going);
+          // For "All Versions," retrieve labels from month and year values (string)
+          for (const filteredProject of filteredProjects) {
+            for (const yearData of filteredProject.progress) {
+              for (const entry of yearData.progress) {
+                const label = `${entry.month} ${yearData.year}`;
+                if (!lineData.labels.includes(label)) {
+                  lineData.labels.push(label);
                 }
-                break; // Break out of the loop once the selected version's progress is found
+                lineData.datasets[0].data.push(entry.wp_done);
+                lineData.datasets[1].data.push(entry.wp_on_going);
               }
             }
           }
@@ -411,12 +447,6 @@ function ProjectBar() {
   };
   
   
-  
-  
-  
-  
-  
-
   const handleTypeSelect = (selectedOptions) => {
     setSelectedTypes(selectedOptions);
 

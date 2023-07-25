@@ -148,23 +148,43 @@ const Timeline = () => {
           Milestone
         </Button>
       </div>
-      <div style={{ position: 'relative' }}>
-        {/* Transparent overlay to disable hover */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 1,
-          }}
-        />
+      {selectedView === 'Phase' && (
+        <div style={{ position: 'relative' }}>
+          <Chart
+            chartType='Timeline'
+            data={[
+              ['Project ID', 'Phase Name', 'Start Date', 'End Date', { type: 'string', role: 'style' }, { id: 'style', type: 'string', role: 'style' }],
+              ...timelineData,
+            ]}
+            options={{
+              timeline: {
+                groupByRowLabel: true,
+                showBarLabels: false,
+              },
+              colors: Object.values(phaseColorMap),
+              legend: selectedView === 'Phase' ? { position: 'bottom' } : 'none',
+              tooltip: {
+                trigger: 'focus', // or 'selection'
+                isHtml: true,
+                ignoreBounds: true,
+                textStyle: {
+                  color: '#444',
+                  fontSize: 12,
+                },
+                // Set the tooltip content as a function
+                html: ({ row, column }) => getTooltipContent(selectedView, row, column),
+              },
+            }}
+            width='100%'
+            height='300px'
+          />
+        </div>
+      )}
+      {selectedView === 'Milestone' && (
         <Chart
           chartType='Timeline'
           data={[
-            ['Project ID', 'Phase Name', 'Start Date', 'End Date', { type: 'string', role: 'style' }, { id: 'style', type: 'string', role: 'style' }],
+            ['Project ID', 'Milestone Name', 'Start Date', 'End Date', { type: 'string', role: 'style' }, { id: 'style', type: 'string', role: 'style' }],
             ...timelineData,
           ]}
           options={{
@@ -173,7 +193,7 @@ const Timeline = () => {
               showBarLabels: false,
             },
             colors: Object.values(phaseColorMap),
-            legend: selectedView === 'Phase' ? { position: 'bottom' } : 'none',
+            legend: 'none',
             tooltip: {
               trigger: 'focus', // or 'selection'
               isHtml: true,
@@ -189,18 +209,19 @@ const Timeline = () => {
           width='100%'
           height='300px'
         />
-      </div>
+      )}
       <div style={{ textAlign: 'center' }}>
-        {Object.entries(phaseColorMap).map(([phaseName, color], index) => (
-          <span key={index} style={{ margin: '0 10px' }}>
-            <div style={{ backgroundColor: color, width: '10px', height: '10px', display: 'inline-block' }}></div>
-            <span style={{ paddingLeft: '5px' }}>{phaseName}</span>
-          </span>
-        ))}
+        {selectedView === 'Phase' &&
+          Object.entries(phaseColorMap).map(([phaseName, color], index) => (
+            <span key={index} style={{ margin: '0 10px' }}>
+              <div style={{ backgroundColor: color, width: '10px', height: '10px', display: 'inline-block' }}></div>
+              <span style={{ paddingLeft: '5px' }}>{phaseName}</span>
+            </span>
+          ))}
       </div>
     </div>
   );
-};
+}
 
 export default Timeline;
 
