@@ -101,6 +101,7 @@ async def get_all_wp():
     done_wp = await get_done_wp()
     all_wp = wp + done_wp
     if all_wp:
+        all_wp = sorted(all_wp, key=lambda x: x["date"])
         return all_wp
     else:
         return {"message": "No work packages found."}
