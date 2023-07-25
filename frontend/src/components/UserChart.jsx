@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dropdown, Container, Row, Col, Table } from "react-bootstrap";
+import { Dropdown, Container, Row, Col, Button } from "react-bootstrap";
 import { Pie } from "react-chartjs-2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -14,24 +14,27 @@ function UserChart() {
   const [selectedItem, setSelectedItem] = useState("Work Packages");
   const [chartData, setChartData] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [tableData, setTableData] = useState([]);
-  const [showTableMessage, setShowTableMessage] = useState(true);
-  const [isProjectSelected, setIsProjectSelected] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [userNameFromURL, setUserNameFromURL] = useState(null);
   const [totalWP, setTotalWP] = useState(0);
   const [totalSP, setTotalSP] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [selectedSliceIndex, setSelectedSliceIndex] = useState(null);
+  const [selectedLabel, setSelectedLabel] = useState(null);
+  const [tableData, setTableData] = useState([]);
 
   function formatDate(date) {
     return date.toISOString().slice(0, 10);
   }
 
-  async function fetchUserData(start, end) {
+  async function fetchUserData(start = "", end = "") {
+    setLoading(true);
     try {
+      const url = "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-details";
       const response = await axios.get(
-        `https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-details?start_date=${start}&end_date=${end}`
+        start && end ? `${url}?start_date=${start}&end_date=${end}` : url
       );
       const data = response.data;
 
@@ -42,35 +45,8 @@ function UserChart() {
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
-    }
-  }
-
-  async function fetchWpData(start, end) {
-    try {
-      const response = await axios.get(
-        `https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-wp-details?start_date=${start}&end_date=${end}`
-      );
-      const data = response.data;
-
-      if (data && Array.isArray(data)) {
-        setTotalWP(data.find((user) => user.user_name === userNameFromURL)?.total_wp || 0);
-        setTotalSP(data.find((user) => user.user_name === userNameFromURL)?.total_sp || 0);
-
-        if (selectedItem === "Work Packages") {
-          setChartData(generateChartData(data.find((user) => user.user_name === userNameFromURL)?.projects || [], "project_name"));
-        } else if (selectedItem === "Story Points") {
-          setChartData(generateChartData(data.find((user) => user.user_name === userNameFromURL)?.projects || [], "project_name"));
-        }
-
-        handleTableDataUpdate(data.find((user) => user.user_name === userNameFromURL)?.projects || []);
-      } else {
-        setTotalWP(0);
-        setTotalSP(0);
-        setChartData(null);
-        setTableData([]);
-      }
-    } catch (error) {
-      console.error("Error fetching work package data:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -82,40 +58,62 @@ function UserChart() {
     setEndDate(date);
   }
 
-  function handleChartClick(event, elements) {
-    if (elements.length > 0) {
-      const selectedIndex = elements[0].index;
-      const selectedProject = selectedUser?.find((user) => user.user_name === userNameFromURL)?.projects[selectedIndex];
-      setSelectedProject(selectedProject);
-    }
-  }
-
   function handleDropdownSelect(eventKey) {
     setSelectedItem(eventKey);
-
-    // Calculate the totalWP and totalSP based on the selected item
-    if (eventKey === "Work Packages") {
-      setTotalWP(selectedUser?.find((user) => user.user_name === userNameFromURL)?.total_wp || 0);
-      setTotalSP(0);
-      setChartData(generateChartData(selectedUser?.find((user) => user.user_name === userNameFromURL)?.projects || [], "project_name"));
-    } else if (eventKey === "Story Points") {
-      setTotalWP(0);
-      setTotalSP(selectedUser?.find((user) => user.user_name === userNameFromURL)?.total_sp || 0);
-      setChartData(generateChartData(selectedUser?.find((user) => user.user_name === userNameFromURL)?.projects || [], "project_name"));
-    }
-
-    handleTableDataUpdate(selectedUser?.find((user) => user.user_name === userNameFromURL)?.projects || []);
-    setSelectedProject(null); // Reset selected project
-    setShowTableMessage(true);
   }
 
-  function handleChartDataUpdate(data, property) {
-    if (!data || data.length === 0) {
-      setChartData(null);
-    } else {
-      setChartData(generateChartData(data, property));
+  async function fetchDataWithoutDate() {
+    setLoading(true);
+    try {
+      const userResponse = await axios.get(
+        "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-details"
+      );
+      const userData = userResponse.data;
+
+      if (userData && Array.isArray(userData)) {
+        setSelectedUser(userData);
+      } else {
+        setSelectedUser(null);
+      }
+    } catch (error) {
+      console.error("Error fetching data without date:", error);
+    } finally {
+      setLoading(false);
     }
   }
+
+  useEffect(() => {
+    setSelectedItem("Work Packages");
+    fetchDataWithoutDate();
+    setUserNameFromURL(getLabelFromURL());
+  }, []);
+
+  useEffect(() => {
+    if (selectedUser && userNameFromURL) {
+      setChartData(
+        generateChartData(
+          selectedUser.find((user) => user.user_name === userNameFromURL)?.projects || [],
+          "project_name"
+        )
+      );
+
+      if (selectedItem === "Work Packages") {
+        setTotalWP(
+          selectedUser.find((user) => user.user_name === userNameFromURL)?.total_wp || 0
+        );
+        setTotalSP(0);
+      } else if (selectedItem === "Story Points") {
+        setTotalWP(0);
+        setTotalSP(
+          selectedUser.find((user) => user.user_name === userNameFromURL)?.total_sp || 0
+        );
+      }
+    }
+  }, [selectedUser, selectedItem, userNameFromURL]);
+
+  useEffect(() => {
+    fetchTableData();
+  }, [userNameFromURL, selectedLabel, startDate, endDate]);
 
   function generateChartData(data, property) {
     if (!data || !Array.isArray(data)) {
@@ -123,7 +121,9 @@ function UserChart() {
     }
 
     const labels = data.map((project) => project[property]);
-    const values = data.map((project) => project[selectedItem === "Work Packages" ? "wp_assigned" : "story_points"]);
+    const values = data.map((project) =>
+      project[selectedItem === "Work Packages" ? "wp_assigned" : "story_points"]
+    );
 
     return {
       labels: labels,
@@ -134,34 +134,7 @@ function UserChart() {
           backgroundColor: ["#FA4907", "#327332", "#165BAA", "#F6C600"],
         },
       ],
-      options: {
-        plugins: {
-          legend: {
-            position: "right",
-            labels: {
-              padding: 30,
-              boxWidth: 15,
-            },
-          },
-        },
-        onClick: handleChartClick,
-      },
     };
-  }
-
-  function handleTableDataUpdate(data) {
-    if (selectedProject) {
-      const projectData = data.find((project) => project.project_name === selectedProject.project_name);
-      if (projectData) {
-        const wpAssigned = projectData.wp_assigned;
-        const tableData = wpAssigned.map((wp) => ({
-          wp_name: wp.wp_name,
-          progress: wp.progress,
-          story_points: wp.story_points,
-        }));
-        setTableData(tableData);
-      }
-    }
   }
 
   function getLabelFromURL() {
@@ -171,122 +144,221 @@ function UserChart() {
     return decodeURIComponent(label);
   }
 
-  useEffect(() => {
-    // Fetch user data when the component mounts (initial page load)
-    setUserNameFromURL(getLabelFromURL());
+  async function handleGenerateChartClick() {
+    setErrorMessage(null);
 
-    // Check if the date pickers have valid dates selected before making the API call
-    if (startDate && endDate) {
-      fetchUserData(startDate, endDate);
-      fetchWpData(startDate, endDate);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Fetch user data when either of the dates change
-    if (startDate && endDate) {
+    if (!startDate || !endDate) {
+      setLoading(true);
+      await fetchDataWithoutDate();
+      setLoading(false);
+    } else if (endDate <= startDate) {
+      setErrorMessage("End date should be greater than the start date.");
+    } else {
+      setLoading(true);
       const formattedStartDate = formatDate(startDate);
       const formattedEndDate = formatDate(endDate);
-      fetchUserData(formattedStartDate, formattedEndDate);
-      fetchWpData(formattedStartDate, formattedEndDate);
+      await fetchUserData(formattedStartDate, formattedEndDate);
+      setLoading(false);
     }
-  }, [startDate, endDate]);
+  }
 
+  async function fetchTableDataWithoutDate() {
+    setLoading(true);
+  
+    try {
+      const url = "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-wp-details";
+      const response = await axios.get(url);
+  
+      const userData = response.data;
+  
+      if (userData && Array.isArray(userData)) {
+        const selectedUser = userData.find((user) => user.user_name === userNameFromURL);
+        if (selectedUser) {
+          const selectedProject = selectedUser.projects.find(
+            (project) => project.project_name === selectedLabel
+          );
+          if (selectedProject) {
+            const projectTableData = selectedProject.wp_assigned.map((wp) => ({
+              wp_name: wp.wp_name,
+              progress: wp.progress,
+              story_points: wp.story_points,
+            }));
+  
+            setTableData(projectTableData);
+          } else {
+            setTableData([]);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+  
+  async function fetchTableData(selectedProjectName) {
+    if (!startDate || !endDate) {
+      await fetchTableDataWithoutDate();
+    } else {
+      setLoading(true);
+  
+      try {
+        const url = "https://sw.infoglobal.id/executive-summary-dashboard/get-assignee-wp-details";
+        const response = await axios.get(
+          `${url}?start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}`
+        );
+  
+        const userData = response.data;
+  
+        if (userData && Array.isArray(userData)) {
+          const selectedUser = userData.find((user) => user.user_name === userNameFromURL);
+          if (selectedUser) {
+            const selectedProject = selectedUser.projects.find(
+              (project) => project.project_name === selectedProjectName
+            );
+            if (selectedProject) {
+              const projectTableData = selectedProject.wp_assigned.map((wp) => ({
+                wp_name: wp.wp_name,
+                progress: wp.progress,
+                story_points: wp.story_points,
+              }));
+  
+              setTableData(projectTableData);
+            } else {
+              setTableData([]);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching table data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  }
+
+function handlePieSliceClick(_, elements) {
+  if (elements.length > 0) {
+    const sliceIndex = elements[0].index;
+    setSelectedSliceIndex(sliceIndex);
+
+    const selectedLabel = chartData.labels[sliceIndex];
+    setSelectedLabel(selectedLabel);
+
+    // Fetch table data for the selected project
+    if (startDate && endDate) {
+      fetchTableData(selectedLabel);
+    } else {
+      setTableData([]);
+    }
+  }
+}
+  
   return (
     <Container fluid className="user-components">
-      <Row>
-        <Col>
-          <h3 className="sub-judul-assignee">Date Range</h3>
-          <div className="date-inputs">
-            <div className="date-label">Start Date:</div>
-            <DatePicker
-              selected={startDate ? new Date(startDate) : null}
-              onChange={handleStartDateChange}
-              dateFormat="yyyy-MM-dd"
-              isClearable
-              showYearDropdown
-              scrollableYearDropdown
-            />
-          </div>
-          <div className="date-inputs">
-            <div className="date-label">End Date:</div>
-            <DatePicker
-              selected={endDate ? new Date(endDate) : null}
-              onChange={handleEndDateChange}
-              dateFormat="yyyy-MM-dd"
-              isClearable
-              showYearDropdown
-              scrollableYearDropdown
-            />
-          </div>
+      <Row className="date-inputs" style={{ margin: 20 }}>
+        <Col className="date-label">
+          <div> Start Date:</div>
+          <DatePicker
+            selected={startDate}
+            onChange={handleStartDateChange}
+            dateFormat="yyyy-MM-dd"
+            isClearable
+            showYearDropdown
+            scrollableYearDropdown
+          />
+        </Col>
+        <Col className="date-label">
+          <div>End Date: </div>
+          <DatePicker
+            selected={endDate}
+            onChange={handleEndDateChange}
+            dateFormat="yyyy-MM-dd"
+            isClearable
+            showYearDropdown
+            scrollableYearDropdown
+          />
+          <Button className="refresh-button" style={{ marginLeft: 30 }} onClick={handleGenerateChartClick} disabled={loading}>
+            Submit
+          </Button>
         </Col>
       </Row>
       <Row>
-        <Col>
+        <Col style={{ width: "50%" }}>
           <h3 className="sub-judul-assignee">Overview</h3>
-          <div className="container-chart">
-            <div className="title-count">
-              Total {selectedItem} <br />
-              <span style={{ marginTop: "20px" }} className="count-project">
-                {selectedItem === "Work Packages" ? totalWP : totalSP} {selectedItem}
-              </span>
-            </div>
-            <Row>
-              <Col className="d-flex justify-content-end">
-                <Dropdown onSelect={handleDropdownSelect}>
-                  <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                    {selectedItem}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    {dropdownItems.map((item, index) => (
-                      <Dropdown.Item key={index} eventKey={item.value}>
-                        {item.label}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Col>
-            </Row>
-            <hr style={{ height: "2px", background: "black", border: "none" }} />
-            {chartData ? (
-              <Pie data={chartData} />
+          <div className="container-chart" style={{ width: 400 }}>
+            {loading ? (
+              <div>Loading...</div>
             ) : (
-              <div className="no-data-message">No data available</div>
+              <>
+                <div className="title-count">
+                  Total {selectedItem} <br />
+                  <span style={{ marginTop: "20px" }} className="count-project">
+                    {selectedItem === "Work Packages"
+                      ? `${totalWP} ${selectedItem}`
+                      : `${totalSP} ${selectedItem}`}
+                  </span>
+                </div>
+                <Row>
+                  <Col className="d-flex justify-content-end">
+                    <Dropdown onSelect={handleDropdownSelect}>
+                      <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                        {selectedItem}
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        {dropdownItems.map((item, index) => (
+                          <Dropdown.Item key={index} eventKey={item.value}>
+                            {item.label}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </Col>
+                </Row>
+                <hr style={{ height: "2px", background: "black", border: "none" }} />
+                {chartData ? (
+                  <Pie
+                    id="userChart"
+                    data={chartData}
+                    options={{ onClick: handlePieSliceClick }}
+                    style={{
+                      opacity: 1,
+                      transition: "opacity 0.5s ease, width 0.5s ease",
+                    }}
+                  />
+                ) : (
+                  <div className="no-data-message">No data available</div>
+                )}
+              </>
             )}
           </div>
-        </Col>
-        <Col>
-          <h3 className="sub-judul-assignee">Project Details</h3>
-          <div className="project-table">
-            {isProjectSelected ? (
-              <div>
-                <h4>{selectedProject?.project_name}</h4>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Work Package Name</th>
-                      <th>Progress</th>
-                      <th>Story Points</th>
+          </Col>
+        {selectedSliceIndex !== null && (
+          <Col style={{ width: "50%" }}>
+            <h3 className="sub-judul-assignee">{selectedLabel}</h3>
+            <div className="container-chart" style={{ width: 400 }}>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Work Packages</th>
+                    <th>Progress</th>
+                    <th>Story Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableData.map((wp, index) => (
+                    <tr key={index}>
+                      <td>{wp.wp_name}</td>
+                      <td>{wp.progress}%</td>
+                      <td>{wp.story_points}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {tableData.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.wp_name}</td>
-                        <td>{item.progress}</td>
-                        <td>{item.story_points}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </div>
-            ) : showTableMessage ? (
-              <div className="no-data-message">No project selected</div>
-            ) : (
-              <div className="no-data-message">No data available</div>
-            )}
-          </div>
-        </Col>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Col>
+        )}
       </Row>
     </Container>
   );

@@ -15,7 +15,6 @@ const NavbarComponents = () => {
                         height="56"
                     />
                 </Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
             </Container>
         </Navbar>
     </div>

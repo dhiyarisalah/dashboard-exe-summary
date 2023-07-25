@@ -107,11 +107,20 @@ const Timeline = () => {
     }
   }
 
-  const getTooltipContent = (view) => {
+  const getTooltipContent = (view, row, column) => {
     if (view === 'Phase') {
-      return `$start (Phase)<br>Project: $name<br>Phase: $phase<br>Start: $start<br>End: $end`;
+      const data = timelineData[row];
+      const projectName = data[0];
+      const phaseName = data[1];
+      const start = data[2];
+      const end = data[3];
+      return `${start} (Phase)<br>Project: ${projectName}<br>Phase: ${phaseName}<br>Start: ${start}<br>End: ${end}`;
     } else {
-      return `$start (Milestone)<br>Project: $name<br>Milestone: $wpName<br>Date: $start`;
+      const data = timelineData[row];
+      const projectName = data[0];
+      const milestoneName = data[1];
+      const start = data[2];
+      return `${start} (Milestone)<br>Project: ${projectName}<br>Milestone: ${milestoneName}<br>Date: ${start}`;
     }
   };
 
@@ -167,14 +176,15 @@ const Timeline = () => {
             colors: Object.values(phaseColorMap),
             legend: selectedView === 'Phase' ? { position: 'bottom' } : 'none',
             tooltip: {
-              trigger: '',
+              trigger: 'focus', // or 'selection'
               isHtml: true,
               ignoreBounds: true,
               textStyle: {
                 color: '#444',
                 fontSize: 12,
               },
-              html: getTooltipContent(selectedView),
+              // Set the tooltip content as a function
+              html: ({ row, column }) => getTooltipContent(selectedView, row, column),
             },
           }}
           width='100%'
@@ -194,3 +204,4 @@ const Timeline = () => {
 };
 
 export default Timeline;
+
