@@ -16,7 +16,7 @@ function BurndownChart() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://sw.infoglobal.id/executive-summary-dashboard/get-burndown-chart-overview");
+        const response = await fetch("https://sw.infoglobal.id/nirmala/backend/get-burndown-chart-overview");
         const data = await response.json();
         console.log("API Data:", data);
     

@@ -25,7 +25,7 @@ function ProjectChart() {
 
   async function fetchTotalCount() {
     try {
-      const response = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/count-all");
+      const response = await axios.get("https://sw.infoglobal.id/nirmala/backend/count-all");
       const totalCountData = response.data;
       console.log("Total Count Data:", totalCountData);
       if (totalCountData && totalCountData.total_project) {
@@ -43,8 +43,8 @@ function ProjectChart() {
       setLoading(true);
       const url =
         selectedValue === "Status"
-          ? "https://sw.infoglobal.id/executive-summary-dashboard/project-count-by-status"
-          : "https://sw.infoglobal.id/executive-summary-dashboard/project-count-by-priority";
+          ? "https://sw.infoglobal.id/nirmala/backend/project-count-by-status"
+          : "https://sw.infoglobal.id/nirmala/backend/project-count-by-priority";
 
       const response = await axios.get(url);
       const data = response.data;
@@ -55,10 +55,10 @@ function ProjectChart() {
       setChartData(chartData);
 
       if (selectedValue === "Status") {
-        const projectListResponse = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/project-list-by-status");
+        const projectListResponse = await axios.get("https://sw.infoglobal.id/nirmala/backend/project-list-by-status");
         setProjectListStatus(projectListResponse.data);
       } else {
-        const projectListResponse = await axios.get("https://sw.infoglobal.id/executive-summary-dashboard/project-list-by-priority");
+        const projectListResponse = await axios.get("https://sw.infoglobal.id/nirmala/backend/project-list-by-priority");
         setProjectListPriority(projectListResponse.data);
       }
 

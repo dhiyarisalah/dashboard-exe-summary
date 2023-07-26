@@ -26,8 +26,8 @@ const Timeline = () => {
     try {
       const url =
         view === 'Phase'
-          ? 'https://sw.infoglobal.id/executive-summary-dashboard/get-phase-by-project'
-          : 'https://sw.infoglobal.id/executive-summary-dashboard/get-miles-by-project';
+          ? 'https://sw.infoglobal.id/nirmala/backend/get-phase-by-project'
+          : 'https://sw.infoglobal.id/nirmala/backend/get-miles-by-project';
 
       const response = await axios.get(url);
       const data = response.data;

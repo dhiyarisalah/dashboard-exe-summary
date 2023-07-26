@@ -4,7 +4,7 @@ import { Bar, Line} from "react-chartjs-2";
 import Select from "react-select";
 import axios from "axios";
 
-const BASE_URL = "https://sw.infoglobal.id/executive-summary-dashboard";
+const BASE_URL = "https://sw.infoglobal.id/nirmala/backend";
 
 function ProjectBar() {
   const [selectedVersion, setSelectedVersion] = useState(null);

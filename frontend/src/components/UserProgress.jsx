@@ -137,8 +137,8 @@ function UserProgress() {
     setIsLoadingData(true);
     try {
       const [userProgressResponse, progressProjectResponse] = await Promise.all([
-        axios.get("https://sw.infoglobal.id/executive-summary-dashboard/get-progress-assignee-total"),
-        axios.get("https://sw.infoglobal.id/executive-summary-dashboard/get-progress-assignee")
+        axios.get("https://sw.infoglobal.id/nirmala/backend/get-progress-assignee-total"),
+        axios.get("https://sw.infoglobal.id/nirmala/backend/get-progress-assignee")
       ]);
 
       const userProgressData = userProgressResponse.data;
