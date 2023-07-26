@@ -29,7 +29,7 @@ function Progress() {
       const clickedIndex = elements[0].index;
       const clickedLabel = projectProgress[clickedIndex]?.project_name;
       if (clickedLabel) {
-        window.location.href = `/projectdetails/${clickedLabel}`;
+        window.location.href = `/nirmala/projectdetails/${clickedLabel}`;
       }
     }
   };

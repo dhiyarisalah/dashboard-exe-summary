@@ -156,7 +156,7 @@ function UserProgress() {
   }
 
   const handleUserClick = (userName) => {
-    window.location.href = `/assigneedetails/${userName}`;
+    window.location.href = `/nirmala/assigneedetails/${userName}`;
   };
 
   useEffect(() => {
