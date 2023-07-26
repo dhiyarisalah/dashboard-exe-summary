@@ -183,7 +183,6 @@ function UserProgress() {
           group: 1,
         },
       ];
-
       setProjectData({
         labels: labels,
         datasets: datasets,
@@ -191,6 +190,14 @@ function UserProgress() {
       });
 
       setUserNames(labels);
+    } else {
+      // If there's no data available, set projectData to an empty object {}
+      setProjectData({});
+      setUserNames([]);
+
+      // Reset selectedProjectData and selectedProjectLabel when there's no data available
+      setSelectedProjectData({});
+      setSelectedProjectLabel("");
     }
   }, [selectedMonth, selectedYear, userProgress]);
 
@@ -269,15 +276,15 @@ function UserProgress() {
             </div>
           </Col>
           <Col md={8}>
-            <div>
-              {/* Check if data is loading */}
-              {isLoadingData ? (
+          <div>
+          {/* Check if data is loading */}
+          {isLoadingData ? (
                 <p>Loading...</p>
               ) : selectedMonth !== "" ? (
-                projectData.labels && projectData.labels.length > 0 ? (
+                Array.isArray(projectData.labels) && projectData.labels.length > 0 ? (
                   <StackedChart chartData={projectData} handleClick={handleBarClick} />
                 ) : (
-                  <p className="text-align center">No data available for the selected month.</p>
+                  <p className="text-align-center">No data available for the selected month.</p>
                 )
               ) : (
                 <p>Select month first from the dropdown button.</p>
@@ -286,7 +293,7 @@ function UserProgress() {
           </Col>
         </Row>
         <Row>
-          <Col md={12}>
+        <Col md={12}>
             <hr
               style={{ margin: "20px 0px 20px 0px", height: "2px", background: "black", border: "none" }}
             />
@@ -297,7 +304,10 @@ function UserProgress() {
               ) : selectedProjectData.labels && selectedProjectData.labels.length > 0 ? (
                 <ProjectDetailsChart projectData={selectedProjectData} selectedLabel={selectedProjectLabel} />
               ) : (
-                <p className="text-align center">No project details data available.</p>
+                // Show message when selectedProjectData.labels is empty and selectedProjectLabel is empty
+                selectedProjectLabel === "" && (
+                  <p className="text-align-center">Click specific user first</p>
+                )
               )}
             </div>
           </Col>

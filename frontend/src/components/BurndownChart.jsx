@@ -121,7 +121,8 @@ function BurndownChart() {
           </Col>
         </Row>
         <hr style={{ marginTop: "0px", height: "2px", background: "black", border: "none" }} />
-        <div style={{ height: "400px" }}>
+        <div style={{height: "350px"}}>
+
           {loading ? (
             <div>Loading...</div>
           ) : (

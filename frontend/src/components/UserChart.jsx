@@ -305,15 +305,15 @@ function UserChart() {
         </Col>
       </Row>
       {errorMessage && <div className="error-message" style={{marginLeft: 30}}>{errorMessage}</div>}
-      <hr style={{ height: "2px", background: "black", border: "none" }} />
+      <hr style={{ height: "2px", background: "black", border: "none", margin: 0 }} />
       <Row>
-        <Col style={{ width: "50%" }}>
-          <h3 className="sub-judul-assignee">Overview</h3>
-          <div className="container-chart" style={{ width: 400 }}>
+      <Col md={6} className="container-chart">
+        <h3 className="sub-judul-assignee">Overview</h3>
+          <div>
             <>
               <div className="title-count">
                 Total {selectedItem} <br />
-                <span style={{ marginTop: "20px" }} className="count-project">
+                <span className="count-project">
                   {selectedItem === "Work Packages"
                     ? `${totalWP} ${selectedItem}`
                     : `${totalSP} ${selectedItem}`}
@@ -335,15 +335,17 @@ function UserChart() {
                   </Dropdown>
                 </Col>
               </Row>
-              <hr style={{ height: "2px", background: "black", border: "none" }} />
+              <hr style={{ height: "2px", background: "black", border: "none", margin:0 }} />
               {chartData ? (
                 <Pie
                   id="userChart"
                   data={chartData}
-                  options={{ onClick: handlePieSliceClick }}
+                  options={{ onClick: handlePieSliceClick, aspectRatio: 2 }}
+                  
                   style={{
                     opacity: 1,
                     transition: "opacity 0.5s ease, width 0.5s ease",
+
                   }}
                 />
               ) : (
@@ -353,10 +355,10 @@ function UserChart() {
           </div>
         </Col>
         {selectedSliceIndex !== null && (
-          <Col style={{ width: "50%" }}>
-            <h3 className="sub-judul-assignee">{selectedLabel}</h3>
-            <div className="container-chart" style={{ width: 400 }}>
-              <table className="table">
+        <Col md={6} className="container-chart" style={{ overflowY: "auto"}}>
+          <h3 className="sub-judul-assignee">{selectedLabel}</h3>
+          <div style={{ width: "100%" }}>
+            <table className="table">
                 <thead>
                   <tr>
                     <th>Work Packages</th>

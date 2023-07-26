@@ -53,7 +53,7 @@ const LandingPage = () => {
           <h3 className="sub-judul">Burndown Chart</h3>
           <Row className="row">
             <Col className="container-chart">
-              <div style={{ height: '400px' }}>
+              <div style={{ height: '400px'}}>
                 <BurndownChart />
               </div>
             </Col>

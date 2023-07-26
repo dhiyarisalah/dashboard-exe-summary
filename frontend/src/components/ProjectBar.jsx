@@ -15,6 +15,8 @@ function ProjectBar() {
   const [selectedMetric, setSelectedMetric] = useState("Progress");
   const [assigneeChartData, setAssigneeChartData] = useState(null);
   const [lineChartData, setLineChartData] = useState(null);
+  const [lineChartLoading, setLineChartLoading] = useState(false); // Add this state
+  
 
   const getLabelFromURL = () => {
     const url = window.location.href;
@@ -338,6 +340,7 @@ function ProjectBar() {
 
   const fetchLineChartData = async (selectedTypeValues, selectedVersionValue) => {
     try {
+      setLineChartLoading(true); // Set loading to true before fetching data
       let response;
       let apiEndpoint;
   
@@ -440,9 +443,11 @@ function ProjectBar() {
       } else {
         setLineChartData(null);
       }
+      setLineChartLoading(false);
     } catch (error) {
       console.error("Error fetching line chart data:", error);
       setLineChartData(null);
+      setLineChartLoading(false);
     }
   };
   
@@ -539,15 +544,17 @@ function ProjectBar() {
     <Row className="container-chart">
       <h3 className="sub-judul-project">Burndown</h3>
       <Col>
-       {lineChartData !== null ? ( // Check if lineChartData is not null before rendering
-          <Line
-            data={lineChartData}
-
-          />
+      {lineChartLoading ? ( // Display loading message or spinner while loading
+        <div>Loading...</div>
+      ) : (
+        // Display the line chart when data is available
+        lineChartData !== null ? (
+          <Line data={lineChartData} />
         ) : (
-          <div>Loading line chart...</div> // Display a loading message or fallback UI if lineChartData is undefined
-        )}
-      </Col>
+          <div>No data available.</div>
+        )
+      )}
+    </Col>
     </Row>
     <Col className="button d-flex justify-content-end">
         <Select

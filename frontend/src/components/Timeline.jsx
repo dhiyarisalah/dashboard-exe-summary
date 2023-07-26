@@ -203,7 +203,7 @@ const Timeline = () => {
                 fontSize: 12,
               },
               // Set the tooltip content as a function
-              html: ({ row, column }) => getTooltipContent(selectedView, row, column),
+              format: 'MMM dd, yyyy',
             },
           }}
           width='100%'
