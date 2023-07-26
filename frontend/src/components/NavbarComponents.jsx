@@ -8,7 +8,7 @@ const NavbarComponents = () => {
     <div>
         <Navbar expand="lg" className='navbar-custom'>
             <Container>
-                <Navbar.Brand href="/">
+                <Navbar.Brand href="/nirmala/">
                     <img
                         src= {logo}
                         width="248"
