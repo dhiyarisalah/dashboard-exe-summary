@@ -1,19 +1,20 @@
-import {Routes, Route} from 'react-router-dom'
-import LandingPage from './pages/LandingPage';
-import NavbarComponents from './components/NavbarComponents';
-import ProjectDetails from './pages/ProjectDetails';
-import AssigneeDetails from './pages/AssigneeDetails';
+import { Routes, Route } from 'react-router-dom';
+import LandingPage from './LandingPage';
+import ProjectDetails from './ProjectDetails';
+import AssigneeDetails from './AssigneeDetails';
+
 function App() {
   return (
     <div>
       <NavbarComponents />
       <Routes>
-        <Route path="/" Component={LandingPage} />
-        <Route path="/projectdetails/:label" Component={ProjectDetails} />
-        <Route path="/assigneedetails/:label" Component={AssigneeDetails}/>
+        <Route path="/nirmala/" element={<LandingPage />} />
+        <Route path="/nirmala/projectdetails/:label" element={<ProjectDetails />} />
+        <Route path="/nirmala/assigneedetails/:label" element={<AssigneeDetails />} />
       </Routes>
     </div>
   );
 }
+
 
 export default App
