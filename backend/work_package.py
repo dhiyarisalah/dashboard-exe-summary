@@ -99,7 +99,8 @@ def process_element(element):
 async def get_all_wp():
     wp = await get_wp()
     done_wp = await get_done_wp()
-    all_wp = wp + done_wp
+    miles_wp = await get_miles_wp()
+    all_wp = wp + done_wp + miles_wp
     if all_wp:
         all_wp = sorted(all_wp, key=lambda x: x["date"])
         return all_wp
@@ -132,6 +133,28 @@ async def get_wp():
 async def get_done_wp():
     try:
         params = {'filters': '[{"status": { "operator": "=", "values": ["17"] }}]'}
+        async with httpx.AsyncClient() as client:
+            done_work_packages = await client.get(f'{url}/work_packages', params=params, headers=header)
+            done_work_packages.raise_for_status()
+            data = done_work_packages.json()
+
+            done_wp = []
+            if "_embedded" in data and "elements" in data["_embedded"]:
+                elements = data["_embedded"]["elements"]
+                done_wp = [process_element(element) for element in elements if len(element["_links"]["project"]["title"]) == 7]
+
+            return done_wp
+
+    except httpx.RequestError as e:
+        raise HTTPException(status_code=500, detail="Failed to connect to the API.")
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail="Invalid JSON response from the API.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
+async def get_miles_wp():
+    try:
+        params = {'filters': '[{"type": { "operator": "=", "values": ["2"] }}]'}
         async with httpx.AsyncClient() as client:
             done_work_packages = await client.get(f'{url}/work_packages', params=params, headers=header)
             done_work_packages.raise_for_status()
